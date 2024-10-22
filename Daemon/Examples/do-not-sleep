@@ -1,0 +1,6 @@
+#!/bin/bash
+VAR_DAEMON_VERSION="2024.10.20-1644"
+VAR_DAEMON_REQUIRED_COMMAND_LINE_TOOLS="caffeinate"
+
+echo "Starting caffeinate..."
+caffeinate -d
