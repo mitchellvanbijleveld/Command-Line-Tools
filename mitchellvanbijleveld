@@ -1,0 +1,302 @@
+#!/bin/bash
+SELF_VAR_UTILITY="mitchell"
+SELF_VAR_UTILITY_SCRIPT="vanbijleveld"
+SELF_VAR_BIN_FLAGS="--DEBUG --AUTO-UPDATE"
+
+####################################################################################################
+####################################################################################################
+# GLOBAL VARIABLES
+####################################################################################################
+export VAR_BIN_INSTALL_DIR=$(dirname $(realpath $0))
+export VAR_BIN_CONFIG_DIR="/etc/mitchellvanbijleveld/Linux-Command-Line-Tools"
+export VAR_BIN_TEMP_DIR="/tmp/mitchellvanbijleveld/Linux-Command-Line-Tools"
+
+VAR_BIN_ARGUMENTS_STRING="$@"
+VAR_BIN_ARGUMENTS_WITHOUT_FLAGS=$(echo "$@" | sed "s/--[^ ]*//gi; s/^ *//; s/  */ /g; s/ *$//") # replace flags, leading spaces, more than two spaces, and trailing spaces
+export VAR_UTILITY=$(echo "$VAR_BIN_ARGUMENTS_WITHOUT_FLAGS" | awk '{print $1}')
+export VAR_UTILITY_SCRIPT=$(echo "$VAR_BIN_ARGUMENTS_WITHOUT_FLAGS" | awk '{print $2}')
+if [[ $VAR_UTILITY != "" ]] && [[ $VAR_UTILITY_SCRIPT != "" ]]; then
+    VAR_UTILITY_SCRIPT_ARGUMENTS="$@ "
+    for BIN_ARGUMENT in $SELF_VAR_BIN_FLAGS; do
+        VAR_UTILITY_SCRIPT_ARGUMENTS=$(echo "$VAR_UTILITY_SCRIPT_ARGUMENTS" | sed "s/$BIN_ARGUMENT //gi")
+    done
+    VAR_UTILITY_SCRIPT_ARGUMENTS=$(echo "$VAR_UTILITY_SCRIPT_ARGUMENTS" | sed "s/$VAR_UTILITY//i; s/$VAR_UTILITY_SCRIPT//i; s/^ *//; s/  */ /g; s/ *$//")
+fi
+
+if [[ $(echo $@ | tr '[:lower:]' '[:upper:]') =~ (^|[[:space:]])--DEBUG([[:space:]]|$) ]]; then
+    export VAR_SCRIPT_DEBUG=1
+fi
+####################################################################################################
+# GLOBAL VARIABLES
+####################################################################################################
+####################################################################################################
+
+
+
+
+
+####################################################################################################
+####################################################################################################
+# FUNCTIONS
+####################################################################################################
+PrintMessage(){
+    # $1 = Log Level
+    # $2 = Utility
+    # $3 = Script
+    # $4 = Message
+    if [[ "$1" == "" ]] && [[ "$2" == "" ]] && [[ "$3" == "" ]] && [[ "$4" == "" ]]; then ### IF ALL ARGUMENTS ARE EMPTY
+        case $VAR_SCRIPT_DEBUG in
+            1) return 0;; # Print nothing in debugging mode
+            *) echo; return 0;; # Print empty line in *** non *** debugging mode
+        esac
+    elif [[ "$1" != "" ]] && [[ "$2" != "" ]] && [[ "$3" != "" ]] && [[ "$4" != "" ]]; then ### IF ALL ARGUMENTS HAVE A VALUE
+        case $VAR_SCRIPT_DEBUG in
+            1) echo $(date +"%Y-%m-%d %H:%M:%S").$(date +"%N" | cut -c 1-3) "$(printf "%-38s" "$2/$3")" "[$(printf "%8s" "$1")]" ":" "$4"; return 0;;
+            *) 
+                case $1 in
+                    "DEBUG" | "CONFIG" | "PRERUN") return 0;;
+                    "INFO") echo "$4"; return 0;;
+                esac
+                ;;
+        esac
+    fi
+}
+export -f PrintMessage
+
+EvalFromFile(){
+    # $1 = NAME OF VARIABLE
+    # $2 = FILE PATH
+    VAR_LINE_TO_BE_EVALUATED=$(grep "^$1=" "$2")
+    eval "$VAR_LINE_TO_BE_EVALUATED"
+}
+export -f EvalFromFile
+
+
+# Function die_UtilityNotFound()
+# Exits the script if utility does not exist.
+die_UtilityNotFound () {
+    # $1 = MESSAGE
+    PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "$1"
+    PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "The bin '$(basename $0)' supports the following utilities:"
+    PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Searching for utilities in '$VAR_BIN_INSTALL_DIR'..."
+    for var_utility_dir in "$VAR_BIN_INSTALL_DIR"/*; do
+        if [[ -d  "$var_utility_dir" ]]; then
+            var_utility=$(basename $var_utility_dir)
+            PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "  - $var_utility"
+        fi
+    done
+    exit 1
+}
+
+die_UtilityScriptNotFound (){
+    # $1 = MESSAGE
+    PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "$1"
+    PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "The utility '$VAR_UTILITY' supports the following scripts:"
+    PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Searching for scripts in '$VAR_UTILITY_FOLDER_PATH'..."
+    for var_utility_script_real_path in "$VAR_UTILITY_FOLDER_PATH"/*; do
+        if [[ -f  "$var_utility_script_real_path" ]]; then
+            var_utility_script=$(basename $var_utility_script_real_path)
+            PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "  - ${var_utility_script%.sh}"
+        fi
+    done
+    exit 1
+}
+
+CheckIfArgumentNeedsToDoSomething(){
+    # $1 = Argument
+    case $(echo $1 | tr '[:lower:]' '[:upper:]') in
+        "--AUTO-UPDATE")
+            PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Updating first..."
+            "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/update.sh"
+            ;;
+        *)
+            PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Doing nothing..."
+            ;;
+    esac
+}
+####################################################################################################
+# FUNCTIONS
+####################################################################################################
+####################################################################################################
+
+
+
+
+
+####################################################################################################
+####################################################################################################
+# PRINT CONFIG PART ONE
+####################################################################################################
+PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "BIN INSTALLATION DIRECTORY  : $VAR_BIN_INSTALL_DIR"
+PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "BIN CONFIGURATION DIRECTORY : $VAR_BIN_CONFIG_DIR"
+PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "BIN TEMPORARY DIRECTORY     : $VAR_BIN_TEMP_DIR"
+
+PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "BIN POSSIBLE FLAGS          : '$SELF_VAR_BIN_FLAGS'"
+PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "BIN ARGUMENT LIST STRING    : '$VAR_BIN_ARGUMENTS_STRING'"
+PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "BIN ARGUMENTS WITHOUT FLAGS : '$VAR_BIN_ARGUMENTS_WITHOUT_FLAGS'"
+PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "UTILITY                     : '$VAR_UTILITY'"
+PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "UTILITY SCRIPT              : '$VAR_UTILITY_SCRIPT'"
+PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "UTILITY SCRIPT ARGUMENTS    : '$VAR_UTILITY_SCRIPT_ARGUMENTS'"
+####################################################################################################
+# PRINT CONFIG PART ONE
+####################################################################################################
+####################################################################################################
+
+
+
+
+
+####################################################################################################
+####################################################################################################
+# PROCESS ARGUMENT FLAGS
+####################################################################################################
+PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Processing Argument List..."
+for BinArgument in $VAR_BIN_ARGUMENTS_STRING; do
+    PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Processing Argument '$BinArgument'..."
+    if [[ $BinArgument != "--"* ]]; then
+        PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Argument '$BinArgument' is not a --flag..."
+        continue
+    fi
+    if [[ $SELF_VAR_BIN_FLAGS == *"$(echo $BinArgument | tr '[:lower:]' '[:upper:]')"* ]]; then
+        PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Found '$BinArgument' in SELF_VAR_BIN_FLAGS..."
+        CheckIfArgumentNeedsToDoSomething $BinArgument
+    else
+        PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Ignoring '$BinArgument'... Not in SELF_VAR_BIN_FLAGS..."
+    fi
+done
+####################################################################################################
+# PROCESS ARGUMENT FLAGS
+####################################################################################################
+####################################################################################################
+
+
+
+
+
+####################################################################################################
+####################################################################################################
+# PRE START CHECKS
+####################################################################################################
+# SET VAR_UTILITY_FOLDER_PATH
+PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking if VAR_UTILITY has a value..."
+    if [[ "$VAR_UTILITY" == "" ]]; then
+        #die_UtilityNotFound "No utility specified!"
+        "$(which bash)" "$VAR_BIN_INSTALL_DIR/InteractiveShell/Start.sh"
+        exit 0
+    elif [[ "$VAR_UTILITY_SCRIPT" == "" ]]; then
+        #########################
+        case $(echo $VAR_UTILITY | tr '[:lower:]' '[:upper:]') in
+            "HELP")
+                PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "HELP IS REQUESTED..."
+                exit 0
+                ;;
+            "INTERACTIVESHELL")
+                PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting Interactive Shell..."
+                "$(which bash)" "$VAR_BIN_INSTALL_DIR/InteractiveShell/Start.sh"
+                exit 0
+                ;;
+            *)
+                PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "No need to start the utility right away..."
+                ;;
+        esac
+        #########################
+    fi
+PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Using the 'find' command to set the actual directory path for VAR_UTILITY_FOLDER_PATH..."
+    if [[ $(echo $VAR_UTILITY | tr '[:lower:]' '[:upper:]') == "HELP" ]]; then
+        export VAR_UTILITY_FOLDER_PATH=$(find "$VAR_BIN_INSTALL_DIR/Help" -maxdepth 1 -iname "$VAR_UTILITY" -type d -print)
+    elif [[ $(echo $VAR_UTILITY | tr '[:lower:]' '[:upper:]') == "INTERACTIVESHELL" ]]; then
+        export VAR_UTILITY_FOLDER_PATH=$(find "$VAR_BIN_INSTALL_DIR/InteractiveShell" -maxdepth 1 -iname "$VAR_UTILITY" -type d -print)
+    else
+        export VAR_UTILITY_FOLDER_PATH=$(find "$VAR_BIN_INSTALL_DIR" -maxdepth 1 -path "$VAR_BIN_INSTALL_DIR/Help" -prune -o -path "$VAR_BIN_INSTALL_DIR/InteractiveShell" -prune -o -iname "$VAR_UTILITY" -type d -print)
+    fi
+PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking if VAR_UTILITY_FOLDER_PATH is an existing directory..."
+    if ! [[ -d $VAR_UTILITY_FOLDER_PATH ]]; then
+        die_UtilityNotFound "The '$VAR_UTILITY' utility was not found!"
+    fi
+
+
+# SET VAR_UTILITY_SCRIPT_FILE_PATH
+PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking if VAR_UTILITY_SCRIPT has a value..."
+    if [[ "$VAR_UTILITY_SCRIPT" == "" ]]; then
+        die_UtilityScriptNotFound "No script specified!"
+    fi
+PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Using the 'find' command to set the actual VAR_UTILITY_SCRIPT_FILE_PATH..."
+    VAR_UTILITY_SCRIPT_FILE_PATH=$(find $VAR_UTILITY_FOLDER_PATH -maxdepth 1 -iname "$VAR_UTILITY_SCRIPT.sh" -type f)
+PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking if VAR_UTILITY_SCRIPT_FILE_PATH is an existing file..."
+    if ! [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
+        die_UtilityScriptNotFound "The '$VAR_UTILITY_SCRIPT' script was not found within the '$VAR_UTILITY' utility!"
+    fi
+
+# DEPENDENCY CHECK
+PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Fetching dependencies from Utility Script '$VAR_UTILITY_SCRIPT_FILE_PATH'..."
+    EvalFromFile "VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" "$VAR_UTILITY_SCRIPT_FILE_PATH"
+PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting dependency check for dependencies '$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS'..."
+    "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
+####################################################################################################
+# PRE START CHECKS
+####################################################################################################
+####################################################################################################
+
+
+
+
+
+
+####################################################################################################
+####################################################################################################
+# EXPORT VARIABLES
+####################################################################################################
+export VAR_UTILITY_SCRIPT_CONFIG_DIR=$(echo $VAR_UTILITY_SCRIPT_FILE_PATH | sed "s/$(echo $VAR_BIN_INSTALL_DIR | sed 's/\//\\\//g')/$(echo $VAR_BIN_CONFIG_DIR | sed 's/\//\\\//g')/; s/.sh$//")
+export VAR_UTILITY_SCRIPT_TEMP_DIR=$( echo $VAR_UTILITY_SCRIPT_FILE_PATH | sed "s/$(echo $VAR_BIN_INSTALL_DIR | sed 's/\//\\\//g')/$(echo $VAR_BIN_TEMP_DIR | sed 's/\//\\\//g')/; s/.sh$//")
+####################################################################################################
+# EXPORT VARIABLES
+####################################################################################################
+####################################################################################################
+
+
+
+
+####################################################################################################
+####################################################################################################
+# PRINT CONFIG PART TWO
+####################################################################################################
+PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Utility Folder Path         : '$VAR_UTILITY_FOLDER_PATH'"
+PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Utility Script File Path    : '$VAR_UTILITY_SCRIPT_FILE_PATH'"
+PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Utility Script Config Dir   : '$VAR_UTILITY_SCRIPT_CONFIG_DIR'"
+PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Utility Script Temp Dir     : '$VAR_UTILITY_SCRIPT_TEMP_DIR'"
+####################################################################################################
+# PRINT CONFIG PART TWO
+####################################################################################################
+####################################################################################################
+
+
+
+
+
+
+
+# Making necessary directories
+mkdir -p "$VAR_UTILITY_SCRIPT_CONFIG_DIR"
+mkdir -p "$VAR_UTILITY_SCRIPT_TEMP_DIR"
+
+
+
+
+
+####################################################################################################
+####################################################################################################
+# MAIN SCRIPT
+####################################################################################################
+PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting Utility Script '$(ls $VAR_UTILITY_SCRIPT_FILE_PATH)' [$VAR_UTILITY_SCRIPT_ARGUMENTS]..."
+if [[ $(EvalFromFile "VAR_NEED_ROOT" "$VAR_UTILITY_SCRIPT_FILE_PATH"; echo $VAR_NEED_ROOT) ]] && [[ $(whoami) != "root" ]]; then
+    PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "The root user is requested. Doing restart of bin as root..."
+    "$(which sudo)" "$VAR_BIN_INSTALL_DIR/mitchellvanbijleveld" $VAR_BIN_ARGUMENTS_STRING
+else
+    "$(which bash)" "$VAR_UTILITY_SCRIPT_FILE_PATH" $VAR_UTILITY_SCRIPT_ARGUMENTS
+fi
+
+
+####################################################################################################
+# MAIN SCRIPT
+####################################################################################################
+####################################################################################################
