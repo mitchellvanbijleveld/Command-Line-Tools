@@ -67,7 +67,7 @@ die_UtilityScriptNotFound (){
     PrintMessage "INFO" "mitchell" "vanbijleveld" "The utility '$VAR_UTILITY' supports the following scripts:"
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Searching for utility scripts in '$VAR_UTILITY_FOLDER_PATH'..."
     for var_utility_script_file in "$VAR_UTILITY_FOLDER_PATH"/*; do
-        if [[ -f $var_utility_script_file ]]; then
+        if [[ -f $var_utility_script_file ]] && [[ $var_utility_script_file == *".bash" ]]; then
             var_utility_script=$(basename $var_utility_script_file)
             PrintMessage "INFO" "mitchell" "vanbijleveld" "  - ${var_utility_script%.bash}"
         fi
