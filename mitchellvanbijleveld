@@ -62,6 +62,7 @@ die_UtilityNotFound () {
 #
 die_UtilityScriptNotFound (){
     # $1 = MESSAGE
+    var_utility_scripts_found=0
     PrintMessage "FATAL" "mitchell" "vanbijleveld" "$1"
     PrintMessage
     PrintMessage "INFO" "mitchell" "vanbijleveld" "The utility '$VAR_UTILITY' supports the following scripts:"
@@ -70,8 +71,12 @@ die_UtilityScriptNotFound (){
         if [[ -f $var_utility_script_file ]] && [[ $var_utility_script_file == *".bash" ]]; then
             var_utility_script=$(basename $var_utility_script_file)
             PrintMessage "INFO" "mitchell" "vanbijleveld" "  - ${var_utility_script%.bash}"
+            ((var_utility_scripts_found++))
         fi
     done
+    if [[ $var_utility_scripts_found -eq 0 ]]; then
+        PrintMessage "INFO" "mitchell" "vanbijleveld" "  No Utility Scripts available."
+    fi
     PrintMessage
     exit 1
 }
