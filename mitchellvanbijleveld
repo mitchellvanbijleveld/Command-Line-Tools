@@ -80,6 +80,16 @@ die_UtilityScriptNotFound (){
     PrintMessage
     exit 1
 }
+#
+FindUtilityFolderPath(){
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Finding folder for 'VAR_UTILITY'..."
+    VAR_UTILITY_FOLDER_PATH=$(find $GLOBAL_VAR_DIR_INSTALLATION -maxdepth 1 -iname $VAR_UTILITY -type d)
+}
+#
+FindUtilityScriptFilePath(){
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Finding file path for 'VAR_UTILITY_SCRIPT'..."
+    VAR_UTILITY_SCRIPT_FILE_PATH=$(find $VAR_UTILITY_FOLDER_PATH -maxdepth 1 -iname $VAR_UTILITY_SCRIPT.bash -type f)
+}
 ####################################################################################################
 # FUNCTIONS
 ####################################################################################################
@@ -157,8 +167,7 @@ if [[ $VAR_UTILITY == "" ]]; then
     die_UtilityNotFound "No Utility specified!"
 fi
 #
-PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Finding folder for 'VAR_UTILITY'..."
-VAR_UTILITY_FOLDER_PATH=$(find $GLOBAL_VAR_DIR_INSTALLATION -maxdepth 1 -iname $VAR_UTILITY -type d)
+FindUtilityFolderPath
 #
 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Checking existense of folder for 'VAR_UTILITY'..."
 if ! [[ -d $VAR_UTILITY_FOLDER_PATH ]]; then
@@ -178,8 +187,7 @@ if [[ $VAR_UTILITY_SCRIPT == "" ]]; then
     die_UtilityScriptNotFound "No Uitility Script specified!"
 fi
 #
-PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Finding file path for 'VAR_UTILITY_SCRIPT'..."
-VAR_UTILITY_SCRIPT_FILE_PATH=$(find $VAR_UTILITY_FOLDER_PATH -maxdepth 1 -iname $VAR_UTILITY_SCRIPT.bash -type f)
+FindUtilityScriptFilePath
 #
 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Checking existense of file path for 'VAR_UTILITY_SCRIPT'..."
 if ! [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
