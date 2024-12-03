@@ -195,6 +195,7 @@ if [[ $VAR_UTILITY_SCRIPT == "" ]] && [[ $VAR_UTILITY_SCRIPT_FILE_PATH == "" ]];
     if ! [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
             die_UtilityScriptNotFound "No Uitility Script specified!"
     fi
+    VAR_UTILITY_SCRIPT=$VAR_UTILITY
 fi
 #
 if [[ $VAR_UTILITY_SCRIPT_FILE_PATH == "" ]]; then
