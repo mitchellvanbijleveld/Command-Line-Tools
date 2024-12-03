@@ -7,7 +7,7 @@
 VAR_UTILITY="mitchell"
 VAR_UTILITY_SCRIPT="vanbijleveld"
 VAR_UTILITY_SCRIPT_VERSION="2024.11.27-2156"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname echo find printf realpath sed"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname echo find printf realpath sed tr"
 ####################################################################################################
 # INFO - MITCHELLVANBIJLEVELD
 ####################################################################################################
