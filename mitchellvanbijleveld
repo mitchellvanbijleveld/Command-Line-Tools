@@ -281,5 +281,22 @@ PrintMessage "CONFIG" "mitchell" "vanbijleveld" "UTILITY_SCRIPT_VAR_DIR_TMP   = 
 #
 #
 #
+####################################################################################################
+####################################################################################################
+# CHECK DEPENDENCIES
+####################################################################################################
+PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Fetching dependencies from utility script..."
+eval_FromFile "VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" $VAR_UTILITY_SCRIPT_FILE_PATH
+PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Starting script to check dependencies..."
+$(which bash) "$GLOBAL_VAR_DIR_INSTALLATION/bin/CheckDependencies.bash" $VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS
+####################################################################################################
+# CHECK DEPENDENCIES
+####################################################################################################
+####################################################################################################
+#
+#
+#
+#
+#
 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Starting Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' from '$VAR_UTILITY_SCRIPT_FILE_PATH' with arguments '$VAR_UTILITY_SCRIPT_ARGUMENTS'..."
 $(which bash) $VAR_UTILITY_SCRIPT_FILE_PATH $VAR_UTILITY_SCRIPT_ARGUMENTS
