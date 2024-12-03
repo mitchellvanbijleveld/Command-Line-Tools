@@ -191,7 +191,10 @@ fi
 ####################################################################################################
 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Checking 'VAR_UTILITY_SCRIPT'..."
 if [[ $VAR_UTILITY_SCRIPT == "" ]] && [[ $VAR_UTILITY_SCRIPT_FILE_PATH == "" ]]; then
-    die_UtilityScriptNotFound "No Uitility Script specified!"
+    FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY"
+    if ! [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
+            die_UtilityScriptNotFound "No Uitility Script specified!"
+    fi
 fi
 #
 if [[ $VAR_UTILITY_SCRIPT_FILE_PATH == "" ]]; then
