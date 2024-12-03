@@ -44,6 +44,12 @@ PrintMessage(){
     fi
 }
 #
+eval_FromFile(){
+    # $1 = NAME OF VARIABLE
+    # $2 = FILE PATH
+    eval $(grep "^$1=" $2)
+}
+#
 die_UtilityNotFound () {
     # $1 = MESSAGE
     PrintMessage "FATAL" "mitchell" "vanbijleveld" "$1"
@@ -221,6 +227,7 @@ fi
 ####################################################################################################
 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Exporting Functions..."
 export -f PrintMessage
+export -f eval_FromFile
 ####################################################################################################
 # EXPORT FUNCTIONS
 ####################################################################################################
