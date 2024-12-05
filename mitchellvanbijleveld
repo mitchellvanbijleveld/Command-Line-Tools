@@ -187,6 +187,7 @@ if ! [[ -d $VAR_UTILITY_FOLDER_PATH ]]; then
     fi
     VAR_UTILITY_SCRIPT=$VAR_UTILITY
     VAR_UTILITY="BIN"
+    VAR_UTILITY_SCRIPT_ARGUMENTS=$(echo $VAR_ARGUMENTS | sed -E "s/$VAR_UTILITY[ ]*//; s/$VAR_UTILITY_SCRIPT[ ]*//")
 fi
 ####################################################################################################
 # FIND UTILITY FOLDER PATH
