@@ -185,6 +185,8 @@ if ! [[ -d $VAR_UTILITY_FOLDER_PATH ]]; then
     if [[ $VAR_UTILITY_SCRIPT_FILE_PATH == "" ]]; then
         die_UtilityNotFound "The '$VAR_UTILITY' utility was not found!"
     fi
+    VAR_UTILITY_SCRIPT=$VAR_UTILITY
+    VAR_UTILITY="BIN"
 fi
 ####################################################################################################
 # FIND UTILITY FOLDER PATH
