@@ -289,6 +289,11 @@ PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Fetching dependencies from utili
 eval_FromFile "VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" $VAR_UTILITY_SCRIPT_FILE_PATH
 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Starting script to check dependencies..."
 $(which bash) "$GLOBAL_VAR_DIR_INSTALLATION/bin/CheckDependencies.bash" $VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS
+#
+if [[ $? -eq 1 ]]; then
+    PrintMessage "FATAL" "mitchell" "vanbijleveld" "Could not start Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' because dependencies are missing. Exiting..."
+    exit 1
+fi
 ####################################################################################################
 # CHECK DEPENDENCIES
 ####################################################################################################
