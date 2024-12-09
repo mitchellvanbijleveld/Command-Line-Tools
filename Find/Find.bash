@@ -6,7 +6,7 @@
 ####################################################################################################
 VAR_UTILITY="Find"
 VAR_UTILITY_SCRIPT="Find"
-VAR_UTILITY_SCRIPT_VERSION="2024.12.10-0005"
+VAR_UTILITY_SCRIPT_VERSION="2024.12.10-0059"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="clear echo find PrintMessage sed sudo"
 ####################################################################################################
 # UTILITY SCRIPT INFO - Find/Find
