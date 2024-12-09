@@ -209,6 +209,10 @@ fi
 #
 if [[ $VAR_UTILITY_SCRIPT_FILE_PATH == "" ]]; then
     FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY_SCRIPT"
+    if ! [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
+        FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY"
+        VAR_UTILITY_SCRIPT_ARGUMENTS="$VAR_UTILITY_SCRIPT $VAR_UTILITY_SCRIPT_ARGUMENTS"
+    fi
 fi
 #
 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Checking existense of file path for 'VAR_UTILITY_SCRIPT'..."
