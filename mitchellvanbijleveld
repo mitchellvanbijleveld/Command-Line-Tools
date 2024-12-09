@@ -92,6 +92,11 @@ FindUtilityFolderPath(){
     # $2 = FIND FOLDER NAME
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Finding folder for 'VAR_UTILITY'..."
     VAR_UTILITY_FOLDER_PATH=$(find $1 -maxdepth 1 -iname $2 -type d)
+    if [[ -d $VAR_UTILITY_FOLDER_PATH ]]; then
+        return 0
+    else
+        return 1
+    fi
 }
 #
 FindUtilityScriptFilePath(){
@@ -99,6 +104,11 @@ FindUtilityScriptFilePath(){
     # $2 = FIND FILE NAME
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Finding file path for 'VAR_UTILITY_SCRIPT'..."
     VAR_UTILITY_SCRIPT_FILE_PATH=$(find $1 -maxdepth 1 -iname $2.bash -type f)
+    if [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
+        return 0
+    else
+        return 1
+    fi
 }
 ####################################################################################################
 # FUNCTIONS
