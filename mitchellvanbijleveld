@@ -206,7 +206,9 @@ fi
 ####################################################################################################
 # FIND UTILITY SCRIPT FILE PATH
 ####################################################################################################
-if FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY_SCRIPT"; then
+if [[ ! $VAR_UTILITY_SCRIPT_FILE_PATH == "" ]]; then
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script File Path is already set! No need to search for it..."
+elif FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY_SCRIPT"; then
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script File '$VAR_UTILITY_SCRIPT' found in Utility '$VAR_UTILITY'!"
 elif FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY"; then
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script '$VAR_UTILITY' found in Utility '$VAR_UTILITY'!"
