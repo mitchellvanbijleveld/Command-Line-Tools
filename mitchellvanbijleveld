@@ -72,8 +72,8 @@ die_UtilityScriptNotFound (){
     PrintMessage "FATAL" "mitchell" "vanbijleveld" "$1"
     PrintMessage
     PrintMessage "INFO" "mitchell" "vanbijleveld" "The utility '$VAR_UTILITY' supports the following scripts:"
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Searching for utility scripts in '$VAR_UTILITY_FOLDER_PATH'..."
-    for var_utility_script_file in "$VAR_UTILITY_FOLDER_PATH"/*; do
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Searching for utility scripts in '$GLOBAL_VAR_DIR_INSTALLATION/$VAR_UTILITY'..."
+    for var_utility_script_file in "$GLOBAL_VAR_DIR_INSTALLATION/$VAR_UTILITY"/*; do
         if [[ -f $var_utility_script_file ]] && [[ $var_utility_script_file == *".bash" ]]; then
             var_utility_script=$(basename $var_utility_script_file)
             PrintMessage "INFO" "mitchell" "vanbijleveld" "  - ${var_utility_script%.bash}"
@@ -206,26 +206,20 @@ fi
 ####################################################################################################
 # FIND UTILITY SCRIPT FILE PATH
 ####################################################################################################
-PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Checking 'VAR_UTILITY_SCRIPT'..."
-if [[ $VAR_UTILITY_SCRIPT == "" ]] && [[ $VAR_UTILITY_SCRIPT_FILE_PATH == "" ]]; then
-    FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY"
-    if ! [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
-            die_UtilityScriptNotFound "No Uitility Script specified!"
-    fi
+PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Checking variable 'VAR_UTILITY_SCRIPT' with value '$VAR_UTILITY_SCRIPT'..."
+if [[ $VAR_UTILITY_SCRIPT == "" ]]; then
+#    die_UtilityScriptNotFound "No Utility Script specified!"
+    echo "not found"
+fi
+#
+if (FindUtilityScriptFilePath "$GLOBAL_VAR_DIR_INSTALLATION/$VAR_UTILITY" "$VAR_UTILITY_SCRIPT"); then
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script File '$VAR_UTILITY_SCRIPT' found in Utility '$VAR_UTILITY'!"
+elif (FindUtilityScriptFilePath "$GLOBAL_VAR_DIR_INSTALLATION/$VAR_UTILITY" "$VAR_UTILITY"); then
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script '$VAR_UTILITY' found in Utility '$VAR_UTILITY'!"
+    VAR_UTILITY_SCRIPT_ARGUMENTS="$VAR_UTILITY_SCRIPT $VAR_UTILITY_SCRIPT_ARGUMENTS"
     VAR_UTILITY_SCRIPT=$VAR_UTILITY
-fi
-#
-if [[ $VAR_UTILITY_SCRIPT_FILE_PATH == "" ]]; then
-    FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY_SCRIPT"
-    if ! [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
-        FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY"
-        VAR_UTILITY_SCRIPT_ARGUMENTS="$VAR_UTILITY_SCRIPT $VAR_UTILITY_SCRIPT_ARGUMENTS"
-    fi
-fi
-#
-PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Checking existense of file path for 'VAR_UTILITY_SCRIPT'..."
-if ! [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
-    die_UtilityScriptNotFound "The '$VAR_UTILITY_SCRIPT' script was not found within the '$VAR_UTILITY' utility!"
+else
+    die_UtilityScriptNotFound "Utility Script '$VAR_UTILITY_SCRIPT' not found within Utility '$VAR_UTILITY'!"  
 fi
 ####################################################################################################
 # FIND UTILITY SCRIPT FILE PATH
