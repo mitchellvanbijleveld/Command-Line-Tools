@@ -182,22 +182,20 @@ PrintMessage "CONFIG" "mitchell" "vanbijleveld" "VAR_UTILITY_SCRIPT_ARGUMENTS = 
 ####################################################################################################
 # FIND UTILITY FOLDER PATH
 ####################################################################################################
-PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Checking 'VAR_UTILITY'..."
+PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Checking variable 'VAR_UTILITY' with value '$VAR_UTILITY'..."
 if [[ $VAR_UTILITY == "" ]]; then
     die_UtilityNotFound "No Utility specified!"
 fi
 #
-FindUtilityFolderPath "$GLOBAL_VAR_DIR_INSTALLATION" "$VAR_UTILITY"
-#
-PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Checking existense of folder for 'VAR_UTILITY'..."
-if ! [[ -d $VAR_UTILITY_FOLDER_PATH ]]; then
-    FindUtilityScriptFilePath "$GLOBAL_VAR_DIR_INSTALLATION/bin" "$VAR_UTILITY"
-    if [[ $VAR_UTILITY_SCRIPT_FILE_PATH == "" ]]; then
-        die_UtilityNotFound "The '$VAR_UTILITY' utility was not found!"
-    fi
-    VAR_UTILITY_SCRIPT=$VAR_UTILITY
-    VAR_UTILITY="BIN"
-    VAR_UTILITY_SCRIPT_ARGUMENTS=$(echo $VAR_ARGUMENTS | sed -E "s/$VAR_UTILITY[ ]*//; s/$VAR_UTILITY_SCRIPT[ ]*//")
+if (FindUtilityFolderPath "$GLOBAL_VAR_DIR_INSTALLATION" "$VAR_UTILITY"); then
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Folder '$VAR_UTILITY' found!"
+elif (FindUtilityScriptFilePath "$GLOBAL_VAR_DIR_INSTALLATION/bin" "$VAR_UTILITY"); then
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Folder '$VAR_UTILITY' was not found..."
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script '$VAR_UTILITY' found in Utility 'bin'!"
+    VAR_UTILITY_SCRIPT_ARGUMENTS="$VAR_UTILITY_SCRIPT $VAR_UTILITY_SCRIPT_ARGUMENTS"
+    VAR_UTILITY_SCRIPT=$VAR_UTILITY; VAR_UTILITY="BIN"
+else
+    die_UtilityNotFound "Utility '$VAR_UTILITY' not found!"  
 fi
 ####################################################################################################
 # FIND UTILITY FOLDER PATH
