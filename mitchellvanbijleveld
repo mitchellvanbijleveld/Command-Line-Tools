@@ -206,18 +206,14 @@ fi
 ####################################################################################################
 # FIND UTILITY SCRIPT FILE PATH
 ####################################################################################################
-PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Checking variable 'VAR_UTILITY_SCRIPT' with value '$VAR_UTILITY_SCRIPT'..."
-if [[ $VAR_UTILITY_SCRIPT == "" ]]; then
-#    die_UtilityScriptNotFound "No Utility Script specified!"
-    echo "not found"
-fi
-#
 if FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY_SCRIPT"; then
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script File '$VAR_UTILITY_SCRIPT' found in Utility '$VAR_UTILITY'!"
 elif FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY"; then
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script '$VAR_UTILITY' found in Utility '$VAR_UTILITY'!"
     VAR_UTILITY_SCRIPT_ARGUMENTS="$VAR_UTILITY_SCRIPT $VAR_UTILITY_SCRIPT_ARGUMENTS"
     VAR_UTILITY_SCRIPT=$VAR_UTILITY
+elif [[ $VAR_UTILITY_SCRIPT == "" ]]; then
+    die_UtilityScriptNotFound "No Utility Script specified!"
 else
     die_UtilityScriptNotFound "Utility Script '$VAR_UTILITY_SCRIPT' not found within Utility '$VAR_UTILITY'!"  
 fi
