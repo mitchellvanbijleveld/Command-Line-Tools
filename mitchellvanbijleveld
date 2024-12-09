@@ -187,9 +187,9 @@ if [[ $VAR_UTILITY == "" ]]; then
     die_UtilityNotFound "No Utility specified!"
 fi
 #
-if (FindUtilityFolderPath "$GLOBAL_VAR_DIR_INSTALLATION" "$VAR_UTILITY"); then
+if FindUtilityFolderPath "$GLOBAL_VAR_DIR_INSTALLATION" "$VAR_UTILITY"; then
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Folder '$VAR_UTILITY' found!"
-elif (FindUtilityScriptFilePath "$GLOBAL_VAR_DIR_INSTALLATION/bin" "$VAR_UTILITY"); then
+elif FindUtilityScriptFilePath "$GLOBAL_VAR_DIR_INSTALLATION/bin" "$VAR_UTILITY"; then
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Folder '$VAR_UTILITY' was not found..."
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script '$VAR_UTILITY' found in Utility 'bin'!"
     VAR_UTILITY_SCRIPT_ARGUMENTS="$VAR_UTILITY_SCRIPT $VAR_UTILITY_SCRIPT_ARGUMENTS"
@@ -212,9 +212,9 @@ if [[ $VAR_UTILITY_SCRIPT == "" ]]; then
     echo "not found"
 fi
 #
-if (FindUtilityScriptFilePath "$GLOBAL_VAR_DIR_INSTALLATION/$VAR_UTILITY" "$VAR_UTILITY_SCRIPT"); then
+if FindUtilityScriptFilePath "$GLOBAL_VAR_DIR_INSTALLATION/$VAR_UTILITY" "$VAR_UTILITY_SCRIPT"; then
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script File '$VAR_UTILITY_SCRIPT' found in Utility '$VAR_UTILITY'!"
-elif (FindUtilityScriptFilePath "$GLOBAL_VAR_DIR_INSTALLATION/$VAR_UTILITY" "$VAR_UTILITY"); then
+elif FindUtilityScriptFilePath "$GLOBAL_VAR_DIR_INSTALLATION/$VAR_UTILITY" "$VAR_UTILITY"; then
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script '$VAR_UTILITY' found in Utility '$VAR_UTILITY'!"
     VAR_UTILITY_SCRIPT_ARGUMENTS="$VAR_UTILITY_SCRIPT $VAR_UTILITY_SCRIPT_ARGUMENTS"
     VAR_UTILITY_SCRIPT=$VAR_UTILITY
