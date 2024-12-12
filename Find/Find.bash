@@ -58,7 +58,7 @@ for var_argument in $VAR_SEARCH_QUERY; do
             ;;
         "--SEARCH-DIR")
             if [[ ! -d $1 ]]; then
-                PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Argument '--SEARCH-DIR' was not given a valid existing directory. Exiting..."
+                PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Argument '--SEARCH-DIR' was not given a valid existing directory ($1). Exiting..."
                 exit 1
             fi
             VAR_SEARCH_DIR=$1
