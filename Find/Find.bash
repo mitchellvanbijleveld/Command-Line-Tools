@@ -26,19 +26,17 @@ VAR_FLAGS="--DIRS-ONLY --FILES-ONLY --SEARCH-DIR"
 VAR_DIRS_ONLY=0
 VAR_FILES_ONLY=0
 #
-VAR_SEARCH_QUERY=$@
+VAR_SEARCH_QUERY=""
 VAR_SEARCH_DIR=$HOME
 ####################################################################################################
 # VARIABLES
 ####################################################################################################
 ####################################################################################################
-for var_argument in $VAR_SEARCH_QUERY; do
-    shift
-    if [[ $VAR_FLAGS =~ (^|[[:space:]])$var_argument([[:space:]]|$) ]]; then
-        VAR_SEARCH_QUERY=$(echo $VAR_SEARCH_QUERY | sed -E "s/$var_argument[ ]*//")
-    fi
+for var_argument in "$@"; do
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Processing argument '$var_argument'..."
+    var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
     #
-    case $var_argument in
+    case $var_argument_CAPS in
         "--DIRS-ONLY") 
             if [[ $VAR_FILES_ONLY -eq 1 ]]; then
                 PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Argument '--DIRS-ONLY' was not accepted because '--FILES-ONLY' was already set. Exiting..."
@@ -46,7 +44,7 @@ for var_argument in $VAR_SEARCH_QUERY; do
             else
                 VAR_DIRS_ONLY=1
             fi
-            ;;
+        ;;
         "--FILES-ONLY") 
             if [[ $VAR_DIRS_ONLY -eq 1 ]]; then
                 PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Argument '--FILES-ONLY' was not accepted because '--DIRS-ONLY' was already set. Exiting..."
@@ -54,17 +52,36 @@ for var_argument in $VAR_SEARCH_QUERY; do
             else
                 VAR_FILES_ONLY=1
             fi
-            ;;
+        ;;
         "--SEARCH-DIR")
-            if [[ ! -d $1 ]]; then
-                PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Argument '--SEARCH-DIR' was not given a valid existing directory ($1). Exiting..."
+            if [[ $VAR_SEARCH_DIR != $HOME ]]; then
+                PrintMessage "WARN" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Argument '--SEARCH-DIR' should only be set once. Overriding..,"
+            fi
+            VAR_SEARCH_DIR=$2           
+            if [[ ! -d $VAR_SEARCH_DIR ]]; then
+                PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Argument '--SEARCH-DIR' was not given a valid existing directory ('$VAR_SEARCH_DIR'). Exiting..."
                 exit 1
             fi
-            VAR_SEARCH_DIR=$1
-            VAR_SEARCH_QUERY=$(echo $VAR_SEARCH_QUERY | sed -E "s|[ ]*$VAR_SEARCH_DIR||")
-            ;;
-        "--"*) PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Invalid option given. Exiting..."; exit 1;;
+            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Set search directory to '$VAR_SEARCH_DIR'..."
+            if [[ $VAR_SEARCH_DIR == "." || $VAR_SEARCH_DIR == *".."* ]]; then
+                PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Search directory real path is '$(realpath $VAR_SEARCH_DIR)'..."
+            fi
+        ;;
+        "--"*)
+            PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Invalid option given. Exiting..."
+            exit 1
+        ;;
+        *)
+            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Ignoring argument '$var_argument'..."
+        ;;
     esac
+    #
+    if [[ $VAR_FLAGS != *"$var_argument_CAPS"* && $VAR_SEARCH_QUERY == "" ]] || [[ $VAR_SEARCH_QUERY == $VAR_SEARCH_DIR ]]; then
+        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Setting '$var_argument' as search string..."
+        VAR_SEARCH_QUERY=$var_argument
+    fi
+    #
+    shift
 done
 #
 if [[ $VAR_SEARCH_QUERY == "" ]]; then
