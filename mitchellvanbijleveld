@@ -36,7 +36,7 @@ PrintMessage(){
             1) echo $(date +'%Y-%m-%d %H:%M:%S') "$(printf '%-32s' "$2/$3")" "[ $(printf '%-8s' "$1") ]" "$4"; return 0;;
             *) 
                 case $1 in
-                    "INFO" | "FATAL") echo "$4"; return 0;;
+                    "FATAL" | "INFO" | "WARN") echo "$4"; return 0;;
                     *) return 0;;
                 esac
                 ;;
