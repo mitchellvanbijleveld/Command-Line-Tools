@@ -22,7 +22,6 @@ VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="clear echo find PrintMessage sed
 # VARIABLES
 ####################################################################################################
 VAR_FLAGS="--DIRS-ONLY --FILES-ONLY --SEARCH-DIR"
-VAR_ARGS=($@)
 #
 VAR_DIRS_ONLY=0
 VAR_FILES_ONLY=0
