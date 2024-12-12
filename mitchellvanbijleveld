@@ -90,11 +90,12 @@ die_UtilityScriptNotFound (){
 FindUtilityFolderPath(){
     # $1 = FIND FOLDER PATH
     # $2 = FIND FOLDER NAME
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Finding folder for 'VAR_UTILITY'..."
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Finding Utility Folder for '$2'..."
     VAR_UTILITY_FOLDER_PATH=$(find $1 -maxdepth 1 -iname $2 -type d)
     if [[ -d $VAR_UTILITY_FOLDER_PATH ]]; then
         return 0
     else
+        PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Folder for '$2' not found!"
         return 1
     fi
 }
@@ -102,11 +103,12 @@ FindUtilityFolderPath(){
 FindUtilityScriptFilePath(){
     # $1 = FIND FOLDER PATH
     # $2 = FIND FILE NAME
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Finding file path for 'VAR_UTILITY_SCRIPT'..."
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Finding Utility Script File for '$2'..."
     VAR_UTILITY_SCRIPT_FILE_PATH=$(find $1 -maxdepth 1 -iname $2.bash -type f)
     if [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
         return 0
     else
+        PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script File for '$2' not found!"
         return 1
     fi
 }
