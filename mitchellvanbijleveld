@@ -134,6 +134,25 @@ FindUtilityScriptFilePath(){
         return 1
     fi
 }
+#
+FormatArguments(){
+    VAR_UTILITY_SCRIPT_ARGUMENTS_ARRAY=()
+    VAR_UTILITY_SCRIPT_ARGUMENTS_STRING=""
+    for var_argument in "$@"; do
+        var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
+        if [[ $VAR_FLAGS != *"$var_argument_CAPS"* ]] &&
+        [[ $var_argument_CAPS != "$VAR_UTILITY" ]] &&
+        [[ $var_argument_CAPS != "$VAR_UTILITY_SCRIPT" ]]; then
+            VAR_UTILITY_SCRIPT_ARGUMENTS_ARRAY+=("$var_argument")
+            VAR_UTILITY_SCRIPT_ARGUMENTS_STRING="$(echo $VAR_UTILITY_SCRIPT_ARGUMENTS_STRING) '$var_argument'"
+        fi
+        #
+        case $var_argument_CAPS in
+            "--DEBUG") GLOBAL_VAR_DEBUG=1;;
+        esac
+        #
+    done
+}
 ####################################################################################################
 # FUNCTIONS
 ####################################################################################################
@@ -160,21 +179,7 @@ VAR_ARGUMENTS_WITHOUT_FLAGS=$(echo $VAR_ARGUMENTS | sed -E 's/[^A-Z0-9 ][-]+[^ ]
 VAR_UTILITY=$(echo $VAR_ARGUMENTS_WITHOUT_FLAGS | awk '{print $1}')
 VAR_UTILITY_SCRIPT=$(echo $VAR_ARGUMENTS_WITHOUT_FLAGS | awk '{print $2}')
 #
-VAR_UTILITY_SCRIPT_ARGUMENTS_ARRAY=()
-for var_argument in "$@"; do
-    var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
-    if [[ $VAR_FLAGS != *"$var_argument_CAPS"* ]] &&
-       [[ $var_argument_CAPS != "$VAR_UTILITY" ]] &&
-       [[ $var_argument_CAPS != "$VAR_UTILITY_SCRIPT" ]]; then
-        VAR_UTILITY_SCRIPT_ARGUMENTS_ARRAY+=("$var_argument")
-        VAR_UTILITY_SCRIPT_ARGUMENTS_STRING="$(echo $VAR_UTILITY_SCRIPT_ARGUMENTS_STRING) '$var_argument'"
-    fi
-    #
-    case $var_argument_CAPS in
-        "--DEBUG") GLOBAL_VAR_DEBUG=1;;
-    esac
-    #
-done
+FormatArguments $@
 ####################################################################################################
 # VARIABLES
 ####################################################################################################
@@ -221,6 +226,7 @@ elif FindUtilityScriptFilePath "$GLOBAL_VAR_DIR_INSTALLATION/bin" "$VAR_UTILITY"
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Folder '$VAR_UTILITY' was not found..."
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script '$VAR_UTILITY' found in Utility 'bin'!"
     VAR_UTILITY_SCRIPT=$VAR_UTILITY; VAR_UTILITY="BIN"
+    FormatArguments $@
 else
     die_UtilityNotFound "Utility '$VAR_UTILITY' not found!"  
 fi
@@ -240,6 +246,7 @@ elif FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY_SCRIPT";
 elif FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY"; then
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script '$VAR_UTILITY' found in Utility '$VAR_UTILITY'!"
     VAR_UTILITY_SCRIPT=$VAR_UTILITY
+    FormatArguments $@
 elif [[ $VAR_UTILITY_SCRIPT == "" ]]; then
     die_UtilityScriptNotFound "No Utility Script specified!"
 else
