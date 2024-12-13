@@ -21,22 +21,42 @@ VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname e
 ####################################################################################################
 # FUNCTIONS
 ####################################################################################################
+PrintTimeStamp(){
+    echo "$(date +'%Y-%m-%d %H:%M:%S') $(printf '%-32s' $var_utility/$var_utility_script) [ $(printf '%-8s' $var_log_level) ]"
+}
+#
 PrintMessage(){
     # $1 = LOG LEVEL
-    # $2 = UTILITY
+    var_log_level=$1
+    # $2 = UTILITY | COMMAND
+    var_utility=$2
     # $3 = SCRIPT
+    var_utility_script=$3
     # $4 = MESSAGE
-    if [[ $1 == "" ]] && [[ $2 == "" ]] && [[ $3 == "" ]] && [[ $4 == "" ]]; then
+    var_message=$4
+    #
+    if type $var_utility &> /dev/null; then
+        var_utility=$VAR_UTILITY
+        var_utility_script=$VAR_UTILITY_SCRIPT
+        shift
+        # THIS BLOCK USES 'WHILE' INSTEAD OF SED / KEEPING FOR FUTURE IMPROVEMENTS
+        # $@ | while IFS= read -r command_output_line; do
+        #     echo "$(PrintTimeStamp) $(echo $@ | awk '{print $1}'): $command_output_line"
+        # done
+        # THIS BLOCK USES 'WHILE' INSTEAD OF SED / KEEPING FOR FUTURE IMPROVEMENTS
+        #
+        $@ | sed "s|^|$(PrintTimeStamp) $(echo $@ | awk '{print $1}'): |"
+    elif [[ $var_log_level == "" ]] && [[ $var_utility == "" ]] && [[ $var_utility_script == "" ]] && [[ $var_message == "" ]]; then
         case $GLOBAL_VAR_DEBUG in
             1) return 0;; 
             *) echo; return 0;;
         esac
-    elif [[ $1 != "" ]] && [[ $2 != "" ]] && [[ $3 != "" ]] && [[ $4 != "" ]]; then
+    elif [[ $var_log_level != "" ]] && [[ $var_utility != "" ]] && [[ $var_utility_script != "" ]] && [[ $var_message != "" ]]; then
         case $GLOBAL_VAR_DEBUG in
-            1) echo $(date +'%Y-%m-%d %H:%M:%S') "$(printf '%-32s' "$2/$3")" "[ $(printf '%-8s' "$1") ]" "$4"; return 0;;
+            1) echo "$(PrintTimeStamp) $var_message"; return 0;;
             *) 
                 case $1 in
-                    "FATAL" | "INFO" | "WARN") echo "$4"; return 0;;
+                    "FATAL" | "INFO" | "WARN") echo "$var_message"; return 0;;
                     *) return 0;;
                 esac
                 ;;
@@ -239,6 +259,7 @@ fi
 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Exporting Functions..."
 export -f PrintMessage
 export -f eval_FromFile
+export -f PrintTimeStamp
 ####################################################################################################
 # EXPORT FUNCTIONS
 ####################################################################################################
