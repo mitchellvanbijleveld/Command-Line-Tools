@@ -94,13 +94,13 @@ $(which clear)
 if [[ $VAR_DIRS_ONLY -eq 1 ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Searching for directories only in '$VAR_SEARCH_DIR' for '$VAR_SEARCH_QUERY'..."
     PrintMessage
-    $(which sudo) $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*" -type d
+    PrintMessage "INFO" $(which sudo) $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*" -type d
 elif [[ $VAR_FILES_ONLY -eq 1 ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Searching for files only in '$VAR_SEARCH_DIR' for '$VAR_SEARCH_QUERY'..."
     PrintMessage
-    $(which sudo) $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*" -type f
+    PrintMessage "INFO" $(which sudo) $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*" -type f
 else
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Searching in '$VAR_SEARCH_DIR' for '$VAR_SEARCH_QUERY'..."
     PrintMessage
-    $(which sudo) $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*"
+    PrintMessage "INFO" $(which sudo) $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*"
 fi
