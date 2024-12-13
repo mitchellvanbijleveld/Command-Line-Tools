@@ -34,11 +34,7 @@ VAR_OLD_VERSION=$(cat $VAR_VERSION_FILE)
 #
 #
 PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Using command 'git' to pull the latest version..."
-if [[ $GLOBAL_VAR_DEBUG -eq 0 ]]; then
-    PrintMessage "INFO" $(which git) -C $GLOBAL_VAR_DIR_INSTALLATION pull >/dev/null
-elif [[ $GLOBAL_VAR_DEBUG -eq 1 ]]; then
-    PrintMessage "DEBUG" $(which git) -C $GLOBAL_VAR_DIR_INSTALLATION pull
-fi
+PrintMessage "DEBUG" $(which git) -C $GLOBAL_VAR_DIR_INSTALLATION pull
 #
 PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Reading new version from VERSION..."
 VAR_NEW_VERSION=$(cat $VAR_VERSION_FILE)
