@@ -51,7 +51,12 @@ PrintMessage(){
                 #     echo "$(PrintTimeStamp) $var_executed_command: $command_output_line"
                 # done
                 # THIS BLOCK USES 'WHILE' INSTEAD OF SED / KEEPING FOR FUTURE IMPROVEMENTS
-            *) "$@" 2>&1;;
+            *) 
+                case $var_log_level in
+                    "FATAL" | "INFO" | "WARN") "$@" 2>&1;;
+                    *) "$@" > /dev/null 2>&1;;
+                esac
+                ;;
         esac
     elif [[ $var_log_level == "" ]] && [[ $var_utility == "" ]] && [[ $var_utility_script == "" ]] && [[ $var_message == "" ]]; then
         case $GLOBAL_VAR_DEBUG in
@@ -62,7 +67,7 @@ PrintMessage(){
         case $GLOBAL_VAR_DEBUG in
             1) echo "$(PrintTimeStamp) $var_message"; return 0;;
             *) 
-                case $1 in
+                case $var_log_level in
                     "FATAL" | "INFO" | "WARN") echo "$var_message"; return 0;;
                     *) return 0;;
                 esac
