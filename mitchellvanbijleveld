@@ -35,7 +35,9 @@ PrintMessage(){
     # $4 = MESSAGE
     var_message=$4
     #
-    if type $var_utility &> /dev/null; then
+    if type $var_utility &> /dev/null && 
+       [[ $(echo $var_utility | tr '[:lower:]' '[:upper:]') != "FIND" && $(echo $var_utility_script | tr '[:lower:]' '[:upper:]') != "FIND" ]] &&
+       [[ $(echo $var_utility | tr '[:lower:]' '[:upper:]') != "SSH" && $(echo $var_utility_script | tr '[:lower:]' '[:upper:]') != "SSH" ]]; then
         var_utility=$VAR_UTILITY
         var_utility_script=$VAR_UTILITY_SCRIPT
         shift
