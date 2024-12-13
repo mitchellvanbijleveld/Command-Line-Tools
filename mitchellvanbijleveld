@@ -165,7 +165,7 @@ for var_argument in "$@"; do
     var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
     if [[ $VAR_FLAGS != *"$var_argument_CAPS"* ]] &&
        [[ $var_argument_CAPS != "$VAR_UTILITY" ]] &&
-       [[ $var_argument_CAPS != "$VAR_UTILITY" ]]; then
+       [[ $var_argument_CAPS != "$VAR_UTILITY_SCRIPT" ]]; then
         VAR_UTILITY_SCRIPT_ARGUMENTS_ARRAY+=("$var_argument")
         VAR_UTILITY_SCRIPT_ARGUMENTS_STRING="$(echo $VAR_UTILITY_SCRIPT_ARGUMENTS_STRING) '$var_argument'"
     fi
