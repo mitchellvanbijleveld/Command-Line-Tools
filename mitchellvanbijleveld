@@ -47,7 +47,7 @@ PrintMessage(){
         # done
         # THIS BLOCK USES 'WHILE' INSTEAD OF SED / KEEPING FOR FUTURE IMPROVEMENTS
         #
-        "$@" | sed "s|^|$(PrintTimeStamp) $(echo $@ | awk '{print $1}'): |"
+        "$@" 2>&1 | sed "s|^|$(PrintTimeStamp) $(echo $@ | awk '{print $1}'): |"
     elif [[ $var_log_level == "" ]] && [[ $var_utility == "" ]] && [[ $var_utility_script == "" ]] && [[ $var_message == "" ]]; then
         case $GLOBAL_VAR_DEBUG in
             1) return 0;; 
