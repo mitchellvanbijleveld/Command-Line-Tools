@@ -38,16 +38,21 @@ PrintMessage(){
     if type $var_utility &> /dev/null && 
        [[ $(echo $var_utility | tr '[:lower:]' '[:upper:]') != "FIND" && $(echo $var_utility_script | tr '[:lower:]' '[:upper:]') != "FIND" ]] &&
        [[ $(echo $var_utility | tr '[:lower:]' '[:upper:]') != "SSH" && $(echo $var_utility_script | tr '[:lower:]' '[:upper:]') != "SSH" ]]; then
+        #
         var_utility=$VAR_UTILITY
         var_utility_script=$VAR_UTILITY_SCRIPT
         shift
-        # THIS BLOCK USES 'WHILE' INSTEAD OF SED / KEEPING FOR FUTURE IMPROVEMENTS
-        # $@ | while IFS= read -r command_output_line; do
-        #     echo "$(PrintTimeStamp) $(echo $@ | awk '{print $1}'): $command_output_line"
-        # done
-        # THIS BLOCK USES 'WHILE' INSTEAD OF SED / KEEPING FOR FUTURE IMPROVEMENTS
+        var_executed_command=$(echo $@ | awk '{print $1}')
         #
-        "$@" 2>&1 | sed "s|^|$(PrintTimeStamp) $(echo $@ | awk '{print $1}'): |"
+        case $GLOBAL_VAR_DEBUG in
+            1) "$@" 2>&1 | sed "s|^|$(PrintTimeStamp) $var_executed_command: |";;
+                # THIS BLOCK USES 'WHILE' INSTEAD OF SED / KEEPING FOR FUTURE IMPROVEMENTS
+                # $@ | while IFS= read -r command_output_line; do
+                #     echo "$(PrintTimeStamp) $var_executed_command: $command_output_line"
+                # done
+                # THIS BLOCK USES 'WHILE' INSTEAD OF SED / KEEPING FOR FUTURE IMPROVEMENTS
+            *) "$@" 2>&1;;
+        esac
     elif [[ $var_log_level == "" ]] && [[ $var_utility == "" ]] && [[ $var_utility_script == "" ]] && [[ $var_message == "" ]]; then
         case $GLOBAL_VAR_DEBUG in
             1) return 0;; 
