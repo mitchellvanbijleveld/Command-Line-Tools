@@ -354,5 +354,5 @@ fi
 #
 #
 #
-PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Starting Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' from '$VAR_UTILITY_SCRIPT_FILE_PATH' with arguments: $VAR_UTILITY_SCRIPT_ARGUMENTS_STRING"
+PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Starting Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' from '$VAR_UTILITY_SCRIPT_FILE_PATH' with arguments: $(echo $VAR_UTILITY_SCRIPT_ARGUMENTS_STRING)"
 $(which bash) $VAR_UTILITY_SCRIPT_FILE_PATH "${VAR_UTILITY_SCRIPT_ARGUMENTS_ARRAY[@]}"
