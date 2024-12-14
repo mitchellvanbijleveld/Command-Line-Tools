@@ -67,6 +67,10 @@ for var_argument in "$@"; do
                 PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Search directory real path is '$(realpath $VAR_SEARCH_DIR)'..."
             fi
         ;;
+        "--SUPPRESS-ERRORS")
+            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Suppressing warnings and errors in output..."
+            SUPPRESS_PERMISSION_DENIED=1
+            ;;
         "--"*)
             PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Invalid option given. Exiting..."
             exit 1
@@ -93,14 +97,20 @@ $(which clear)
 #
 if [[ $VAR_DIRS_ONLY -eq 1 ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Searching for directories only in '$VAR_SEARCH_DIR' for '$VAR_SEARCH_QUERY'..."
-    PrintMessage
-    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*" -type d
+    COMMAND_SUFFIX="-type d"
 elif [[ $VAR_FILES_ONLY -eq 1 ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Searching for files only in '$VAR_SEARCH_DIR' for '$VAR_SEARCH_QUERY'..."
-    PrintMessage
-    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*" -type f
+    COMMAND_SUFFIX="-type f"
 else
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Searching in '$VAR_SEARCH_DIR' for '$VAR_SEARCH_QUERY'..."
-    PrintMessage
-    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*"
+fi
+#
+PrintMessage
+#
+if [[ $SUPPRESS_PERMISSION_DENIED -eq 1 ]]; then
+    SUPPRESS_STRING="Permission denied|Operation not permitted"
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Supressing '$SUPPRESS_STRING' warnings/errors..."
+    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*" $COMMAND_SUFFIX | grep -Ev "$SUPPRESS_STRING"
+else
+    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*" $COMMAND_SUFFIX
 fi
