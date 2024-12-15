@@ -35,7 +35,12 @@ PrintMessage(){
     # $4 = MESSAGE
     var_message=$4
     #
-    if type $var_utility &> /dev/null && 
+    if [[ $var_log_level == "" ]] && [[ $var_utility == "" ]] && [[ $var_utility_script == "" ]] && [[ $var_message == "" ]]; then
+        case $GLOBAL_VAR_DEBUG in
+            1) return 0;; 
+            *) echo; return 0;;
+        esac
+    elif type $var_utility &> /dev/null && 
        [[ $(echo $var_utility | tr '[:lower:]' '[:upper:]') != "FIND" && $(echo $var_utility_script | tr '[:lower:]' '[:upper:]') != "FIND" ]] &&
        [[ $(echo $var_utility | tr '[:lower:]' '[:upper:]') != "SSH" && $(echo $var_utility_script | tr '[:lower:]' '[:upper:]') != "SSH" ]]; then
         #
@@ -56,11 +61,6 @@ PrintMessage(){
                     *) "$@" > /dev/null 2>&1;;
                 esac
                 ;;
-        esac
-    elif [[ $var_log_level == "" ]] && [[ $var_utility == "" ]] && [[ $var_utility_script == "" ]] && [[ $var_message == "" ]]; then
-        case $GLOBAL_VAR_DEBUG in
-            1) return 0;; 
-            *) echo; return 0;;
         esac
     elif [[ $var_log_level != "" ]] && [[ $var_utility != "" ]] && [[ $var_utility_script != "" ]] && [[ $var_message != "" ]]; then
         case $GLOBAL_VAR_DEBUG in
