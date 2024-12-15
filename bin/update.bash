@@ -34,7 +34,7 @@ VAR_OLD_VERSION=$(cat $VAR_VERSION_FILE)
 #
 #
 PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Using command 'git' to pull the latest version..."
-PrintMessage "DEBUG" $(which git) -C $GLOBAL_VAR_DIR_INSTALLATION pull
+PrintMessage "DEBUG" $(which git) -C $GLOBAL_VAR_DIR_INSTALLATION pull --rebase
 #
 PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Reading new version from VERSION..."
 VAR_NEW_VERSION=$(cat $VAR_VERSION_FILE)
