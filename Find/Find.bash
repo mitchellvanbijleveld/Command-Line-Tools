@@ -91,6 +91,9 @@ done
 if [[ $VAR_SEARCH_QUERY == "" ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Search query not set! Exiting..."
     exit 1
+elif [[ $VAR_SEARCH_QUERY == $VAR_SEARCH_DIR ]]; then
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Search query can not be the same as search directory! Exiting..."
+    exit 1
 fi
 #
 $(which clear)
