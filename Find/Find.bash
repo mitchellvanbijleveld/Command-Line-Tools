@@ -76,14 +76,14 @@ for var_argument in "$@"; do
             exit 1
         ;;
         *)
-            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Ignoring argument '$var_argument'..."
+            if [[ $VAR_SEARCH_QUERY == "" ]] || [[ $VAR_SEARCH_QUERY == $VAR_SEARCH_DIR ]]; then
+                PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Setting '$var_argument' as search string..."
+                VAR_SEARCH_QUERY=$var_argument
+            else
+                PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Ignoring argument '$var_argument'..."
+            fi
         ;;
     esac
-    #
-    if [[ $VAR_FLAGS != *"$var_argument_CAPS"* && $VAR_SEARCH_QUERY == "" ]] || [[ $VAR_SEARCH_QUERY == $VAR_SEARCH_DIR ]]; then
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Setting '$var_argument' as search string..."
-        VAR_SEARCH_QUERY=$var_argument
-    fi
     #
     shift
 done
