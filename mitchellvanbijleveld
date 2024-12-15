@@ -2,14 +2,14 @@
 #
 ####################################################################################################
 ####################################################################################################
-# INFO - MITCHELLVANBIJLEVELD
+# BIN INFO - MITCHELL/VANBIJLEVELD
 ####################################################################################################
-VAR_UTILITY="mitchell"
-VAR_UTILITY_SCRIPT="vanbijleveld"
+# VAR_UTILITY="mitchell"
+# VAR_UTILITY_SCRIPT="vanbijleveld"
 VAR_UTILITY_SCRIPT_VERSION="2024.12.13-1150"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname echo find printf realpath sed tr"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname echo eval exit find grep printf realpath sed shift tr type"
 ####################################################################################################
-# INFO - MITCHELLVANBIJLEVELD
+# BIN INFO - MITCHELL/VANBIJLEVELD
 ####################################################################################################
 ####################################################################################################
 #
@@ -122,7 +122,7 @@ FindUtilityFolderPath(){
     # $1 = FIND FOLDER PATH
     # $2 = FIND FOLDER NAME
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Finding Utility Folder for '$2'..."
-    VAR_UTILITY_FOLDER_PATH=$(find $1 -maxdepth 1 -iname $2 -type d)
+    VAR_UTILITY_FOLDER_PATH=$(find $1 -maxdepth 1 -iname "$2" -type d)
     if [[ -d $VAR_UTILITY_FOLDER_PATH ]]; then
         return 0
     else
@@ -135,32 +135,13 @@ FindUtilityScriptFilePath(){
     # $1 = FIND FOLDER PATH
     # $2 = FIND FILE NAME
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Finding Utility Script File for '$2'..."
-    VAR_UTILITY_SCRIPT_FILE_PATH=$(find $1 -maxdepth 1 -iname $2.bash -type f)
+    VAR_UTILITY_SCRIPT_FILE_PATH=$(find $1 -maxdepth 1 -iname "$2.bash" -type f)
     if [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
         return 0
     else
         PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script File for '$2' not found!"
         return 1
     fi
-}
-#
-FormatArguments(){
-    VAR_UTILITY_SCRIPT_ARGUMENTS_ARRAY=()
-    VAR_UTILITY_SCRIPT_ARGUMENTS_STRING=""
-    for var_argument in "$@"; do
-        var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
-        if [[ $VAR_FLAGS != *"$var_argument_CAPS"* ]] &&
-        [[ $var_argument_CAPS != "$VAR_UTILITY" ]] &&
-        [[ $var_argument_CAPS != "$VAR_UTILITY_SCRIPT" ]]; then
-            VAR_UTILITY_SCRIPT_ARGUMENTS_ARRAY+=("$var_argument")
-            VAR_UTILITY_SCRIPT_ARGUMENTS_STRING="$(echo $VAR_UTILITY_SCRIPT_ARGUMENTS_STRING) '$var_argument'"
-        fi
-        #
-        case $var_argument_CAPS in
-            "--DEBUG") GLOBAL_VAR_DEBUG=1;;
-        esac
-        #
-    done
 }
 ####################################################################################################
 # FUNCTIONS
@@ -173,24 +154,13 @@ FormatArguments(){
 #
 ####################################################################################################
 ####################################################################################################
-# VARIABLES
+# DEFAULT VARIABLES
 ####################################################################################################
-GLOBAL_VAR_DEBUG=0
-VAR_FLAGS="--DEBUG"
-#
 GLOBAL_VAR_DIR_INSTALLATION=$(dirname $(realpath $0))
 GLOBAL_VAR_DIR_ETC="/etc/mitchellvanbijleveld/Command-Line-Tools"
 GLOBAL_VAR_DIR_TMP="/tmp/mitchellvanbijleveld/Command-Line-Tools"
-#
-VAR_ARGUMENTS=$(echo $@ | tr '[:lower:]' '[:upper:]')
-VAR_ARGUMENTS_WITHOUT_FLAGS=$(echo $VAR_ARGUMENTS | sed -E 's/[^A-Z0-9 ][-]+[^ ]+[ ]*//g')
-#
-VAR_UTILITY=$(echo $VAR_ARGUMENTS_WITHOUT_FLAGS | awk '{print $1}')
-VAR_UTILITY_SCRIPT=$(echo $VAR_ARGUMENTS_WITHOUT_FLAGS | awk '{print $2}')
-#
-FormatArguments "$@"
 ####################################################################################################
-# VARIABLES
+# DEFAULT VARIABLES
 ####################################################################################################
 ####################################################################################################
 #
@@ -200,19 +170,50 @@ FormatArguments "$@"
 #
 ####################################################################################################
 ####################################################################################################
-# PRINT CONFIG PART ONE
+# PROCESS ARGUMENTS
 ####################################################################################################
-PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Printing configuration..."
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "GLOBAL_VAR_DIR_INSTALLATION         = $GLOBAL_VAR_DIR_INSTALLATION"
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "GLOBAL_VAR_DIR_ETC                  = $GLOBAL_VAR_DIR_ETC"
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "GLOBAL_VAR_DIR_TMP                  = $GLOBAL_VAR_DIR_TMP"
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "VAR_ARGUMENTS                       = $VAR_ARGUMENTS"
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "VAR_ARGUMENTS_WITHOUT_FLAGS         = $VAR_ARGUMENTS_WITHOUT_FLAGS"
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "VAR_UTILITY                         = $VAR_UTILITY"
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "VAR_UTILITY_SCRIPT                  = $VAR_UTILITY_SCRIPT"
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "VAR_UTILITY_SCRIPT_ARGUMENTS_STRING = $VAR_UTILITY_SCRIPT_ARGUMENTS_STRING"
+ProcessArguments() {
+#
+VAR_UTILITY_SCRIPT_ARGUMENTS=()
+#
+VAR_UTILITY_REMOVED_FROM_ARGUMENTS=0
+VAR_UTILITY_SCRIPT_REMOVED_FROM_ARGUMENTS=0
+#
+for var_argument in "$@"; do
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Processing argument '$var_argument'..."
+    var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
+    #
+    case $var_argument_CAPS in
+        "--DEBUG")
+            GLOBAL_VAR_DEBUG=1
+            PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Started logging in debug style"
+        ;;
+        *)
+            if [[ $VAR_UTILITY == "" ]] && [[ $VAR_UTILITY != "--"* ]]; then
+                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Setting '$var_argument' as VAR_UTILITY..."
+                VAR_UTILITY=$var_argument_CAPS
+            elif [[ $VAR_UTILITY_SCRIPT == "" ]] && [[ $VAR_UTILITY != "--"* ]]; then
+                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Setting '$var_argument' as VAR_UTILITY_SCRIPT..."
+                VAR_UTILITY_SCRIPT=$var_argument_CAPS
+            elif [[ $VAR_UTILITY_SCRIPT == $var_argument_CAPS ]] && [[ $VAR_UTILITY_SCRIPT_REMOVED_FROM_ARGUMENTS -eq 0 ]]; then
+                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Not adding first occurence of VAR_UTILITY_SCRIPT '$VAR_UTILITY_SCRIPT' to VAR_UTILITY_SCRIPT_ARGUMENTS..."
+                VAR_UTILITY_SCRIPT_REMOVED_FROM_ARGUMENTS=1
+            elif [[ $VAR_UTILITY == $var_argument_CAPS ]] && [[ $VAR_UTILITY_REMOVED_FROM_ARGUMENTS -eq 0 ]] && [[ $VAR_UTILITY_SCRIPT_REMOVED_FROM_ARGUMENTS -eq 0 ]]; then
+                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Not adding first occurence of VAR_UTILITY '$VAR_UTILITY' to VAR_UTILITY_SCRIPT_ARGUMENTS..."
+                VAR_UTILITY_REMOVED_FROM_ARGUMENTS=1
+            else
+                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Ignoring argument '$var_argument'. Forwarding argument to Utility Script..."
+                VAR_UTILITY_SCRIPT_ARGUMENTS+=("$var_argument")
+            fi
+        ;;
+    esac
+    #
+done
+#
+}
+ProcessArguments "$@"
 ####################################################################################################
-# PRINT CONFIG PART ONE
+# PROCESS ARGUMENTS
 ####################################################################################################
 ####################################################################################################
 #
@@ -234,8 +235,9 @@ if FindUtilityFolderPath "$GLOBAL_VAR_DIR_INSTALLATION" "$VAR_UTILITY"; then
 elif FindUtilityScriptFilePath "$GLOBAL_VAR_DIR_INSTALLATION/bin" "$VAR_UTILITY"; then
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Folder '$VAR_UTILITY' was not found..."
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script '$VAR_UTILITY' found in Utility 'bin'!"
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Changing variable 'VAR_UTILITY' from '$VAR_UTILITY' to 'BIN'..."
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Changing variable 'VAR_UTILITY_SCRIPT' from '$VAR_UTILITY_SCRIPT' to '$VAR_UTILITY'..."
     VAR_UTILITY_SCRIPT=$VAR_UTILITY; VAR_UTILITY="BIN"
-    FormatArguments "$@"
 else
     die_UtilityNotFound "Utility '$VAR_UTILITY' not found!"  
 fi
@@ -254,8 +256,8 @@ elif FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY_SCRIPT";
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script File '$VAR_UTILITY_SCRIPT' found in Utility '$VAR_UTILITY'!"
 elif FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY"; then
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script '$VAR_UTILITY' found in Utility '$VAR_UTILITY'!"
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Changing variable 'VAR_UTILITY_SCRIPT' from '$VAR_UTILITY_SCRIPT' to '$VAR_UTILITY'..."
     VAR_UTILITY_SCRIPT=$VAR_UTILITY
-    FormatArguments "$@"
 elif [[ $VAR_UTILITY_SCRIPT == "" ]]; then
     die_UtilityScriptNotFound "No Utility Script specified!"
 else
@@ -267,7 +269,7 @@ fi
 ####################################################################################################
 #
 #
-#
+ProcessArguments "$@"
 #
 #
 ####################################################################################################
@@ -315,15 +317,21 @@ export UTILITY_SCRIPT_VAR_DIR_TMP=$(echo $VAR_UTILITY_SCRIPT_FILE_PATH | sed "s|
 #
 ####################################################################################################
 ####################################################################################################
-# PRINT CONFIG PART TWO
+# PRINT CONFIG 
 ####################################################################################################
 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Printing configuration..."
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "VAR_UTILITY_FOLDER_PATH             = $VAR_UTILITY_FOLDER_PATH"
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "VAR_UTILITY_SCRIPT_FILE_PATH        = $VAR_UTILITY_SCRIPT_FILE_PATH"
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "UTILITY_SCRIPT_VAR_DIR_ETC          = $UTILITY_SCRIPT_VAR_DIR_ETC"
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "UTILITY_SCRIPT_VAR_DIR_TMP          = $UTILITY_SCRIPT_VAR_DIR_TMP"
+PrintMessage "CONFIG" "mitchell" "vanbijleveld" "GLOBAL_VAR_DIR_INSTALLATION  = $GLOBAL_VAR_DIR_INSTALLATION"
+PrintMessage "CONFIG" "mitchell" "vanbijleveld" "GLOBAL_VAR_DIR_ETC           = $GLOBAL_VAR_DIR_ETC"
+PrintMessage "CONFIG" "mitchell" "vanbijleveld" "GLOBAL_VAR_DIR_TMP           = $GLOBAL_VAR_DIR_TMP"
+PrintMessage "CONFIG" "mitchell" "vanbijleveld" "VAR_UTILITY                  = $VAR_UTILITY"
+PrintMessage "CONFIG" "mitchell" "vanbijleveld" "VAR_UTILITY_SCRIPT           = $VAR_UTILITY_SCRIPT"
+#
+PrintMessage "CONFIG" "mitchell" "vanbijleveld" "VAR_UTILITY_FOLDER_PATH      = $VAR_UTILITY_FOLDER_PATH"
+PrintMessage "CONFIG" "mitchell" "vanbijleveld" "VAR_UTILITY_SCRIPT_FILE_PATH = $VAR_UTILITY_SCRIPT_FILE_PATH"
+PrintMessage "CONFIG" "mitchell" "vanbijleveld" "UTILITY_SCRIPT_VAR_DIR_ETC   = $UTILITY_SCRIPT_VAR_DIR_ETC"
+PrintMessage "CONFIG" "mitchell" "vanbijleveld" "UTILITY_SCRIPT_VAR_DIR_TMP   = $UTILITY_SCRIPT_VAR_DIR_TMP"
 ####################################################################################################
-# PRINT CONFIG PART TWO
+# PRINT CONFIG 
 ####################################################################################################
 ####################################################################################################
 #
@@ -353,5 +361,9 @@ fi
 #
 #
 #
-PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Starting Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' from '$VAR_UTILITY_SCRIPT_FILE_PATH' with arguments: $(echo $VAR_UTILITY_SCRIPT_ARGUMENTS_STRING)"
-$(which bash) $VAR_UTILITY_SCRIPT_FILE_PATH "${VAR_UTILITY_SCRIPT_ARGUMENTS_ARRAY[@]}"
+####################################################################################################
+####################################################################################################
+# START UTILITY SCRIPT
+####################################################################################################
+PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Starting Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' from '$VAR_UTILITY_SCRIPT_FILE_PATH' with arguments: $(printf "'%s' " "${VAR_UTILITY_SCRIPT_ARGUMENTS[@]}")"
+$(which bash) $VAR_UTILITY_SCRIPT_FILE_PATH "${VAR_UTILITY_SCRIPT_ARGUMENTS[@]}"
