@@ -23,6 +23,8 @@ VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="clear echo find mktemp PrintMess
 ####################################################################################################
 VAR_FLAGS="--DIRS-ONLY --FILES-ONLY --SEARCH-DIR --SUPPRESS-ERRORS"
 #
+SUPPRESS_STRING="Permission denied|Operation not permitted|Invalid argument"
+#
 VAR_DIRS_ONLY=0
 VAR_FILES_ONLY=0
 #
@@ -114,7 +116,6 @@ fi
 PrintMessage
 #
 if [[ $SUPPRESS_PERMISSION_DENIED -eq 1 ]]; then
-    SUPPRESS_STRING="Permission denied|Operation not permitted|Invalid argument"
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Supressing '$SUPPRESS_STRING' warnings/errors..."
     PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*" $COMMAND_SUFFIX | grep -Ev "$SUPPRESS_STRING" | tee $VAR_TEMP_OUTPUT_FILE
 else
@@ -123,5 +124,6 @@ fi
 #
 PrintMessage
 #
-VAR_COUNT_FOUND_ITEMS=$(cat $VAR_TEMP_OUTPUT_FILE | wc -l)
-PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Found $(echo $VAR_COUNT_FOUND_ITEMS) files/folders in '$VAR_SEARCH_DIR' for '$VAR_SEARCH_QUERY'"
+VAR_COUNT_FOUND_ITEMS=$(cat $VAR_TEMP_OUTPUT_FILE | grep -Ev "$SUPPRESS_STRING" | wc -l)
+VAR_COUNT_FOUND_ERRORS=$(cat $VAR_TEMP_OUTPUT_FILE | grep -E "$SUPPRESS_STRING" | wc -l)
+PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Found $(echo $VAR_COUNT_FOUND_ITEMS) files/folders and $(echo $VAR_COUNT_FOUND_ERRORS) errors/warnings in '$VAR_SEARCH_DIR' for '$VAR_SEARCH_QUERY'"
