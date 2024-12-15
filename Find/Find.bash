@@ -114,7 +114,7 @@ fi
 PrintMessage
 #
 if [[ $SUPPRESS_PERMISSION_DENIED -eq 1 ]]; then
-    SUPPRESS_STRING="Permission denied|Operation not permitted"
+    SUPPRESS_STRING="Permission denied|Operation not permitted|Invalid argument"
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Supressing '$SUPPRESS_STRING' warnings/errors..."
     PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*" $COMMAND_SUFFIX | grep -Ev "$SUPPRESS_STRING" | tee $VAR_TEMP_OUTPUT_FILE
 else
