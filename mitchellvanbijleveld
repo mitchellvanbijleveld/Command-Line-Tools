@@ -45,12 +45,11 @@ PrintMessage(){
         var_executed_command=$(echo $@ | awk '{print $1}')
         #
         case $GLOBAL_VAR_DEBUG in
-            1) "$@" 2>&1 | sed "s|^|$(PrintTimeStamp) $var_executed_command: |";;
-                # THIS BLOCK USES 'WHILE' INSTEAD OF SED / KEEPING FOR FUTURE IMPROVEMENTS
-                # $@ | while IFS= read -r command_output_line; do
-                #     echo "$(PrintTimeStamp) $var_executed_command: $command_output_line"
-                # done
-                # THIS BLOCK USES 'WHILE' INSTEAD OF SED / KEEPING FOR FUTURE IMPROVEMENTS
+            1) "$@" 2>&1 | while IFS= read -r command_output_line; do
+                   echo "$(PrintTimeStamp) $var_executed_command: $command_output_line"
+               done
+            ;; 
+            # "$@" 2>&1 | sed "s|^|$(PrintTimeStamp) $var_executed_command: |";;
             *) 
                 case $var_log_level in
                     "FATAL" | "INFO" | "WARN") "$@" 2>&1;;
