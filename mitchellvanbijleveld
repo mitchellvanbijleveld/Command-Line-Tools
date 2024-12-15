@@ -365,5 +365,5 @@ fi
 ####################################################################################################
 # START UTILITY SCRIPT
 ####################################################################################################
-PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Starting Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' from '$VAR_UTILITY_SCRIPT_FILE_PATH' with arguments: $(printf "'%s' " "${VAR_UTILITY_SCRIPT_ARGUMENTS[@]}")"
+PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Starting Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' with arguments: $(printf "'%s' " "${VAR_UTILITY_SCRIPT_ARGUMENTS[@]}")"
 $(which bash) $VAR_UTILITY_SCRIPT_FILE_PATH "${VAR_UTILITY_SCRIPT_ARGUMENTS[@]}"
