@@ -7,7 +7,7 @@
 VAR_UTILITY="Find"
 VAR_UTILITY_SCRIPT="Find"
 VAR_UTILITY_SCRIPT_VERSION="2024.12.14-0102"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="clear echo find PrintMessage sed shift sudo tr"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="clear echo find mktemp PrintMessage sed shift sudo tee tr wc"
 ####################################################################################################
 # UTILITY SCRIPT INFO - Find/Find
 ####################################################################################################
@@ -28,6 +28,9 @@ VAR_FILES_ONLY=0
 #
 VAR_SEARCH_QUERY=""
 VAR_SEARCH_DIR=$HOME
+#
+VAR_TEMP_OUTPUT_FILE=$(mktemp)
+PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Temporary file created as '$VAR_TEMP_OUTPUT_FILE'..."
 ####################################################################################################
 # VARIABLES
 ####################################################################################################
@@ -113,7 +116,12 @@ PrintMessage
 if [[ $SUPPRESS_PERMISSION_DENIED -eq 1 ]]; then
     SUPPRESS_STRING="Permission denied|Operation not permitted"
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Supressing '$SUPPRESS_STRING' warnings/errors..."
-    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*" $COMMAND_SUFFIX | grep -Ev "$SUPPRESS_STRING"
+    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*" $COMMAND_SUFFIX | grep -Ev "$SUPPRESS_STRING" | tee $VAR_TEMP_OUTPUT_FILE
 else
-    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*" $COMMAND_SUFFIX
+    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*" $COMMAND_SUFFIX | tee $VAR_TEMP_OUTPUT_FILE
 fi
+#
+PrintMessage
+#
+VAR_COUNT_FOUND_ITEMS=$(cat $VAR_TEMP_OUTPUT_FILE | wc -l)
+PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Found $(echo $VAR_COUNT_FOUND_ITEMS) files/folders in '$VAR_SEARCH_DIR' for '$VAR_SEARCH_QUERY'"
