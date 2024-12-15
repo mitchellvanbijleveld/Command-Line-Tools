@@ -6,7 +6,7 @@
 ####################################################################################################
 # VAR_UTILITY="mitchell"
 # VAR_UTILITY_SCRIPT="vanbijleveld"
-VAR_UTILITY_SCRIPT_VERSION="2024.12.13-1150"
+VAR_UTILITY_SCRIPT_VERSION="2024.12.15-2142"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname echo eval exit find grep printf realpath sed shift tr type"
 ####################################################################################################
 # BIN INFO - MITCHELL/VANBIJLEVELD
