@@ -188,6 +188,14 @@ for var_argument in "$@"; do
             GLOBAL_VAR_DEBUG=1
             PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Started logging in debug style"
         ;;
+        "--UPDATE-FIRST")
+            if [[ $VAR_UPDATED -eq 0 ]]; then
+                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Script will update first..."
+                VAR_UPDATE_FIRST=1
+            else
+                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Already updated. Not updating again..."
+            fi
+        ;;
         *)
             if [[ $VAR_UTILITY == "" ]] && [[ $VAR_UTILITY != "--"* ]]; then
                 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Setting '$var_argument' as VAR_UTILITY..."
@@ -215,6 +223,37 @@ ProcessArguments "$@"
 ####################################################################################################
 # PROCESS ARGUMENTS
 ####################################################################################################
+####################################################################################################
+#
+#
+#
+#
+#
+####################################################################################################
+# CHECK IF UPDATE REQUESTED
+####################################################################################################
+####################################################################################################
+if [[ $VAR_UPDATE_FIRST -eq 1 ]]; then
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Exporting functions and scripts in order to update..."
+    #
+    export -f PrintMessage
+    export -f PrintTimeStamp
+    export GLOBAL_VAR_DEBUG=$GLOBAL_VAR_DEBUG
+    export GLOBAL_VAR_DIR_INSTALLATION=$GLOBAL_VAR_DIR_INSTALLATION
+    #
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Starting update script..."
+    $(which bash) "$GLOBAL_VAR_DIR_INSTALLATION/bin/update.bash"
+    export VAR_UPDATED=1
+    #
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Restarting bin..."
+    "$(realpath $0)" "$@"
+    exit 0
+else
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Not updating automatically..."
+fi
+####################################################################################################
+####################################################################################################
+# CHECK IF UPDATE REQUESTED
 ####################################################################################################
 #
 #
