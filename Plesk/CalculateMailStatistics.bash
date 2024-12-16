@@ -52,6 +52,9 @@ for var_argument in "$@"; do
                 shift
             done
         ;;
+        "--UPDATE-PLESK-EMAIL-SECURITY" | "--UPES")
+        PrintMessage "DEBUG" /opt/psa/admin/bin/php -dauto_prepend_file=sdk.php '/opt/psa/admin/plib/modules/email-security/scripts/update-stats.php'
+        ;;
         "--"*)
             PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Invalid option given. Exiting..."
             exit 1
