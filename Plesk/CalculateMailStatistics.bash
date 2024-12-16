@@ -6,7 +6,7 @@
 ####################################################################################################
 VAR_UTILITY="Plesk"
 VAR_UTILITY_SCRIPT="CalculateMailStatistics"
-VAR_UTILITY_SCRIPT_VERSION="2024.12.16-2232"
+VAR_UTILITY_SCRIPT_VERSION="2024.12.16-2306"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename cat echo find hostname mkdir mktemp printf PrintMessage tr"
 ####################################################################################################
 # UTILITY SCRIPT INFO - Plesk/CalculateMailStatistics
