@@ -53,7 +53,8 @@ for var_argument in "$@"; do
             done
         ;;
         "--UPDATE-PLESK-EMAIL-SECURITY" | "--UPES")
-        PrintMessage "DEBUG" /opt/psa/admin/bin/php -dauto_prepend_file=sdk.php '/opt/psa/admin/plib/modules/email-security/scripts/update-stats.php'
+            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Running command to update Plesk's Email Security statistics database..."
+            PrintMessage "DEBUG" /opt/psa/admin/bin/php -dauto_prepend_file=sdk.php '/opt/psa/admin/plib/modules/email-security/scripts/update-stats.php'
         ;;
         "--"*)
             PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Invalid option given. Exiting..."
