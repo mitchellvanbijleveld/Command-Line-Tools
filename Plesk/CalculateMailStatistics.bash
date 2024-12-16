@@ -48,6 +48,9 @@ for var_argument in "$@"; do
                         PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Script will print filesystem statistics..."
                         PRINT_STATISTICS_FILESYSTEM=1
                     ;;
+                    *)
+                        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Value '$2' is not valid for --PRINT-STATISTICS. Ignoring..."
+                    ;;
                 esac
                 shift
             done
