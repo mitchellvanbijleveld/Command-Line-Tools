@@ -7,7 +7,7 @@
 # VAR_UTILITY="mitchell"
 # VAR_UTILITY_SCRIPT="vanbijleveld"
 VAR_UTILITY_SCRIPT_VERSION="2024.12.17-0031"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname echo eval exit find grep printf realpath sed shift tr type"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname echo eval exit find grep mktemp printf realpath sed shift tr type"
 ####################################################################################################
 # BIN INFO - MITCHELL/VANBIJLEVELD
 ####################################################################################################
@@ -344,7 +344,8 @@ export GLOBAL_VAR_DIR_TMP=$GLOBAL_VAR_DIR_TMP
 ####################################################################################################
 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Exporting Utility Script Variables..."
 export UTILITY_SCRIPT_VAR_DIR_ETC=$(echo $VAR_UTILITY_SCRIPT_FILE_PATH | sed "s|$GLOBAL_VAR_DIR_INSTALLATION|$GLOBAL_VAR_DIR_ETC|; s|.bash$||")
-export UTILITY_SCRIPT_VAR_DIR_TMP=$(echo $VAR_UTILITY_SCRIPT_FILE_PATH | sed "s|$GLOBAL_VAR_DIR_INSTALLATION|$GLOBAL_VAR_DIR_TMP|; s|.bash$||")
+#export UTILITY_SCRIPT_VAR_DIR_TMP=$(echo $VAR_UTILITY_SCRIPT_FILE_PATH | sed "s|$GLOBAL_VAR_DIR_INSTALLATION|$GLOBAL_VAR_DIR_TMP|; s|.bash$||")
+export UTILITY_SCRIPT_VAR_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-$VAR_UTILITY-$VAR_UTILITY_SCRIPT.XXXXXXXX" --tmpdir)
 ####################################################################################################
 # EXPORT UTILITY SCRIPT VARIABLES
 ####################################################################################################
