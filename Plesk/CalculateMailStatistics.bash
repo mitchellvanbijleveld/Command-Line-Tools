@@ -118,6 +118,14 @@ PrintStatistics_FileSystem(){
 ####################################################################################################
 # START UTILITY SCRIPT
 ####################################################################################################
+if [[ ! -d $VAR_MAIL_DIRECTORY ]]; then
+    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Mail Directory ('$VAR_MAIL_DIRECTORY') does not exist. Doesn't make sense to continue. Exiting..."
+    exit 1
+fi
+#
+#
+#
+#
 #
 ##################################################
 ##################################################
