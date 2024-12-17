@@ -28,9 +28,6 @@ VAR_FILES_ONLY=0
 #
 VAR_SEARCH_QUERY=""
 VAR_SEARCH_DIR=$HOME
-#
-VAR_TEMP_OUTPUT_FILE=$(mktemp)
-PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Temporary file created as '$VAR_TEMP_OUTPUT_FILE'..."
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
@@ -144,13 +141,13 @@ PrintMessage
 #
 if [[ $SUPPRESS_PERMISSION_DENIED -eq 1 ]]; then
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Supressing '$SUPPRESS_STRING' warnings/errors..."
-    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "$VAR_SEARCH_QUERY" $COMMAND_SUFFIX | grep -Ev "$SUPPRESS_STRING" | tee $VAR_TEMP_OUTPUT_FILE
+    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "$VAR_SEARCH_QUERY" $COMMAND_SUFFIX | grep -Ev "$SUPPRESS_STRING" 
 else
-    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "$VAR_SEARCH_QUERY" $COMMAND_SUFFIX | tee $VAR_TEMP_OUTPUT_FILE
+    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "$VAR_SEARCH_QUERY" $COMMAND_SUFFIX
 fi
 #
 PrintMessage
 #
-VAR_COUNT_FOUND_ITEMS=$(cat $VAR_TEMP_OUTPUT_FILE | grep -Ev "$SUPPRESS_STRING" | wc -l)
-VAR_COUNT_FOUND_ERRORS=$(cat $VAR_TEMP_OUTPUT_FILE | grep -E "$SUPPRESS_STRING" | wc -l)
+VAR_COUNT_FOUND_ITEMS=$(cat $VAR_TMP_FILE_COMMAND_OUTPUT | grep -Ev "$SUPPRESS_STRING" | wc -l)
+VAR_COUNT_FOUND_ERRORS=$(cat $VAR_TMP_FILE_COMMAND_OUTPUT | grep -E "$SUPPRESS_STRING" | wc -l)
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Found $(echo $VAR_COUNT_FOUND_ITEMS) files/folders and $(echo $VAR_COUNT_FOUND_ERRORS) errors/warnings in '$VAR_SEARCH_DIR' for '$VAR_SEARCH_QUERY'"
