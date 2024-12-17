@@ -80,7 +80,7 @@ PrintVersionComparison(){
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$5 has been downgraded from version $2 to $1!"
         UPDATED=1
     elif [[ $1 == $2 ]] && [[ $3 != $4 ]]; then
-        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$5 has a different shasum after updating (changed from $4 to $3)..."
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$5 has a different shasum after updating (changed from $4 to $3)!"
         UPDATED=1
     elif [[ $1 == $2 ]] && [[ $3 == $4 ]]; then
         PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$5 is already up to date ($2)!"
