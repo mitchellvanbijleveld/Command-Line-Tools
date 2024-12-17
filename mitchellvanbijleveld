@@ -81,7 +81,11 @@ PrintMessage(){
 eval_FromFile(){
     # $1 = NAME OF VARIABLE
     # $2 = FILE PATH
-    eval $(grep "^$1=" $2)
+    if grep -q "^$1=" "$2"; then
+        eval $(grep "^$1=" "$2")
+    else
+        eval "$1="
+    fi
 }
 #
 die_UtilityNotFound () {
