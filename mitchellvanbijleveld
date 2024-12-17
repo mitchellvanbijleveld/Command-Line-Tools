@@ -49,16 +49,19 @@ PrintMessage(){
         shift
         var_executed_command=$(echo $@ | awk '{print $1}')
         #
+        export VAR_TMP_FILE_COMMAND_OUTPUT=$(mktemp "mitchellvanbijleveld-$var_utility-$var_utility_script.XXXXXXXX" --tmpdir)
+        #PrintMessage "DEBUG" "$var_utility" "$var_utility_script" "Created temporary file for script output: '$VAR_TMP_FILE_COMMAND_OUTPUT'..."
+        #
         case $GLOBAL_VAR_DEBUG in
-            1) "$@" 2>&1 | while IFS= read -r command_output_line; do
+            1) "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
                    echo "$(PrintTimeStamp) $var_executed_command: $command_output_line"
                done
             ;; 
             # "$@" 2>&1 | sed "s|^|$(PrintTimeStamp) $var_executed_command: |";;
             *) 
                 case $var_log_level in
-                    "FATAL" | "INFO" | "WARN") "$@" 2>&1;;
-                    *) "$@" > /dev/null 2>&1;;
+                    "FATAL" | "INFO" | "WARN") "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT;;
+                    *) "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT > /dev/null;;
                 esac
                 ;;
         esac
