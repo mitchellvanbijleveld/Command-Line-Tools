@@ -72,8 +72,10 @@ PrintVersionComparison(){
     # $3 = MESSAGE
     if [[ $1 > $2 ]]; then
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$3 has been updated from version $2 to $1!"
+        UPDATED=1
     elif [[ $1 < $2 ]]; then
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$3 has been downgraded from version $2 to $1!"
+        UPDATED=1
     elif [[ $1 = $2 ]]; then
         PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$3 has is already up to date ($2)!"
     else
@@ -153,3 +155,7 @@ for var_utility_folder in $GLOBAL_VAR_DIR_INSTALLATION/*; do
         fi
     done
 done
+#
+if [[ ! $UPDATED -eq 1 ]]; then
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Command Line Tools was already up to date!"
+fi
