@@ -77,7 +77,7 @@ PrintVersionComparison(){
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$3 has been downgraded from version $2 to $1!"
         UPDATED=1
     elif [[ $1 = $2 ]]; then
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$3 has is already up to date ($2)!"
+        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$3 is already up to date ($2)!"
     else
         PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Something is weird while comparing versions."
     fi
