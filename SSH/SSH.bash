@@ -7,7 +7,7 @@
 VAR_UTILITY="SSH"
 VAR_UTILITY_SCRIPT="SSH"
 VAR_UTILITY_SCRIPT_VERSION="2024.12.08-0057"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk grep printf PrintMessage read ssh"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk grep printf PrintMessage read shift ssh which"
 ####################################################################################################
 # UTILITY SCRIPT INFO - SSH/SSH
 ####################################################################################################

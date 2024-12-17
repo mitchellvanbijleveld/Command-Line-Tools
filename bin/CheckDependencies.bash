@@ -7,7 +7,7 @@
 VAR_UTILITY="bin"
 VAR_UTILITY_SCRIPT="CheckDependencies"
 VAR_UTILITY_SCRIPT_VERSION="2024.12.05-2139"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo PrintMessage tr type"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo PrintMessage shift tr type"
 ####################################################################################################
 # UTILITY SCRIPT INFO - MITCHELLVANBIJLEVELD/CHECKDEPENDENCIES
 ####################################################################################################

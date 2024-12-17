@@ -7,7 +7,7 @@
 VAR_UTILITY="Find"
 VAR_UTILITY_SCRIPT="Find"
 VAR_UTILITY_SCRIPT_VERSION="2024.12.15-1510"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="clear echo find mktemp PrintMessage sed shift sudo tee tr wc"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="clear echo find mktemp PrintMessage sed shift sudo tr wc which"
 ####################################################################################################
 # UTILITY SCRIPT INFO - Find/Find
 ####################################################################################################
