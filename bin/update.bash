@@ -64,6 +64,33 @@ done
 #
 ####################################################################################################
 ####################################################################################################
+# FUNCTIONS
+####################################################################################################
+PrintVersionComparison(){
+    # $1 = CURRENT VERSION
+    # $2 = PREVIOUS VERSION
+    # $3 = MESSAGE
+    if [[ $1 > $2 ]]; then
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$3 has been updated from version $2 to $1!"
+    elif [[ $1 < $2 ]]; then
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$3 has been downgraded from version $2 to $1!"
+    elif [[ $1 = $2 ]]; then
+        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$3 has is already up to date ($2)!"
+    else
+        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Something is weird while comparing versions."
+    fi
+}
+####################################################################################################
+# FUNCTIONS
+####################################################################################################
+####################################################################################################
+#
+#
+#
+#
+#
+####################################################################################################
+####################################################################################################
 # START UTILITY SCRIPT
 ####################################################################################################
 for var_utility_folder in $GLOBAL_VAR_DIR_INSTALLATION/*; do
@@ -94,15 +121,7 @@ PrintMessage "DEBUG" $(which git) -C $GLOBAL_VAR_DIR_INSTALLATION pull --rebase
 PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Reading new version from VERSION..."
 VAR_NEW_VERSION=$(cat $VAR_VERSION_FILE)
 #
-if [[ $VAR_NEW_VERSION > $VAR_OLD_VERSION ]]; then
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Command Line Tools has been updated from version $VAR_OLD_VERSION to $VAR_NEW_VERSION!"
-elif [[ $VAR_NEW_VERSION < $VAR_OLD_VERSION ]]; then
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Command Line Tools has been downgraded from version $VAR_OLD_VERSION to $VAR_NEW_VERSION!"
-elif [[ $VAR_NEW_VERSION = $VAR_OLD_VERSION ]]; then
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Command Line Tools has is already up to date ($VAR_OLD_VERSION)!"
-else
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Something is weird while comparing versions."
-fi
+PrintVersionComparison "$VAR_NEW_VERSION" "$VAR_OLD_VERSION" "Command Line Tools"
 #
 for var_utility_folder in $GLOBAL_VAR_DIR_INSTALLATION/*; do
     if [[ -d $var_utility_folder ]]; then
@@ -127,15 +146,7 @@ for var_utility_folder in $GLOBAL_VAR_DIR_INSTALLATION/*; do
                 PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Previous version for Utility Script is $var_utility_script_old_version"
             fi
             #
-            if [[ $var_utility_script_version > $var_utility_script_old_version ]]; then
-                PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Utility Script '$var_utility_folder_basename/$var_utility_script_file_basename' has been updated from version $var_utility_script_old_version to $var_utility_script_version!"
-            elif [[ $var_utility_script_version < $var_utility_script_old_version ]]; then
-                PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Utility Script '$var_utility_folder_basename/$var_utility_script_file_basename' has been downgraded from version $var_utility_script_old_version to $var_utility_script_version!"
-            elif [[ $var_utility_script_version = $var_utility_script_old_version ]]; then
-                PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Utility Script '$var_utility_folder_basename/$var_utility_script_file_basename' has is already up to date ($var_utility_script_old_version)!"
-            else
-                PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Something is weird while comparing versions."
-            fi
+            PrintVersionComparison "$var_utility_script_version" "$var_utility_script_old_version" "Utility Script $var_utility_folder_basename/$var_utility_script_file_basename"
             #
         else
             continue
