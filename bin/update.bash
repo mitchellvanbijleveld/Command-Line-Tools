@@ -171,6 +171,10 @@ for var_utility_folder in $GLOBAL_VAR_DIR_INSTALLATION/*; do
                [[ $var_utility_script_version == "" ]] && [[ $var_utility_script_shasum == "da39a3ee5e6b4b0d3255bfef95601890afd80709" ]]; then
                 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Utility Script '$var_utility_folder_basename/$var_utility_script_file_basename' has been installed as an empty Utility Script for future use!"
                 continue
+            elif [[ $var_utility_script_old_version == "" ]] && [[ $var_utility_script_old_shasum == "da39a3ee5e6b4b0d3255bfef95601890afd80709" ]] &&
+                 [[ $var_utility_script_version != "" ]] && [[ $var_utility_script_shasum != "da39a3ee5e6b4b0d3255bfef95601890afd80709" ]]; then
+                PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Utility Script '$var_utility_folder_basename/$var_utility_script_file_basename' is now ready to use! Installed with version $var_utility_script_version!"
+                continue
             elif [[ $var_utility_script_old_version == "" ]] && [[ $var_utility_script_old_shasum == "" ]] &&
                  [[ $var_utility_script_version != "" ]] && [[ $var_utility_script_shasum != "da39a3ee5e6b4b0d3255bfef95601890afd80709" ]]; then
                 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Utility Script '$var_utility_folder_basename/$var_utility_script_file_basename' has been installed with version $var_utility_script_version!"
