@@ -84,7 +84,6 @@ PrintVersionComparison(){
         UPDATED=1
     elif [[ $1 == $2 ]] && [[ $3 == $4 ]]; then
         PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$5 is already up to date ($2)!"
-
     else
         PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Something is weird while comparing versions."
     fi
