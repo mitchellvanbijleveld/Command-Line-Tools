@@ -21,10 +21,7 @@ VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk cat echo git mkdir PrintMess
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
-VAR_VERSION_FILE="$GLOBAL_VAR_DIR_INSTALLATION/VERSION"
 #
-VAR_OLD_VERSION=$(cat $VAR_VERSION_FILE)
-VAR_OLD_SHASUM=$(shasum $VAR_VERSION_FILE | awk '{print $1}')
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
@@ -137,13 +134,20 @@ for var_utility_folder in $GLOBAL_VAR_DIR_INSTALLATION/*; do
     done
 done
 #
+PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Getting current version and shasum for bin..."
+VAR_OLD_VERSION=$(eval_FromFile "VAR_UTILITY_SCRIPT_VERSION" "$GLOBAL_VAR_DIR_INSTALLATION/mitchellvanbijleveld"; echo $VAR_UTILITY_SCRIPT_VERSION)
+VAR_OLD_SHASUM=$(shasum "$GLOBAL_VAR_DIR_INSTALLATION/mitchellvanbijleveld" | awk '{print $1}')
+PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Current version for bin is $VAR_OLD_VERSION"
+PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Current shasum for bin is $VAR_OLD_SHASUM"
+#
 PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Using command 'git' to pull the latest version..."
 PrintMessage "DEBUG" $(which git) -C $GLOBAL_VAR_DIR_INSTALLATION pull --rebase
 #
-PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Reading new version from VERSION..."
-VAR_NEW_VERSION=$(cat $VAR_VERSION_FILE)
-PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Calculating new shasum of bin..."
-VAR_NEW_SHASUM=$(shasum $VAR_VERSION_FILE | awk '{print $1}')
+PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Getting new version and shasum for bin..."
+VAR_NEW_VERSION=$(eval_FromFile "VAR_UTILITY_SCRIPT_VERSION" "$GLOBAL_VAR_DIR_INSTALLATION/mitchellvanbijleveld"; echo $VAR_UTILITY_SCRIPT_VERSION)
+VAR_NEW_SHASUM=$(shasum "$GLOBAL_VAR_DIR_INSTALLATION/mitchellvanbijleveld" | awk '{print $1}')
+PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "New version for bin is $VAR_NEW_VERSION"
+PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "New shasum for bin is $VAR_NEW_SHASUM"
 #
 PrintVersionComparison "$VAR_NEW_VERSION" "$VAR_OLD_VERSION" "$VAR_NEW_SHASUM" "$VAR_OLD_SHASUM" "Command Line Tools"
 #
