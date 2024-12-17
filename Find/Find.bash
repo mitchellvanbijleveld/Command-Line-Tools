@@ -79,6 +79,10 @@ for var_argument in "$@"; do
                 PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Search directory real path is '$(realpath $VAR_SEARCH_DIR)'..."
             fi
         ;;
+        "--WILDCARD")
+            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Searching for search string with wildcards before and after..."
+            SEARCH_WILDCARD=1
+        ;;
         "--SUPPRESS-ERRORS")
             PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Suppressing warnings and errors in output..."
             SUPPRESS_PERMISSION_DENIED=1
@@ -120,6 +124,10 @@ elif [[ $VAR_SEARCH_QUERY == $VAR_SEARCH_DIR ]]; then
     exit 1
 fi
 #
+if [[ $SEARCH_WILDCARD -eq 1 ]]; then
+    VAR_SEARCH_QUERY="*$VAR_SEARCH_QUERY*"
+fi
+#
 $(which clear)
 #
 if [[ $VAR_DIRS_ONLY -eq 1 ]]; then
@@ -136,9 +144,9 @@ PrintMessage
 #
 if [[ $SUPPRESS_PERMISSION_DENIED -eq 1 ]]; then
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Supressing '$SUPPRESS_STRING' warnings/errors..."
-    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*" $COMMAND_SUFFIX | grep -Ev "$SUPPRESS_STRING" | tee $VAR_TEMP_OUTPUT_FILE
+    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "$VAR_SEARCH_QUERY" $COMMAND_SUFFIX | grep -Ev "$SUPPRESS_STRING" | tee $VAR_TEMP_OUTPUT_FILE
 else
-    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "*$VAR_SEARCH_QUERY*" $COMMAND_SUFFIX | tee $VAR_TEMP_OUTPUT_FILE
+    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "$VAR_SEARCH_QUERY" $COMMAND_SUFFIX | tee $VAR_TEMP_OUTPUT_FILE
 fi
 #
 PrintMessage
