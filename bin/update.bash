@@ -101,6 +101,8 @@ PrintVersionComparison(){
 ####################################################################################################
 # START UTILITY SCRIPT
 ####################################################################################################
+PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Checking for updates..."
+#
 for var_utility_folder in $GLOBAL_VAR_DIR_INSTALLATION/*; do
     if [[ -d $var_utility_folder ]]; then
         var_utility_folder_basename=$(basename $var_utility_folder)
@@ -169,6 +171,8 @@ for var_utility_folder in $GLOBAL_VAR_DIR_INSTALLATION/*; do
         fi
     done
 done
+#
+PrintMessage
 #
 if [[ $UPDATED -eq 1 ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Command Line Tools and/or Utility Scripts have been updated."
