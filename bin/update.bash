@@ -155,19 +155,26 @@ for var_utility_folder in $GLOBAL_VAR_DIR_INSTALLATION/*; do
             PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "New version for Utility Script is $var_utility_script_version"
             PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "New shasum for Utility Script is $var_utility_script_shasum"
             #
-            if [[ ! -f "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename" ]] &&
-               [[ ! -f "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename.shasum" ]] &&
+            if [[ -f "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename" ]]; then
+                var_utility_script_old_version=$(cat "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename")
+            else
+                var_utility_script_old_version=""
+            fi
+            #
+            if [[ -f "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename.shasum" ]]; then
+                var_utility_script_old_shasum=$(cat "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename.shasum")
+            else
+                var_utility_script_old_shasum=""
+            fi
+            #
+            if [[ $var_utility_script_old_version == "" ]] && [[ $var_utility_script_old_shasum == "" ]] &&
                [[ $var_utility_script_version == "" ]] && [[ $var_utility_script_shasum == "da39a3ee5e6b4b0d3255bfef95601890afd80709" ]]; then
                 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Utility Script '$var_utility_folder_basename/$var_utility_script_file_basename' has been installed as an empty Utility Script for future use!"
                 continue
-            elif [[ ! -f "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename" ]] &&
-                 [[ ! -f "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename.shasum" ]] &&
-                 [[ $var_utility_script_version != "" ]] && [[ $var_utility_script_shasum != "da39a3ee5e6b4b0d3255bfef95601890afd80709" ]]; then
+            elif [[ $var_utility_script_old_version == "" ]] && [[ $var_utility_script_old_shasum == "" ]] &&
+                 [[ $var_utility_script_version != "" ]] && [[ $var_utility_script_shasum != "" ]]; then
                 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Utility Script '$var_utility_folder_basename/$var_utility_script_file_basename' has been installed with version $var_utility_script_version!"
                 continue
-            else
-                var_utility_script_old_version=$(cat "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename")
-                var_utility_script_old_shasum=$(cat "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename.shasum")
             fi
             #
             PrintVersionComparison "$var_utility_script_version" "$var_utility_script_old_version" "$var_utility_script_shasum" "$var_utility_script_old_shasum" "Utility Script $var_utility_folder_basename/$var_utility_script_file_basename"
