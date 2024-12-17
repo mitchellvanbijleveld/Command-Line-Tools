@@ -6,7 +6,7 @@
 ####################################################################################################
 VAR_UTILITY="bin"
 VAR_UTILITY_SCRIPT="update"
-VAR_UTILITY_SCRIPT_VERSION="2024.12.13-1151"
+VAR_UTILITY_SCRIPT_VERSION="2024.12.17-1632"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cat git PrintMessage"
 ####################################################################################################
 # UTILITY SCRIPT INFO - MITCHELLVANBIJLEVELD/UPDATE
