@@ -156,6 +156,8 @@ for var_utility_folder in $GLOBAL_VAR_DIR_INSTALLATION/*; do
     done
 done
 #
-if [[ ! $UPDATED -eq 1 ]]; then
+if [[ ! $UPDATED -eq 1 ]] && [[ $(cat $VAR_TMP_FILE_COMMAND_OUTPUT) == *"Already up to date."* ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Command Line Tools was already up to date!"
+elif [[ ! $UPDATED -eq 1 ]] && [[ $(cat $VAR_TMP_FILE_COMMAND_OUTPUT) == *"Fast-forward"* ]]; then
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Command Line Tools has been updated without version changes!"
 fi
