@@ -72,14 +72,18 @@ for var_argument in "$@"; do
                 PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Search directory real path is '$(realpath $VAR_SEARCH_DIR)'..."
             fi
         ;;
-        "--WILDCARD")
-            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Searching for search string with wildcards before and after..."
-            SEARCH_WILDCARD=1
+        "--SORT")
+            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sorting output when done..."
+            SORT_OUTPUT=1
         ;;
         "--SUPPRESS-ERRORS")
             PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Suppressing warnings and errors in output..."
             SUPPRESS_PERMISSION_DENIED=1
-            ;;
+        ;;
+        "--WILDCARD")
+            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Searching for search string with wildcards before and after..."
+            SEARCH_WILDCARD=1
+        ;;
         "--"*)
             PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Invalid option given. Exiting..."
             exit 1
