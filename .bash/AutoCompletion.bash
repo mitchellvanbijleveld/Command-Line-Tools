@@ -73,18 +73,18 @@ AutoCompleteFunction() {
 
 
     if [[ $COMP_CWORD -eq 1 ]]; then
-        VAR_UTILITY_FOLDERS=$(find "GLOBAL_VAR_DIR_INSTALLATION" -maxdepth 1 -type d ! -iname '.*' -exec basename {} \;)
+        VAR_UTILITY_FOLDERS=$(find "GLOBAL_VAR_DIR_INSTALLATION" -maxdepth 1 -type d ! -iname '.*' -exec basename {} \; | tr '[:upper:]' '[:lower:]')
         COMPREPLY=( $(compgen -W "$VAR_UTILITY_FOLDERS" -- "$current_word") )
 
     elif [[ $COMP_CWORD -eq 2 ]]; then
         if [[ -d "GLOBAL_VAR_DIR_INSTALLATION/$var_utility" ]]; then
-            VAR_UTILITY_SCRIPT_FILES=$(find "GLOBAL_VAR_DIR_INSTALLATION/$var_utility" -maxdepth 1 -type f -iname "*.bash" -exec basename {} .bash \;)
+            VAR_UTILITY_SCRIPT_FILES=$(find "GLOBAL_VAR_DIR_INSTALLATION/$var_utility" -maxdepth 1 -type f -iname "*.bash" -exec basename {} .bash \; | tr '[:upper:]' '[:lower:]')
             COMPREPLY=( $(compgen -W "$VAR_UTILITY_SCRIPT_FILES" -- "$current_word") )
         fi
 
     elif [[ $COMP_CWORD -ge 3 ]]; then
         if [[ -f "GLOBAL_VAR_DIR_INSTALLATION/$var_utility/$var_utility_script.bash" ]]; then
-            VAR_SCRIPT_OPTIONS=$(grep -Eo -- '--[a-zA-Z-]+' "GLOBAL_VAR_DIR_INSTALLATION/$var_utility/$var_utility_script.bash" | sort -u)
+            VAR_SCRIPT_OPTIONS=$(grep -Eo -- '--[a-zA-Z-]+' "GLOBAL_VAR_DIR_INSTALLATION/$var_utility/$var_utility_script.bash" | tr '[:upper:]' '[:lower:]' | sort -u)
             COMPREPLY=( $(compgen -W "$VAR_SCRIPT_OPTIONS" -- "$current_word") )
         fi
     fi
