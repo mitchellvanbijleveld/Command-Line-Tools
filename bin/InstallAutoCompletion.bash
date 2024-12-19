@@ -96,10 +96,21 @@ if [[ ! -f $VAR_AUTOCOMPLETE_FILE_INSTALLATION_PATH ]]; then
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "AutoComplete file does not exist..."
 elif [[ -f $VAR_AUTOCOMPLETE_FILE_INSTALLATION_PATH ]]; then
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "AutoComplete file already exists..."
-    if [[ $VAR_REPLACE_FILE -ne 1 ]]; then
-        PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Not replacing AutoComplete file. Use '--replace' to overwrite. Exiting..."
+    #
+    var_current_autocomplete_file=$(shasum $VAR_AUTOCOMPLETE_FILE_INSTALLATION_PATH | awk '{print $1}')
+    var_updated_autocomplete_file=$(sed "s|GLOBAL_VAR_DIR_INSTALLATION|$GLOBAL_VAR_DIR_INSTALLATION|g" "$GLOBAL_VAR_DIR_INSTALLATION/.bash/AutoCompletion.bash" | shasum | awk '{print $1}')
+    #
+    if [[ $var_current_autocomplete_file != $var_updated_autocomplete_file ]]; then
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Updated file is available." 
+        if [[ $VAR_REPLACE_FILE -ne 1 ]]; then
+            PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Not replacing AutoComplete file. Use '--replace' to overwrite. Exiting..."
         exit 1
+        fi
+    else
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Installed file is the same as the latest available file. Nothing to do."
+        exit 0 
     fi
+    #
 fi
 #
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Installing AutoCompletion File..."
