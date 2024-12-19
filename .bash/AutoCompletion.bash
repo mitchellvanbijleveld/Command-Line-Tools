@@ -83,7 +83,7 @@ AutoCompleteFunction() {
         fi
 
     elif [[ $COMP_CWORD -ge 3 ]]; then
-        if [[ -f $(find "GLOBAL_VAR_DIR_INSTALLATION" -maxdepth 1 -iname "$var_utility/$var_utility_script.bash" -type f) ]]; then
+        if [[ -f $(find "GLOBAL_VAR_DIR_INSTALLATION/$var_utility" -maxdepth 1 -iname "$var_utility_script.bash" -type f) ]]; then
             VAR_SCRIPT_OPTIONS=$(grep -Eo -- '--[a-zA-Z-]+' "GLOBAL_VAR_DIR_INSTALLATION/$var_utility/$var_utility_script.bash" | tr '[:upper:]' '[:lower:]' | sort -u)
             COMPREPLY=( $(compgen -W "$VAR_SCRIPT_OPTIONS" -- "$current_word") )
         fi
