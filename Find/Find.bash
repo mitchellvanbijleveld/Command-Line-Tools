@@ -6,7 +6,7 @@
 ####################################################################################################
 VAR_UTILITY="Find"
 VAR_UTILITY_SCRIPT="Find"
-VAR_UTILITY_SCRIPT_VERSION="2024.12.15-1510"
+VAR_UTILITY_SCRIPT_VERSION="2024.12.19-1656"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="clear echo find mktemp PrintMessage sed shift sudo tr wc which"
 ####################################################################################################
 # UTILITY SCRIPT INFO - Find/Find
@@ -141,7 +141,7 @@ fi
 #
 $(which clear)
 #
-VAR_FIND_COMMAND="$(which find) '$VAR_SEARCH_DIR' -iname '$VAR_SEARCH_QUERY'"
+VAR_FIND_COMMAND="'$VAR_SEARCH_DIR' -iname '$VAR_SEARCH_QUERY'"
 #
 if [[ $VAR_DIRS_ONLY -eq 1 ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Searching for directories only in '$VAR_SEARCH_DIR' for '$VAR_SEARCH_QUERY'..."
@@ -169,7 +169,7 @@ if [[ $SUPPRESS_PERMISSION_DENIED -eq 1 ]]; then
     VAR_FIND_COMMAND="$VAR_FIND_COMMAND | grep -Ev '$SUPPRESS_STRING'"
 fi
 #
-PrintMessage "INFO" "$VAR_FIND_COMMAND"
+PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which find) "$VAR_FIND_COMMAND"
 ##################################################
 # PREPARE AND RUN FIND COMMAND
 ##################################################
