@@ -97,56 +97,55 @@ done
 ####################################################################################################
 # FUNCTIONS
 ####################################################################################################
-PrintTimeStamp(){
-    echo "$(date +'%Y-%m-%d %H:%M:%S') $(printf '%-32s' $var_utility/$var_utility_script) [ $(printf '%-8s' $var_log_level) ]"
+PrintLogLine_TimeStamp(){
+    echo $(date +'%Y-%m-%d %H:%M:%S')
+}
+#
+PrintLogLine_UtilityAndUtilityScript(){
+    # $1 = UTILITY
+    # $2 = UTILITY SCRIPT
+    echo "$(printf '%-24s' $1/$2)"
+}
+#
+PrintLogLine_LogLevel(){
+    # $1 = LOG LEVEL
+    echo "[ $(printf '%-6s' $1) ]"
 }
 #
 PrintMessage(){
-    # $1 = LOG LEVEL
-    var_log_level=$1
-    # $2 = UTILITY | COMMAND
-    var_utility=$2
-    # $3 = SCRIPT
-    var_utility_script=$3
-    # $4 = MESSAGE
-    var_message=$4
+    # $1 = LOG LEVEL  $2 = UTILITY    $3 = SCRIPT            $4 = MESSAGE | COMMAND
+    var_log_level=$1; var_utility=$2; var_utility_script=$3; var_message=$4
     #
     if [[ $var_log_level == "" ]] && [[ $var_utility == "" ]] && [[ $var_utility_script == "" ]] && [[ $var_message == "" ]]; then
         case $GLOBAL_VAR_DEBUG in
             1) return 0;; 
             *) echo; return 0;;
         esac
-    elif type $var_utility &> /dev/null && 
-       [[ $(echo $var_utility | tr '[:lower:]' '[:upper:]') != "FIND" && $(echo $var_utility_script | tr '[:lower:]' '[:upper:]') != "FIND" ]] &&
-       [[ $(echo $var_utility | tr '[:lower:]' '[:upper:]') != "SSH" && $(echo $var_utility_script | tr '[:lower:]' '[:upper:]') != "SSH" ]]; then
-        #
-        shift
+    elif command -v "$var_message" &>/dev/null; then
+        shift 3
         #
         var_executed_command=$(echo $@ | awk '{print $1}')
         #
-        export VAR_TMP_FILE_COMMAND_OUTPUT=$(mktemp "mitchellvanbijleveld-$VAR_UTILITY-$VAR_UTILITY_SCRIPT.XXXXXXXX" --tmpdir)
-        PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Created temporary file for script output: '$VAR_TMP_FILE_COMMAND_OUTPUT'..."
-        #
-        PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Executing command ($@) on behalf of $VAR_UTILITY/$VAR_UTILITY_SCRIPT..."
-        #
-        var_utility=$VAR_UTILITY
-        var_utility_script=$VAR_UTILITY_SCRIPT
+        export VAR_TMP_FILE_COMMAND_OUTPUT=$(mktemp "mitchellvanbijleveld-$var_utility-$var_utility_script.XXXXXXXX" --tmpdir)
         #
         case $GLOBAL_VAR_DEBUG in
-            1) eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
-                   echo "$(PrintTimeStamp) $var_executed_command: $command_output_line"
-               done
+            1) 
+                echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Created temporary file for script output: '$VAR_TMP_FILE_COMMAND_OUTPUT'..."
+                echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Executing command ($@) on behalf of $var_utility/$var_utility_script..."
+                eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
+                   echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel $var_log_level) $var_executed_command: $command_output_line"
+                done
             ;; 
             *) 
                 case $var_log_level in
                     "FATAL" | "INFO" | "WARN") eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT;;
                     *) eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT > /dev/null;;
                 esac
-                ;;
+            ;;
         esac
     elif [[ $var_log_level != "" ]] && [[ $var_utility != "" ]] && [[ $var_utility_script != "" ]] && [[ $var_message != "" ]]; then
         case $GLOBAL_VAR_DEBUG in
-            1) echo "$(PrintTimeStamp) $var_message"; return 0;;
+            1) echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel $var_log_level) $var_message"; return 0;;
             *) 
                 case $var_log_level in
                     "FATAL" | "INFO" | "WARN") echo "$var_message"; return 0;;
@@ -248,7 +247,9 @@ if [[ $VAR_UPDATE_FIRST -eq 1 ]]; then
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Exporting functions and scripts in order to update..."
     #
     export -f PrintMessage
-    export -f PrintTimeStamp
+    export -f PrintLogLine_TimeStamp
+    export -f PrintLogLine_UtilityAndUtilityScript
+    export -f PrintLogLine_LogLevel
     export GLOBAL_VAR_DEBUG=$GLOBAL_VAR_DEBUG
     export GLOBAL_VAR_DIR_INSTALLATION=$GLOBAL_VAR_DIR_INSTALLATION
     #
@@ -328,9 +329,11 @@ fi
 # EXPORT FUNCTIONS
 ####################################################################################################
 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Exporting Functions..."
-export -f PrintMessage
 export -f eval_FromFile
-export -f PrintTimeStamp
+export -f PrintMessage
+export -f PrintLogLine_TimeStamp
+export -f PrintLogLine_UtilityAndUtilityScript
+export -f PrintLogLine_LogLevel
 ####################################################################################################
 # EXPORT FUNCTIONS
 ####################################################################################################
