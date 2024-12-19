@@ -289,6 +289,7 @@ elif FindUtilityScriptFilePath "$GLOBAL_VAR_DIR_INSTALLATION/bin" "$VAR_UTILITY"
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Changing variable 'VAR_UTILITY' from '$VAR_UTILITY' to 'BIN'..."
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Changing variable 'VAR_UTILITY_SCRIPT' from '$VAR_UTILITY_SCRIPT' to '$VAR_UTILITY'..."
     VAR_UTILITY_SCRIPT=$VAR_UTILITY; VAR_UTILITY="BIN"
+    ProcessArguments "$@"
 else
     die_UtilityNotFound "Utility '$VAR_UTILITY' not found!"  
 fi
