@@ -155,17 +155,25 @@ fi
 #
 PrintMessage
 #
+##################################################
+##################################################
+# PREPARE AND RUN FIND COMMAND
+##################################################
 VAR_FIND_COMMAND="$VAR_FIND_COMMAND 2>&1"
 #
 if [[ $SORT_OUTPUT -eq 1 ]]; then
     VAR_FIND_COMMAND="$VAR_FIND_COMMAND | sort"
 fi
-
+#
 if [[ $SUPPRESS_PERMISSION_DENIED -eq 1 ]]; then
     VAR_FIND_COMMAND="$VAR_FIND_COMMAND | grep -Ev '$SUPPRESS_STRING'"
 fi
 #
 PrintMessage "INFO" "$VAR_FIND_COMMAND"
+##################################################
+# PREPARE AND RUN FIND COMMAND
+##################################################
+##################################################
 #
 PrintMessage
 #
