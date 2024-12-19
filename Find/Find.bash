@@ -141,24 +141,31 @@ fi
 #
 $(which clear)
 #
+VAR_FIND_COMMAND="$(which find) '$VAR_SEARCH_DIR' -iname '$VAR_SEARCH_QUERY'"
+#
 if [[ $VAR_DIRS_ONLY -eq 1 ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Searching for directories only in '$VAR_SEARCH_DIR' for '$VAR_SEARCH_QUERY'..."
-    COMMAND_SUFFIX="-type d"
+    VAR_FIND_COMMAND="$VAR_FIND_COMMAND -type d"
 elif [[ $VAR_FILES_ONLY -eq 1 ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Searching for files only in '$VAR_SEARCH_DIR' for '$VAR_SEARCH_QUERY'..."
-    COMMAND_SUFFIX="-type f"
+    VAR_FIND_COMMAND="$VAR_FIND_COMMAND -type f"
 else
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Searching in '$VAR_SEARCH_DIR' for '$VAR_SEARCH_QUERY'..."
 fi
 #
 PrintMessage
 #
-if [[ $SUPPRESS_PERMISSION_DENIED -eq 1 ]]; then
-    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Supressing '$SUPPRESS_STRING' warnings/errors..."
-    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "$VAR_SEARCH_QUERY" $COMMAND_SUFFIX | grep -Ev "$SUPPRESS_STRING" 
-else
-    PrintMessage "INFO" $(which find) "$VAR_SEARCH_DIR" -iname "$VAR_SEARCH_QUERY" $COMMAND_SUFFIX
+VAR_FIND_COMMAND="$VAR_FIND_COMMAND 2>&1"
+#
+if [[ $SORT_OUTPUT -eq 1 ]]; then
+    VAR_FIND_COMMAND="$VAR_FIND_COMMAND | sort"
 fi
+
+if [[ $SUPPRESS_PERMISSION_DENIED -eq 1 ]]; then
+    VAR_FIND_COMMAND="$VAR_FIND_COMMAND | grep -Ev '$SUPPRESS_STRING'"
+fi
+#
+PrintMessage "INFO" "$VAR_FIND_COMMAND"
 #
 PrintMessage
 #
