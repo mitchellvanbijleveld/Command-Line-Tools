@@ -6,7 +6,7 @@
 ####################################################################################################
 VAR_UTILITY="Find"
 VAR_UTILITY_SCRIPT="Find"
-VAR_UTILITY_SCRIPT_VERSION="2024.12.19-1656"
+VAR_UTILITY_SCRIPT_VERSION="2024.12.22-0011"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="clear echo find mktemp PrintMessage sed shift sudo tr wc which"
 ####################################################################################################
 # UTILITY SCRIPT INFO - Find/Find
@@ -80,6 +80,15 @@ for var_argument in "$@"; do
             PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Suppressing warnings and errors in output..."
             SUPPRESS_PERMISSION_DENIED=1
         ;;
+        "--RUN-COMMAND")
+            if type $2 &> /dev/null && [[ $2 == *"{}"* ]]; then
+                PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Running command '$2' for every found item..."
+                VAR_RUN_COMMAND=$2
+            else
+                PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Given command '$2' can not be executed. Command should include '{}'. Exiting..."
+                exit 1
+            fi
+        ;;
         "--WILDCARD")
             PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Searching for search string with wildcards before and after..."
             SEARCH_WILDCARD=1
@@ -151,6 +160,10 @@ elif [[ $VAR_FILES_ONLY -eq 1 ]]; then
     VAR_FIND_COMMAND="$VAR_FIND_COMMAND -type f"
 else
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Searching in '$VAR_SEARCH_DIR' for '$VAR_SEARCH_QUERY'..."
+fi
+#
+if [[ $VAR_RUN_COMMAND != "" ]]; then
+    VAR_FIND_COMMAND="$VAR_FIND_COMMAND -exec $VAR_RUN_COMMAND \;"
 fi
 #
 PrintMessage
