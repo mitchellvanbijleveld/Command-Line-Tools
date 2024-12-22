@@ -230,6 +230,32 @@ FindUtilityScriptFilePath(){
         return 1
     fi
 }
+#
+ForEachUtilityScript(){
+    # $1 = FUNCTION TO EXECUTE
+    for var_utility_folder in $GLOBAL_VAR_DIR_INSTALLATION/*; do
+        if [[ -d $var_utility_folder ]]; then
+            var_utility_folder_basename=$(basename $var_utility_folder)
+        else
+            continue
+        fi
+        #
+        for var_utility_script_file in $var_utility_folder/*; do
+            if [[ -f $var_utility_script_file ]] && [[ $var_utility_script_file == *".bash" ]]; then
+                var_utility_script_file_basename=$(basename $var_utility_script_file)
+                #
+                # 
+                #
+                $1 $@
+                #
+                #
+                #
+            else
+                continue
+            fi
+        done
+    done
+}
 ####################################################################################################
 # FUNCTIONS
 ####################################################################################################
@@ -330,11 +356,12 @@ fi
 # EXPORT FUNCTIONS
 ####################################################################################################
 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Exporting Functions..."
-export -f eval_FromFile
 export -f PrintMessage
 export -f PrintLogLine_TimeStamp
 export -f PrintLogLine_UtilityAndUtilityScript
 export -f PrintLogLine_LogLevel
+export -f eval_FromFile
+export -f ForEachUtilityScript
 ####################################################################################################
 # EXPORT FUNCTIONS
 ####################################################################################################
