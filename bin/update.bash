@@ -107,21 +107,21 @@ PrintVersionComparison(){
     # $3 = MESSAGE
     if [[ $2 == "" ]] && [[ $4 == "" ]] &&
        [[ $1 == "" ]] && [[ $3 == "da39a3ee5e6b4b0d3255bfef95601890afd80709" ]]; then
-        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$5 has been installed as an empty Utility Script for future use!"
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - $5 has been installed as an empty Utility Script for future use!"
     elif [[ $2 == "" ]] && [[ $4 == "" ]] &&
          [[ $1 != "" ]] && [[ $3 != "da39a3ee5e6b4b0d3255bfef95601890afd80709" ]]; then
-        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$5 has been installed with version $1!"
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - $5 has been installed with version $1!"
     elif [[ $2 == "" ]] && [[ $4 == "da39a3ee5e6b4b0d3255bfef95601890afd80709" ]] &&
          [[ $1 != "" ]] && [[ $3 != "da39a3ee5e6b4b0d3255bfef95601890afd80709" ]]; then
-        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$5 is ready to use! Version $1 is now available!"
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - $5 is ready to use! Version $1 is now available!"
     elif [[ $1 > $2 ]]; then
-        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$5 has been updated from version $2 to $1!"
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - $5 has been updated from version $2 to $1!"
         UPDATED=1
     elif [[ $1 < $2 ]]; then
-        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$5 has been downgraded from version $2 to $1!"
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - $5 has been downgraded from version $2 to $1!"
         UPDATED=1
     elif [[ $1 == $2 ]] && [[ $3 != $4 ]]; then
-        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$5 has a different shasum after updating (changed from $4 to $3)!"
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - $5 has a different shasum after updating (changed from $4 to $3)!"
         UPDATED=1
     elif [[ $1 == $2 ]] && [[ $3 == $4 ]]; then
         PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$5 is already up to date ($2)!"
