@@ -64,6 +64,41 @@ done
 ####################################################################################################
 # FUNCTIONS
 ####################################################################################################
+WriteUtilityScriptInfo(){
+    mkdir -p "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename"
+    var_utility_script_file_basename=$(basename $var_utility_script_file)
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Getting current shasum version for Utility Script '$var_utility_script_file_basename'..."
+    var_utility_script_version=$(eval_FromFile "VAR_UTILITY_SCRIPT_VERSION" $var_utility_script_file; echo $VAR_UTILITY_SCRIPT_VERSION)
+    var_utility_script_shasum=$(shasum $var_utility_script_file | awk '{print $1}')
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Current version for Utility Script is $var_utility_script_version"
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Current shasum for Utility Script is $var_utility_script_shasum"
+    echo $var_utility_script_version > "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename"
+    echo $var_utility_script_shasum > "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename.shasum"
+}
+#
+CompareUtilityScriptInfo(){
+    var_utility_script_file_basename=$(basename $var_utility_script_file)
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Getting new version and shasum for Utility Script '$var_utility_script_file_basename'..."
+    var_utility_script_version=$(eval_FromFile "VAR_UTILITY_SCRIPT_VERSION" $var_utility_script_file; echo $VAR_UTILITY_SCRIPT_VERSION)
+    var_utility_script_shasum=$(shasum $var_utility_script_file | awk '{print $1}')
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "New version for Utility Script is $var_utility_script_version"
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "New shasum for Utility Script is $var_utility_script_shasum"
+    #
+    if [[ -f "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename" ]]; then
+        var_utility_script_old_version=$(cat "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename")
+    else
+        var_utility_script_old_version=""
+    fi
+    #
+    if [[ -f "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename.shasum" ]]; then
+        var_utility_script_old_shasum=$(cat "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename.shasum")
+    else
+        var_utility_script_old_shasum=""
+    fi
+    #
+    PrintVersionComparison "$var_utility_script_version" "$var_utility_script_old_version" "$var_utility_script_shasum" "$var_utility_script_old_shasum" "Utility Script $var_utility_folder_basename/$var_utility_script_file_basename"
+}
+#
 PrintVersionComparison(){
     # $1 = CURRENT VERSION
     # $2 = PREVIOUS VERSION
@@ -109,30 +144,7 @@ PrintVersionComparison(){
 ####################################################################################################
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Checking for updates..."
 #
-for var_utility_folder in $GLOBAL_VAR_DIR_INSTALLATION/*; do
-    if [[ -d $var_utility_folder ]]; then
-        var_utility_folder_basename=$(basename $var_utility_folder)
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Checking for Utility Scripts in Utility '$var_utility_folder_basename'..."
-        mkdir "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename"
-    else
-        continue
-    fi
-    #
-    for var_utility_script_file in $var_utility_folder/*; do
-        if [[ -f $var_utility_script_file ]] && [[ $var_utility_script_file == *".bash" ]]; then
-            var_utility_script_file_basename=$(basename $var_utility_script_file)
-            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Getting current shasum version for Utility Script '$var_utility_script_file_basename'..."
-            var_utility_script_version=$(eval_FromFile "VAR_UTILITY_SCRIPT_VERSION" $var_utility_script_file; echo $VAR_UTILITY_SCRIPT_VERSION)
-            var_utility_script_shasum=$(shasum $var_utility_script_file | awk '{print $1}')
-            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Current version for Utility Script is $var_utility_script_version"
-            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Current shasum for Utility Script is $var_utility_script_shasum"
-            echo $var_utility_script_version > "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename"
-            echo $var_utility_script_shasum > "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename.shasum"
-        else
-            continue
-        fi
-    done
-done
+ForEachUtilityScript WriteUtilityScriptInfo
 #
 PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Getting current version and shasum for bin..."
 VAR_OLD_VERSION=$(eval_FromFile "VAR_UTILITY_SCRIPT_VERSION" "$GLOBAL_VAR_DIR_INSTALLATION/mitchellvanbijleveld"; echo $VAR_UTILITY_SCRIPT_VERSION)
@@ -151,42 +163,7 @@ PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "New shasum for bin is
 #
 PrintVersionComparison "$VAR_NEW_VERSION" "$VAR_OLD_VERSION" "$VAR_NEW_SHASUM" "$VAR_OLD_SHASUM" "Command Line Tools"
 #
-for var_utility_folder in $GLOBAL_VAR_DIR_INSTALLATION/*; do
-    if [[ -d $var_utility_folder ]]; then
-        var_utility_folder_basename=$(basename $var_utility_folder)
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Checking for Utility Scripts in Utility '$var_utility_folder_basename'..."
-    else
-        continue
-    fi
-    #
-    for var_utility_script_file in $var_utility_folder/*; do
-        if [[ -f $var_utility_script_file ]] && [[ $var_utility_script_file == *".bash" ]]; then
-            var_utility_script_file_basename=$(basename $var_utility_script_file)
-            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Getting new version and shasum for Utility Script '$var_utility_script_file_basename'..."
-            var_utility_script_version=$(eval_FromFile "VAR_UTILITY_SCRIPT_VERSION" $var_utility_script_file; echo $VAR_UTILITY_SCRIPT_VERSION)
-            var_utility_script_shasum=$(shasum $var_utility_script_file | awk '{print $1}')
-            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "New version for Utility Script is $var_utility_script_version"
-            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "New shasum for Utility Script is $var_utility_script_shasum"
-            #
-            if [[ -f "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename" ]]; then
-                var_utility_script_old_version=$(cat "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename")
-            else
-                var_utility_script_old_version=""
-            fi
-            #
-            if [[ -f "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename.shasum" ]]; then
-                var_utility_script_old_shasum=$(cat "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename.shasum")
-            else
-                var_utility_script_old_shasum=""
-            fi
-            #
-            PrintVersionComparison "$var_utility_script_version" "$var_utility_script_old_version" "$var_utility_script_shasum" "$var_utility_script_old_shasum" "Utility Script $var_utility_folder_basename/$var_utility_script_file_basename"
-            #
-        else
-            continue
-        fi
-    done
-done
+ForEachUtilityScript CompareUtilityScriptInfo
 #
 PrintMessage
 #
