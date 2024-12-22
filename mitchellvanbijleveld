@@ -21,7 +21,7 @@ VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname e
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
-GLOBAL_VAR_DIR_INSTALLATION=$(dirname $(realpath $0))
+export GLOBAL_VAR_DIR_INSTALLATION=$(dirname $(realpath $0))
 GLOBAL_VAR_DIR_ETC="/etc/mitchellvanbijleveld/Command-Line-Tools"
 GLOBAL_VAR_DIR_TMP="/tmp/mitchellvanbijleveld/Command-Line-Tools"
 ####################################################################################################
@@ -50,7 +50,7 @@ for var_argument in "$@"; do
     #
     case $var_argument_CAPS in
         "--DEBUG")
-            GLOBAL_VAR_DEBUG=1
+            export GLOBAL_VAR_DEBUG=1
             PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Started logging in debug style"
         ;;
         "--UPDATE-FIRST")
@@ -100,17 +100,20 @@ done
 PrintLogLine_TimeStamp(){
     echo $(date +'%Y-%m-%d %H:%M:%S')
 }
+export -f PrintLogLine_TimeStamp
 #
 PrintLogLine_UtilityAndUtilityScript(){
     # $1 = UTILITY
     # $2 = UTILITY SCRIPT
     echo "$(printf '%-24s' $1/$2)"
 }
+export -f PrintLogLine_UtilityAndUtilityScript
 #
 PrintLogLine_LogLevel(){
     # $1 = LOG LEVEL
     echo "[ $(printf '%-6s' $1) ]"
 }
+export -f PrintLogLine_LogLevel
 #
 PrintMessage(){
     # $1 = LOG LEVEL  $2 = UTILITY    $3 = SCRIPT            $4 = MESSAGE | COMMAND
@@ -155,6 +158,7 @@ PrintMessage(){
         esac
     fi
 }
+export -f PrintMessage
 #
 ProcessArguments "$@"
 #
@@ -167,6 +171,7 @@ eval_FromFile(){
         eval "$1="
     fi
 }
+export -f eval_FromFile
 #
 die_UtilityNotFound () {
     # $1 = MESSAGE
@@ -256,6 +261,7 @@ ForEachUtilityScript(){
         done
     done
 }
+export -f ForEachUtilityScript
 ####################################################################################################
 # FUNCTIONS
 ####################################################################################################
@@ -270,14 +276,7 @@ ForEachUtilityScript(){
 ####################################################################################################
 ####################################################################################################
 if [[ $VAR_UPDATE_FIRST -eq 1 ]]; then
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Exporting functions and scripts in order to update..."
-    #
-    export -f PrintMessage
-    export -f PrintLogLine_TimeStamp
-    export -f PrintLogLine_UtilityAndUtilityScript
-    export -f PrintLogLine_LogLevel
-    export GLOBAL_VAR_DEBUG=$GLOBAL_VAR_DEBUG
-    export GLOBAL_VAR_DIR_INSTALLATION=$GLOBAL_VAR_DIR_INSTALLATION
+    export UTILITY_SCRIPT_VAR_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-bin-update-before-run.XXXXXXXX" --tmpdir)
     #
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Starting update script..."
     $(which bash) "$GLOBAL_VAR_DIR_INSTALLATION/bin/update.bash"
@@ -350,36 +349,6 @@ fi
 #
 #
 #
-#
-####################################################################################################
-####################################################################################################
-# EXPORT FUNCTIONS
-####################################################################################################
-PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Exporting Functions..."
-export -f PrintMessage
-export -f PrintLogLine_TimeStamp
-export -f PrintLogLine_UtilityAndUtilityScript
-export -f PrintLogLine_LogLevel
-export -f eval_FromFile
-export -f ForEachUtilityScript
-####################################################################################################
-# EXPORT FUNCTIONS
-####################################################################################################
-####################################################################################################
-#
-####################################################################################################
-####################################################################################################
-# EXPORT GLOBAL VARIABLES
-####################################################################################################
-PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Exporting Global Variables..."
-export GLOBAL_VAR_DEBUG=$GLOBAL_VAR_DEBUG
-export GLOBAL_VAR_DIR_INSTALLATION=$GLOBAL_VAR_DIR_INSTALLATION
-export GLOBAL_VAR_DIR_ETC=$GLOBAL_VAR_DIR_ETC
-export GLOBAL_VAR_DIR_TMP=$GLOBAL_VAR_DIR_TMP
-####################################################################################################
-# EXPORT GLOBAL VARIABLES
-####################################################################################################
-####################################################################################################
 #
 ####################################################################################################
 ####################################################################################################
