@@ -429,7 +429,7 @@ PrintMessage "CONFIG" "mitchell" "vanbijleveld" "UTILITY_SCRIPT_VAR_DIR_TMP   = 
 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Fetching dependencies from utility script..."
 eval_FromFile "VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" $VAR_UTILITY_SCRIPT_FILE_PATH
 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Starting script to check dependencies..."
-$(which bash) "$GLOBAL_VAR_DIR_INSTALLATION/bin/CheckDependencies.bash" $VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS
+$(which bash) "$GLOBAL_VAR_DIR_INSTALLATION/bin/CheckDependencies.bash" $VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS "--run-in-background"
 #
 if [[ $? -eq 1 ]]; then
     PrintMessage "FATAL" "mitchell" "vanbijleveld" "Could not start Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' because dependencies are missing. Exiting..."
