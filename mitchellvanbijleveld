@@ -275,7 +275,11 @@ export -f ForEachUtilityScript
 # CHECK IF UPDATE REQUESTED
 ####################################################################################################
 ####################################################################################################
-if [[ $VAR_UPDATE_FIRST -eq 1 ]]; then
+if [[ $VAR_UPDATE_FIRST -eq 1 ]] && [[ $VAR_UTILITY == "BIN" ]] && [[ $VAR_UTILITY_SCRIPT == "UPDATE" ]]; then
+    PrintMessage "INFO" "mitchell" "vanbijleveld" "Skipping automatic update because 'bin' 'update' is already being called..."
+elif [[ $VAR_UPDATE_FIRST -eq 1 ]]; then
+    PrintMessage "INFO" "mitchell" "vanbijleveld" "Updating first..."
+    #
     export UTILITY_SCRIPT_VAR_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-bin-update-before-run.XXXXXXXX" --tmpdir)
     #
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Starting update script..."
