@@ -40,6 +40,9 @@ for var_argument in "$@"; do
     var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
     #
     case $var_argument_CAPS in
+        "--RUN-IN-BACKGROUND")
+            RUN_IN_BACKGROUND=1
+        ;;
         "--"*)
             PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Invalid option given. Exiting..."
             exit 1
@@ -65,7 +68,20 @@ done
 ####################################################################################################
 # FUNCTIONS
 ####################################################################################################
+FetchAllDependencies(){
+    for var_dependency in $(eval_FromFile "VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" $var_utility_script_file; echo $VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS); do
+        VAR_DEPENDENCIES+=($var_dependency)
+    done
+}
 #
+FindNonWorkingUtilityScript(){
+    for var_dependency_missing in ${VAR_DEPENDENCIES_MISSING[@]}; do
+        if [[ $(eval_FromFile "VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" "$var_utility_script_file"; echo "$VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS") == *"$var_dependency_missing"* ]]; then
+            VAR_NON_WORKING_UTILITY_SCRIPTS+=("$var_utility_folder_basename/$var_utility_script_file_basename")
+            break
+        fi
+    done
+}
 ####################################################################################################
 # FUNCTIONS
 ####################################################################################################
@@ -80,53 +96,55 @@ done
 # START UTILITY SCRIPT
 ####################################################################################################
 if [[ ${#VAR_DEPENDENCIES[@]} -eq 0 ]]; then
-    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "No dependencies forwarded, checking all dependencies..."
-    for var_utility_folder in $GLOBAL_VAR_DIR_INSTALLATION/*; do
-        if [[ -d $var_utility_folder ]]; then
-            var_utility_folder_basename=$(basename $var_utility_folder)
-            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Checking for Utility Scripts in Utility '$var_utility_folder_basename'..."
-        else
-            continue
-        fi
-        #
-        for var_utility_script_file in $var_utility_folder/*; do
-            if [[ -f $var_utility_script_file ]] && [[ $var_utility_script_file == *".bash" ]]; then
-                var_utility_script_file_basename=$(basename $var_utility_script_file)
-                PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Getting dependencies for Utility Script '$var_utility_script_file_basename'..."
-                #
-                for var_dependency in $(eval_FromFile "VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" $var_utility_script_file; echo $VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS); do
-                    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Adding dependency '$var_dependency' to list of dependencies to check..."
-                    VAR_DEPENDENCIES+=($var_dependency)
-                done
-                #
-            else
-                continue
-            fi
-        done
-    done
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "No dependencies passed with arguments..."
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Checking dependencies for all Utility Scripts..."
+    #
+    ForEachUtilityScript FetchAllDependencies 
 else
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Dependencies passed with arguments..."
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Adding dependencies passed with arguments to the list of dependencies to check..."
+    #
     for var_dependency in $@; do
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Adding dependency '$var_dependency' to list of dependencies to check..."
         VAR_DEPENDENCIES+=($var_dependency)
     done
 fi
 #
-PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sorting dependency list and filtering unique dependencies..."
 VAR_DEPENDENCIES=($(printf "%s\n" ${VAR_DEPENDENCIES[@]} | sort -f | uniq))
 #
 for var_dependency in ${VAR_DEPENDENCIES[@]}; do
-    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Checking dependency '$var_dependency'..."
-    if type $var_dependency &> /dev/null; then
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Dependency OK     : $var_dependency"
-    else
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Dependency NOT OK : $var_dependency"
+    if ! type $var_dependency &> /dev/null; then
         VAR_DEPENDENCIES_MISSING+=($var_dependency)
     fi
 done
 #
-if [[ ! ${#VAR_DEPENDENCIES_MISSING[@]} -eq 0 ]]; then
-    for var_dependency_missing in ${VAR_DEPENDENCIES_MISSING[@]}; do
-        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Deoendency '$var_dependency_missing' missing on this system."
-    done
+for var_dependency_missing in ${VAR_DEPENDENCIES_MISSING[@]}; do
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Dependency '$var_dependency_missing' missing on this system."
+done
+#
+if [[ $RUN_IN_BACKGROUND -eq 1 ]] && [[ ${#VAR_DEPENDENCIES_MISSING[@]} -eq 0 ]]; then
+    exit 0
+elif [[ $RUN_IN_BACKGROUND -eq 1 ]] && [[ ${#VAR_DEPENDENCIES_MISSING[@]} -ne 0 ]]; then
+    PrintMessage
     exit 1
+elif [[ $RUN_IN_BACKGROUND -eq 0 ]] && [[ ${#VAR_DEPENDENCIES_MISSING[@]} -eq 0 ]]; then
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "All dependencies are available. All Utility Scripts should work."
+    exit 0
+elif [[ $RUN_IN_BACKGROUND -eq 0 ]] && [[ ${#VAR_DEPENDENCIES_MISSING[@]} -ne 0 ]]; then
+    PrintMessage
 fi
+#
+#
+#
+ForEachUtilityScript FindNonWorkingUtilityScript
+#
+VAR_NON_WORKING_UTILITY_SCRIPTS=($(printf "%s\n" ${VAR_NON_WORKING_UTILITY_SCRIPTS[@]} | sort -f | uniq))
+#
+for var_non_working_utility_script in ${VAR_NON_WORKING_UTILITY_SCRIPTS[@]}; do
+    var_missing_dependencies=""
+    for var_dependency_missing in ${VAR_DEPENDENCIES_MISSING[@]}; do
+        if [[ $(eval_FromFile "VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" "$GLOBAL_VAR_DIR_INSTALLATION/$var_non_working_utility_script"; echo "$VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS") == *"$var_dependency_missing"* ]]; then
+            var_missing_dependencies="$var_missing_dependencies '$var_dependency_missing'"
+        fi
+    done
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Utility Script '${var_non_working_utility_script%.bash}' will not work because of missing dependencies: $(echo $var_missing_dependencies)"
+done
