@@ -6,8 +6,8 @@
 ####################################################################################################
 VAR_UTILITY="Hello"
 VAR_UTILITY_SCRIPT="World"
-VAR_UTILITY_SCRIPT_VERSION="2024.11.26-2241"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="PrintMessage"
+VAR_UTILITY_SCRIPT_VERSION="2024.12.23-0247"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit PrintMessage shift tr"
 ####################################################################################################
 # UTILITY SCRIPT INFO - HELLO/WORLD
 ####################################################################################################
@@ -21,7 +21,7 @@ VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="PrintMessage"
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
-#
+VAR_FIRST_NAME="World"
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
@@ -40,6 +40,15 @@ for var_argument in "$@"; do
     var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
     #
     case $var_argument_CAPS in
+        "--FIRSTNAME")
+            if [[ $2 == "" ]]; then
+                PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The flag --firstname should have a value. Exiting..."
+                exit 1
+            else
+                VAR_FIRST_NAME=$2
+                VAR_NAME_CHANGED=1
+            fi
+        ;;
         "--"*)
             PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Invalid option given. Exiting..."
             exit 1
@@ -79,10 +88,16 @@ done
 # START UTILITY SCRIPT
 ####################################################################################################
 PrintMessage
-PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Hello, World! If you see this message, the Command Line Tools for Linux/macOS are working as expected!"
-if [[ $@ == "" ]]; then
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Try adding some flags (--FLAG) to see if they are recognized!"
+#
+PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Hello, $VAR_FIRST_NAME! If you see this message, the Command Line Tools for Linux/macOS are working as expected!"
+#
+if [[ $VAR_NAME_CHANGED -ne 1 ]]; then
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Try adding the flag --firstname followed by your first name to customize your greeting!"
+    PrintMessage
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Run something like 'mitchellvanbijleveld hello world --firstname HelloWorld'!"
 else
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The script is run with the following arguments: '$(echo $@)'"
+    PrintMessage
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "You changed your name to '$VAR_FIRST_NAME' by using the flag --firstname!"
 fi
+#
 PrintMessage
