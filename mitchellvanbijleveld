@@ -267,7 +267,11 @@ if [[ $VAR_ENABLE_DEBUG -eq 1 ]] && [[ $VAR_BIN_RESTARTED -ne 1 ]]; then
     exit 0
 fi
 #
-if [[ $VAR_UPDATE_FIRST -eq 1 ]] && [[ $VAR_UPDATE_DONE -ne 1 ]]; then
+if [[ $VAR_UPDATE_FIRST -eq 1 ]] && [[ $VAR_UPDATE_DONE -ne 1 ]] && [[ $VAR_UTILITY == "BIN" ]] && [[ $VAR_UTILITY_SCRIPT == "UPDATE" ]]; then
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Not updating automatically because 'bin' 'update' is already requested by user..."
+elif [[ $VAR_UPDATE_FIRST -eq 1 ]] && [[ $VAR_UPDATE_DONE -ne 1 ]] && [[ $VAR_UTILITY == "UPDATE" ]]; then
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Not updating automatically because 'update' is already requested by user..."
+elif [[ $VAR_UPDATE_FIRST -eq 1 ]] && [[ $VAR_UPDATE_DONE -ne 1 ]]; then
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Updating bin, utilities and utility scripts..."
     #
     export UTILITY_SCRIPT_VAR_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-bin-update-before-run.XXXXXXXX" --tmpdir)
