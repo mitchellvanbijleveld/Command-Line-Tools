@@ -48,7 +48,13 @@ for var_argument in "$@"; do
     case $var_argument_CAPS in
         "--DEBUG")
             export GLOBAL_VAR_DEBUG=1
-            PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Started logging in debug style"
+            PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Enabling DEBUG..."
+            if [[ $VAR_RESTARTED -ne 1 ]]; then
+                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Restarting script to enable debugging..."
+                export VAR_RESTARTED=1
+                "$(realpath $0)" "$@"
+                exit 0
+            fi
         ;;
         "--UPDATE-FIRST")
             if [[ $VAR_UPDATED -eq 0 ]]; then
