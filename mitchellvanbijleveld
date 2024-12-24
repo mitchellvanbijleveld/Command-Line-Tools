@@ -6,7 +6,7 @@
 ####################################################################################################
 # VAR_UTILITY="mitchell"
 # VAR_UTILITY_SCRIPT="vanbijleveld"
-VAR_UTILITY_SCRIPT_VERSION="2024.12.22-2158"
+VAR_UTILITY_SCRIPT_VERSION="2024.12.24-0134"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname echo eval exit find grep mktemp printf realpath sed shift tee tr type which"
 ####################################################################################################
 # BIN INFO - MITCHELL/VANBIJLEVELD
@@ -41,9 +41,6 @@ ProcessArguments() {
 #
 VAR_UTILITY_SCRIPT_ARGUMENTS=()
 #
-VAR_UTILITY_REMOVED_FROM_ARGUMENTS=0
-VAR_UTILITY_SCRIPT_REMOVED_FROM_ARGUMENTS=0
-#
 for var_argument in "$@"; do
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Processing argument '$var_argument'..."
     var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
@@ -62,18 +59,16 @@ for var_argument in "$@"; do
             fi
         ;;
         *)
-            if [[ $VAR_UTILITY == "" ]] && [[ $VAR_UTILITY != "--"* ]]; then
+            if [[ $VAR_UTILITY == "" ]] && [[ $var_argument_CAPS != "--"* ]]; then
                 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Setting '$var_argument' as VAR_UTILITY..."
                 VAR_UTILITY=$var_argument_CAPS
-            elif [[ $VAR_UTILITY_SCRIPT == "" ]] && [[ $VAR_UTILITY != "--"* ]]; then
+            elif [[ $VAR_UTILITY_SCRIPT == "" ]] && [[ $var_argument_CAPS != "--"* ]]; then
                 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Setting '$var_argument' as VAR_UTILITY_SCRIPT..."
                 VAR_UTILITY_SCRIPT=$var_argument_CAPS
-            elif [[ $VAR_UTILITY_SCRIPT == $var_argument_CAPS ]] && [[ $VAR_UTILITY_SCRIPT_REMOVED_FROM_ARGUMENTS -eq 0 ]]; then
-                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Not adding first occurence of VAR_UTILITY_SCRIPT '$VAR_UTILITY_SCRIPT' to VAR_UTILITY_SCRIPT_ARGUMENTS..."
-                VAR_UTILITY_SCRIPT_REMOVED_FROM_ARGUMENTS=1
-            elif [[ $VAR_UTILITY == $var_argument_CAPS ]] && [[ $VAR_UTILITY_REMOVED_FROM_ARGUMENTS -eq 0 ]] && [[ $VAR_UTILITY_SCRIPT_REMOVED_FROM_ARGUMENTS -eq 0 ]]; then
+            elif [[ $VAR_UTILITY == $var_argument_CAPS ]]; then
                 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Not adding first occurence of VAR_UTILITY '$VAR_UTILITY' to VAR_UTILITY_SCRIPT_ARGUMENTS..."
-                VAR_UTILITY_REMOVED_FROM_ARGUMENTS=1
+            elif [[ $VAR_UTILITY_SCRIPT == $var_argument_CAPS ]]; then
+                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Not adding first occurence of VAR_UTILITY_SCRIPT '$VAR_UTILITY_SCRIPT' to VAR_UTILITY_SCRIPT_ARGUMENTS..."
             else
                 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Ignoring argument '$var_argument'. Forwarding argument to Utility Script..."
                 VAR_UTILITY_SCRIPT_ARGUMENTS+=("$var_argument")
@@ -159,8 +154,6 @@ PrintMessage(){
     fi
 }
 export -f PrintMessage
-#
-ProcessArguments "$@"
 #
 eval_FromFile(){
     # $1 = NAME OF VARIABLE
@@ -298,7 +291,7 @@ fi
 ####################################################################################################
 #
 #
-#
+ProcessArguments "$@"
 #
 #
 ####################################################################################################
@@ -318,7 +311,6 @@ elif FindUtilityScriptFilePath "$GLOBAL_VAR_DIR_INSTALLATION/bin" "$VAR_UTILITY"
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Changing variable 'VAR_UTILITY' from '$VAR_UTILITY' to 'BIN'..."
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Changing variable 'VAR_UTILITY_SCRIPT' from '$VAR_UTILITY_SCRIPT' to '$VAR_UTILITY'..."
     VAR_UTILITY_SCRIPT=$VAR_UTILITY; VAR_UTILITY="BIN"
-    ProcessArguments "$@"
 else
     die_UtilityNotFound "Utility '$VAR_UTILITY' not found!"  
 fi
@@ -339,7 +331,6 @@ elif FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY"; then
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script '$VAR_UTILITY' found in Utility '$VAR_UTILITY'!"
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Changing variable 'VAR_UTILITY_SCRIPT' from '$VAR_UTILITY_SCRIPT' to '$VAR_UTILITY'..."
     VAR_UTILITY_SCRIPT=$VAR_UTILITY
-    ProcessArguments "$@"
 elif [[ $VAR_UTILITY_SCRIPT == "" ]]; then
     die_UtilityScriptNotFound "No Utility Script specified!"
 else
@@ -351,7 +342,7 @@ fi
 ####################################################################################################
 #
 #
-#
+ProcessArguments "$@"
 #
 #
 ####################################################################################################
