@@ -346,8 +346,8 @@ ProcessArguments "$@"
 # EXPORT UTILITY SCRIPT VARIABLES
 ####################################################################################################
 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Exporting Utility Script Variables..."
-export UTILITY_SCRIPT_VAR_DIR_ETC=$(echo $VAR_UTILITY_SCRIPT_FILE_PATH | sed "s|$GLOBAL_VAR_DIR_INSTALLATION|$GLOBAL_VAR_DIR_ETC|; s|.bash$||")
-#export UTILITY_SCRIPT_VAR_DIR_TMP=$(echo $VAR_UTILITY_SCRIPT_FILE_PATH | sed "s|$GLOBAL_VAR_DIR_INSTALLATION|$GLOBAL_VAR_DIR_TMP|; s|.bash$||")
+export UTILITY_SCRIPT_VAR_DIR_ETC="$GLOBAL_VAR_DIR_ETC/$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))/$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')"
+#export UTILITY_SCRIPT_VAR_DIR_TMP="$GLOBAL_VAR_DIR_TMP/$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))/$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')"
 export UTILITY_SCRIPT_VAR_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-$VAR_UTILITY-$VAR_UTILITY_SCRIPT.XXXXXXXX" --tmpdir)
 ####################################################################################################
 # EXPORT UTILITY SCRIPT VARIABLES
