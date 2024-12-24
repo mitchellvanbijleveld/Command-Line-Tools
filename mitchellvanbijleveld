@@ -47,22 +47,10 @@ for var_argument in "$@"; do
     #
     case $var_argument_CAPS in
         "--DEBUG")
-            export GLOBAL_VAR_DEBUG=1
-            PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Enabling DEBUG..."
-            if [[ $VAR_RESTARTED -ne 1 ]]; then
-                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Restarting script to enable debugging..."
-                export VAR_RESTARTED=1
-                "$(realpath $0)" "$@"
-                exit 0
-            fi
+            VAR_ENABLE_DEBUG=1
         ;;
         "--UPDATE-FIRST")
-            if [[ $VAR_UPDATED -eq 0 ]]; then
-                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Script will update first..."
-                VAR_UPDATE_FIRST=1
-            else
-                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Already updated. Not updating again..."
-            fi
+            VAR_UPDATE_FIRST=1
         ;;
         *)
             if [[ $VAR_UTILITY == "" ]] && [[ $var_argument_CAPS != "--"* ]]; then
@@ -267,37 +255,35 @@ export -f ForEachUtilityScript
 ####################################################################################################
 #
 #
+ProcessArguments "$@"
 #
 #
+if [[ $VAR_ENABLE_DEBUG -eq 1 ]] && [[ $VAR_BIN_RESTARTED -ne 1 ]]; then
+    export GLOBAL_VAR_DEBUG=1
+
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "The bin will be restarted in order to enable debug logging..."
+    export VAR_BIN_RESTARTED=1
+    "$(realpath $0)" "$@"
+    exit 0
+fi
 #
-####################################################################################################
-# CHECK IF UPDATE REQUESTED
-####################################################################################################
-####################################################################################################
-if [[ $VAR_UPDATE_FIRST -eq 1 ]] && [[ $VAR_UTILITY == "BIN" ]] && [[ $VAR_UTILITY_SCRIPT == "UPDATE" ]]; then
-    PrintMessage "INFO" "mitchell" "vanbijleveld" "Skipping automatic update because 'bin' 'update' is already being called..."
-elif [[ $VAR_UPDATE_FIRST -eq 1 ]]; then
-    PrintMessage "INFO" "mitchell" "vanbijleveld" "Updating first..."
+if [[ $VAR_UPDATE_FIRST -eq 1 ]] && [[ $VAR_UPDATE_DONE -ne 1 ]]; then
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Updating bin, utilities and utility scripts..."
     #
     export UTILITY_SCRIPT_VAR_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-bin-update-before-run.XXXXXXXX" --tmpdir)
     #
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Starting update script..."
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Running update script..."
     $(which bash) "$GLOBAL_VAR_DIR_INSTALLATION/bin/update.bash"
-    export VAR_UPDATED=1
-    #
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Restarting bin..."
+    export VAR_UPDATE_DONE=1
+
+    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "The bin will be restarted in order to complete the update..."
+    export VAR_BIN_RESTARTED=1
     "$(realpath $0)" "$@"
     exit 0
-else
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Not updating automatically..."
 fi
-####################################################################################################
-####################################################################################################
-# CHECK IF UPDATE REQUESTED
-####################################################################################################
 #
 #
-ProcessArguments "$@"
+#
 #
 #
 ####################################################################################################
