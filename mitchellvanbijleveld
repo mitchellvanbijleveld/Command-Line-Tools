@@ -59,10 +59,9 @@ for var_argument in "$@"; do
             elif [[ $VAR_UTILITY_SCRIPT == "" ]] && [[ $var_argument_CAPS != "--"* ]]; then
                 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Setting '$var_argument' as VAR_UTILITY_SCRIPT..."
                 VAR_UTILITY_SCRIPT=$var_argument_CAPS
-            elif [[ $VAR_UTILITY == $var_argument_CAPS ]]; then
-                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Not adding first occurence of VAR_UTILITY '$VAR_UTILITY' to VAR_UTILITY_SCRIPT_ARGUMENTS..."
-            elif [[ $VAR_UTILITY_SCRIPT == $var_argument_CAPS ]]; then
-                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Not adding first occurence of VAR_UTILITY_SCRIPT '$VAR_UTILITY_SCRIPT' to VAR_UTILITY_SCRIPT_ARGUMENTS..."
+            elif [[ $VAR_UTILITY == $var_argument_CAPS ]] && [[ $VAR_RECHECK_ARGUMENTS -eq 1 ]] ||
+                 [[ $VAR_UTILITY_SCRIPT == $var_argument_CAPS ]] && [[ $VAR_RECHECK_ARGUMENTS -eq 1 ]]; then
+                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Skip setting '$var_argument' as VAR_UTILITY or VAR_UTILITY_SCRIPT because of VAR_RECHECK_ARGUMENTS is true..."
             else
                 PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Ignoring argument '$var_argument'. Forwarding argument to Utility Script..."
                 VAR_UTILITY_SCRIPT_ARGUMENTS+=("$var_argument")
@@ -306,7 +305,7 @@ elif FindUtilityScriptFilePath "$GLOBAL_VAR_DIR_INSTALLATION/bin" "$VAR_UTILITY"
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script '$VAR_UTILITY' found in Utility 'bin'!"
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Changing variable 'VAR_UTILITY' from '$VAR_UTILITY' to 'BIN'..."
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Changing variable 'VAR_UTILITY_SCRIPT' from '$VAR_UTILITY_SCRIPT' to '$VAR_UTILITY'..."
-    VAR_UTILITY_SCRIPT=$VAR_UTILITY; VAR_UTILITY="BIN"
+    VAR_UTILITY_SCRIPT=$VAR_UTILITY; VAR_UTILITY="BIN"; VAR_RECHECK_ARGUMENTS=1
 else
     die_UtilityNotFound "Utility '$VAR_UTILITY' not found!"  
 fi
@@ -326,7 +325,7 @@ elif FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY_SCRIPT";
 elif FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY"; then
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script '$VAR_UTILITY' found in Utility '$VAR_UTILITY'!"
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Changing variable 'VAR_UTILITY_SCRIPT' from '$VAR_UTILITY_SCRIPT' to '$VAR_UTILITY'..."
-    VAR_UTILITY_SCRIPT=$VAR_UTILITY
+    VAR_UTILITY_SCRIPT=$VAR_UTILITY; VAR_RECHECK_ARGUMENTS=1
 elif [[ $VAR_UTILITY_SCRIPT == "" ]]; then
     die_UtilityScriptNotFound "No Utility Script specified!"
 else
@@ -338,7 +337,9 @@ fi
 ####################################################################################################
 #
 #
-ProcessArguments "$@"
+if [[ $VAR_RECHECK_ARGUMENTS -eq 1 ]]; then
+    ProcessArguments "$@"
+fi
 #
 #
 ####################################################################################################
