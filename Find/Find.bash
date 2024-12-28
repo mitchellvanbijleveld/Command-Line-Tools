@@ -21,7 +21,7 @@ VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="clear echo find mktemp PrintMess
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
-SUPPRESS_STRING="Permission denied|Operation not permitted|Invalid argument"
+SUPPRESS_STRING="Invalid argument|No such file or directory|Not a directory|Operation not permitted|Permission denied"
 #
 VAR_SEARCH_DIR=$HOME
 ####################################################################################################
