@@ -208,6 +208,7 @@ FindUtilityFolderPath(){
         return 1
     fi
 }
+export -f FindUtilityFolderPath
 #
 FindUtilityScriptFilePath(){
     # $1 = FIND FOLDER PATH
@@ -221,6 +222,7 @@ FindUtilityScriptFilePath(){
         return 1
     fi
 }
+export -f FindUtilityScriptFilePath
 #
 ForEachUtilityScript(){
     # $1 = FUNCTION TO EXECUTE
