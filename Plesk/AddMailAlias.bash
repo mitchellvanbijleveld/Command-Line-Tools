@@ -23,6 +23,7 @@ VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit plesk PrintMessage shi
 ####################################################################################################
 VAR_EMAIL_ADDRESS_ALIAS=$1
 VAR_EMAIL_ADDRESS=$2
+VAR_DEFAULT_EMAIL_ADDRESS_FILE="$UTILITY_SCRIPT_VAR_DIR_ETC/default_email_address"
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
@@ -79,8 +80,14 @@ done
 ####################################################################################################
 # START UTILITY SCRIPT
 ####################################################################################################
+if [[ $VAR_EMAIL_ADDRESS == "" ]] && [[ -f $VAR_DEFAULT_EMAIL_ADDRESS_FILE ]]; then
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Email address not provided..."
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "File with default email address exists..."
+    VAR_EMAIL_ADDRESS=$(cat $VAR_DEFAULT_EMAIL_ADDRESS_FILE)
+fi
+#
 if [[ $VAR_EMAIL_ADDRESS == "" ]]; then
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Please provide an email address!"
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Please provide an email address or set a default!"
     exit 1
 fi
 #
