@@ -89,7 +89,7 @@ done
 ##################################################
 # FIND UTILITY HELP FOLDER PATH
 ##################################################
-FindUtilitySubFolderPath "Help"
+FindUtilitySubFolderPath "Help" $HELP_VAR_UTILITY
 ##################################################
 # FIND UTILITY HELP FOLDER PATH
 ##################################################
@@ -103,7 +103,7 @@ FindUtilitySubFolderPath "Help"
 ##################################################
 # FIND UTILITY SCRIPT HELP FILE PATH
 ##################################################
-FindUtilityScriptSubFilePath
+FindUtilityScriptSubFilePath "Help" $HELP_VAR_UTILITY $HELP_VAR_UTILITY_SCRIPT
 ##################################################
 # FIND UTILITY SCRIPT HELP FILE PATH
 ##################################################
