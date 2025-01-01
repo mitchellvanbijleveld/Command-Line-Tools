@@ -89,18 +89,7 @@ done
 ##################################################
 # FIND UTILITY HELP FOLDER PATH
 ##################################################
-PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Checking variable HELP_VAR_UTILITY with value '$HELP_VAR_UTILITY'..."
-if [[ $HELP_VAR_UTILITY == "" ]]; then
-    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "No Help Utility was provided. Exiting..."
-    exit 1
-fi
-#
-if FindUtilityFolderPath "$GLOBAL_VAR_DIR_INSTALLATION/Help" "$HELP_VAR_UTILITY"; then
-    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Help Utility Folder '$HELP_VAR_UTILITY' found!"
-else
-    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The Help Utility Folder for '$HELP_VAR_UTILITY' was not found. Exiting..."
-    exit 1
-fi
+FindUtilitySubFolderPath "Help"
 ##################################################
 # FIND UTILITY HELP FOLDER PATH
 ##################################################
@@ -114,18 +103,7 @@ fi
 ##################################################
 # FIND UTILITY SCRIPT HELP FILE PATH
 ##################################################
-if FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$HELP_VAR_UTILITY_SCRIPT"; then
-    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Help Utility Script File '$HELP_VAR_UTILITY_SCRIPT' found in Utility '$HELP_VAR_UTILITY'!"
-elif FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$HELP_VAR_UTILITY"; then
-    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Utility Script '$HELP_VAR_UTILITY' found in Utility '$HELP_VAR_UTILITY'!"
-    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Changing variable 'HELP_VAR_UTILITY_SCRIPT' from '$HELP_VAR_UTILITY_SCRIPT' to '$HELP_VAR_UTILITY'..."
-elif [[ $HELP_VAR_UTILITY_SCRIPT == "" ]]; then
-    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "No Help Utility Script was provided. Exiting..."
-    exit 1
-else
-    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The Help Utility Script File for '$HELP_VAR_UTILITY' '$HELP_VAR_UTILITY_SCRIPT' was not found. Exiting..."
-    exit 1
-fi
+FindUtilityScriptSubFilePath
 ##################################################
 # FIND UTILITY SCRIPT HELP FILE PATH
 ##################################################
