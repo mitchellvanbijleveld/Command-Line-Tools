@@ -217,7 +217,7 @@ FindUtilityScriptFilePath(){
     # $1 = FIND FOLDER PATH
     # $2 = FIND FILE NAME
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Finding Utility Script File for '$2'..."
-    VAR_UTILITY_SCRIPT_FILE_PATH=$(find $1 -maxdepth 1 -iname "$2.bash" -type f)
+    VAR_UTILITY_SCRIPT_FILE_PATH=$(find -L $1 -maxdepth 1 -iname "$2.bash" -type f)
     if [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
         return 0
     else
