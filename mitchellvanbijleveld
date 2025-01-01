@@ -253,43 +253,6 @@ ForEachUtilityScript(){
     done
 }
 export -f ForEachUtilityScript
-#
-FindUtilitySubFolderPath(){
-    # $1 = SUB FOLDER NAME
-    # $2 = * UTILITY NAME
-    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Checking variable *_VAR_UTILITY with value '$2'..."
-    if [[ $2 == "" ]]; then
-        PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "No $1 Utility was provided. Exiting..."
-        exit 1
-    fi
-    #
-    if FindUtilityFolderPath "$GLOBAL_VAR_DIR_INSTALLATION/$1" "$2"; then
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$1 Utility Folder '$2' found!"
-    else
-        PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The $1 Utility Folder for '$2' was not found. Exiting..."
-        exit 1
-    fi
-}
-export -f FindUtilitySubFolderPath
-#
-FindUtilityScriptSubFilePath(){
-    # $1 = SUB FOLDER NAME
-    # $2 = * UTILITY NAME
-    # $3 = * UTILITY SCRIPT NAME
-    if FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$3"; then
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$1 Utility Script File '$3' found in Utility '$2'!"
-    elif FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$2"; then
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Utility Script '$2' found in Utility '$2'!"
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Changing variable '*_VAR_UTILITY_SCRIPT' from '$3' to '$2'..."
-    elif [[ $3 == "" ]]; then
-        PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "No $1 Utility Script was provided. Exiting..."
-        exit 1
-    else
-        PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The $1 Utility Script File for '$2' '$3' was not found. Exiting..."
-        exit 1
-    fi
-}
-export -f FindUtilityScriptSubFilePath
 ####################################################################################################
 # FUNCTIONS
 ####################################################################################################
