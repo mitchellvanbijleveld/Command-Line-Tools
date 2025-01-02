@@ -40,6 +40,10 @@ for var_argument in "$@"; do
     var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
     #
     case $var_argument_CAPS in
+        "--SKIP-START-SCRIPT")
+            VAR_SKIP_START=1
+            unset VAR_NAME
+        ;;
         "--"*)
             PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Invalid option given. Exiting..."
             exit 1
@@ -94,8 +98,7 @@ done
 ##################################################
 PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Checking variable *_VAR_UTILITY with value '$VAR_VAR_UTILITY'..."
 if [[ $VAR_VAR_UTILITY == "" ]]; then
-    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "No Utility was provided. Exiting..."
-    exit 1
+    die_UtilityNotFound "No Utility was provided!" "$VAR_NAME"
 fi
 #
 if FindUtilityFolderPath "$GLOBAL_VAR_DIR_INSTALLATION/$VAR_NAME" "$VAR_VAR_UTILITY"; then
@@ -125,7 +128,7 @@ elif FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_VAR_UTILITY"; th
 elif [[ $VAR_VAR_UTILITY_SCRIPT == "" ]]; then
     die_UtilityScriptNotFound "No Utility Script specified!" "$VAR_NAME"
 else
-    die_UtilityScriptNotFound "Utility Script '$VAR_UTILITY_SCRIPT' not found within Utility '$VAR_VAR_UTILITY'!" "$VAR_NAME"
+    die_UtilityScriptNotFound "Utility Script '$VAR_VAR_UTILITY_SCRIPT' not found within Utility '$VAR_VAR_UTILITY'!" "$VAR_NAME"
 fi
 ##################################################
 # FIND UTILITY SCRIPT * FILE PATH
@@ -144,6 +147,8 @@ PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Exporting Utility Scr
 export UTILITY_SCRIPT_VAR_DIR_ETC="$GLOBAL_VAR_DIR_ETC/$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))/$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')"
 #export UTILITY_SCRIPT_VAR_DIR_TMP="$GLOBAL_VAR_DIR_TMP/$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))/$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')"
 export UTILITY_SCRIPT_VAR_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-$VAR_UTILITY-$VAR_UTILITY_SCRIPT.XXXXXXXX" --tmpdir)
+VAR_VAR_UTILITY=$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))
+VAR_VAR_UTILITY_SCRIPT=$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')
 ##################################################
 # EXPORT * UTILITY SCRIPT VARIABLES
 ##################################################
@@ -173,5 +178,9 @@ mkdir -p $UTILITY_SCRIPT_VAR_DIR_ETC
 ##################################################
 # START * UTILITY SCRIPT
 ##################################################
-PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting Configure Utility '$VAR_VAR_UTILITY' Script '$VAR_VAR_UTILITY_SCRIPT'..."
-$(which bash) $VAR_UTILITY_SCRIPT_FILE_PATH "${VAR_UTILITY_SCRIPT_ARGUMENTS[@]}"
+if [[ $VAR_SKIP_START -eq 1 ]]; then
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Not starting Utility Script..."
+else
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting Configure Utility '$VAR_VAR_UTILITY' Script '$VAR_VAR_UTILITY_SCRIPT'..."
+    $(which bash) $VAR_UTILITY_SCRIPT_FILE_PATH "${VAR_UTILITY_SCRIPT_ARGUMENTS[@]}"
+fi
