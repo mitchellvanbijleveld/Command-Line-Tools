@@ -22,7 +22,7 @@ VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname e
 # DEFAULT VARIABLES
 ####################################################################################################
 export GLOBAL_VAR_DIR_INSTALLATION=$(dirname $(realpath $0))
-GLOBAL_VAR_DIR_ETC="/etc/mitchellvanbijleveld/Command-Line-Tools"
+export GLOBAL_VAR_DIR_ETC="/etc/mitchellvanbijleveld/Command-Line-Tools"
 GLOBAL_VAR_DIR_TMP="/tmp/mitchellvanbijleveld/Command-Line-Tools"
 ####################################################################################################
 # DEFAULT VARIABLES
