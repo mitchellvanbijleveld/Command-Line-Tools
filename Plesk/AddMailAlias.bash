@@ -8,6 +8,7 @@ VAR_UTILITY="Plesk"
 VAR_UTILITY_SCRIPT="AddMailAlias"
 VAR_UTILITY_SCRIPT_VERSION="2024.12.19-1324"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit plesk PrintMessage shift tr"
+VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="DefaultEmailAddress"
 ####################################################################################################
 # UTILITY SCRIPT INFO - Plesk/AddMailAlias
 ####################################################################################################
@@ -23,7 +24,7 @@ VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit plesk PrintMessage shi
 ####################################################################################################
 VAR_EMAIL_ADDRESS_ALIAS=$1
 VAR_EMAIL_ADDRESS=$2
-VAR_DEFAULT_EMAIL_ADDRESS_FILE="$UTILITY_SCRIPT_VAR_DIR_ETC/default_email_address"
+VAR_DEFAULT_EMAIL_ADDRESS_FILE="$UTILITY_SCRIPT_VAR_DIR_ETC/DefaultEmailAddress"
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
