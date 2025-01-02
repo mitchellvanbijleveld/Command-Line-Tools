@@ -98,8 +98,7 @@ fi
 if FindUtilityFolderPath "$GLOBAL_VAR_DIR_INSTALLATION/$VAR_NAME" "$VAR_VAR_UTILITY"; then
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$1 Utility Folder '$VAR_VAR_UTILITY' found!"
 else
-    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The $VAR_NAME Utility Folder for '$VAR_VAR_UTILITY' was not found. Exiting..."
-    exit 1
+    die_UtilityNotFound "The $VAR_NAME Utility Folder for '$VAR_VAR_UTILITY' was not found" "$VAR_NAME"
 fi
 ##################################################
 # FIND UTILITY HELP FOLDER PATH
@@ -121,11 +120,9 @@ elif FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_VAR_UTILITY"; th
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Changing variable 'VAR_VAR_UTILITY_SCRIPT' from '$VAR_VAR_UTILITY_SCRIPT' to '$VAR_VAR_UTILITY'..."
     VAR_VAR_UTILITY_SCRIPT=$VAR_VAR_UTILITY;
 elif [[ $VAR_VAR_UTILITY_SCRIPT == "" ]]; then
-    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "No $VAR_NAME Utility Script was provided. Exiting..."
-    exit 1
+    die_UtilityScriptNotFound "No Utility Script specified!"
 else
-    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The $VAR_NAME Utility Script File for '$VAR_VAR_UTILITY' '$VAR_VAR_UTILITY_SCRIPT' was not found. Exiting..."
-    exit 1
+    die_UtilityScriptNotFound "Utility Script '$VAR_UTILITY_SCRIPT' not found within Utility '$VAR_VAR_UTILITY'!"
 fi
 ##################################################
 # FIND UTILITY SCRIPT HELP FILE PATH
