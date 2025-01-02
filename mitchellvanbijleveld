@@ -217,7 +217,7 @@ FindUtilityFolderPath(){
     # $1 = FIND FOLDER PATH
     # $2 = FIND FOLDER NAME
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Finding Utility Folder for '$2'..."
-    VAR_UTILITY_FOLDER_PATH=$(find $1 -maxdepth 1 -iname "$2" -type d)
+    VAR_UTILITY_FOLDER_PATH=$(find -L $1 -maxdepth 1 -iname "$2" -type d)
     if [[ -d $VAR_UTILITY_FOLDER_PATH ]]; then
         return 0
     else
