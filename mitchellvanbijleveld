@@ -169,7 +169,7 @@ die_UtilityNotFound () {
     PrintMessage
     if [[ $2 == "" ]]; then
         SEARCH_DIR=$GLOBAL_VAR_DIR_INSTALLATION
-        PrintMessage "INFO" "mitchell" "vanbijleveld" "The bin '$(basename $0)' supports the following utilities:"
+        PrintMessage "INFO" "mitchell" "vanbijleveld" "The bin 'mitchellvanbijleveld' supports the following utilities:"
     else
         SEARCH_DIR="$GLOBAL_VAR_DIR_INSTALLATION/$2"
         PrintMessage "INFO" "mitchell" "vanbijleveld" "The $2 Utility supports the following utilities:"
