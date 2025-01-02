@@ -120,9 +120,9 @@ elif FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_VAR_UTILITY"; th
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Changing variable 'VAR_VAR_UTILITY_SCRIPT' from '$VAR_VAR_UTILITY_SCRIPT' to '$VAR_VAR_UTILITY'..."
     VAR_VAR_UTILITY_SCRIPT=$VAR_VAR_UTILITY;
 elif [[ $VAR_VAR_UTILITY_SCRIPT == "" ]]; then
-    die_UtilityScriptNotFound "No Utility Script specified!"
+    die_UtilityScriptNotFound "No Utility Script specified!" "$VAR_NAME"
 else
-    die_UtilityScriptNotFound "Utility Script '$VAR_UTILITY_SCRIPT' not found within Utility '$VAR_VAR_UTILITY'!"
+    die_UtilityScriptNotFound "Utility Script '$VAR_UTILITY_SCRIPT' not found within Utility '$VAR_VAR_UTILITY'!" "$VAR_NAME"
 fi
 ##################################################
 # FIND UTILITY SCRIPT HELP FILE PATH

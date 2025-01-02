@@ -164,15 +164,16 @@ export -f eval_FromFile
 #
 die_UtilityNotFound () {
     # $1 = MESSAGE
-    # $2 = DIRECTORY SUFFIX
-    if [[ $2 == "" ]]; then
-        SEARCH_DIR=$GLOBAL_VAR_DIR_INSTALLATION
-    else
-        SEARCH_DIR="$GLOBAL_VAR_DIR_INSTALLATION/$2"
-    fi    
+    # $2 = NAME OF SUB DIRECTORY
     PrintMessage "FATAL" "mitchell" "vanbijleveld" "$1"
     PrintMessage
-    PrintMessage "INFO" "mitchell" "vanbijleveld" "The bin '$(basename $0)' supports the following utilities:"
+    if [[ $2 == "" ]]; then
+        SEARCH_DIR=$GLOBAL_VAR_DIR_INSTALLATION
+        PrintMessage "INFO" "mitchell" "vanbijleveld" "The bin '$(basename $0)' supports the following utilities:"
+    else
+        SEARCH_DIR="$GLOBAL_VAR_DIR_INSTALLATION/$2"
+        PrintMessage "INFO" "mitchell" "vanbijleveld" "The $2 Utility supports the following utilities:"
+    fi    
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Searching for utilities in '$SEARCH_DIR'..."
     for var_utility_dir in "$SEARCH_DIR"/*; do
         if [[ -d  $var_utility_dir ]]; then
@@ -187,10 +188,15 @@ export -f die_UtilityNotFound
 #
 die_UtilityScriptNotFound (){
     # $1 = MESSAGE
+    # $2 = NAME OF SUB UTILITY
     var_utility_scripts_found=0
     PrintMessage "FATAL" "mitchell" "vanbijleveld" "$1"
     PrintMessage
-    PrintMessage "INFO" "mitchell" "vanbijleveld" "The utility '$VAR_UTILITY' supports the following scripts:"
+    if [[ $2 == "" ]]; then
+        PrintMessage "INFO" "mitchell" "vanbijleveld" "The utility '$(basename $VAR_UTILITY_FOLDER_PATH)' supports the following utility scripts:"
+    else
+        PrintMessage "INFO" "mitchell" "vanbijleveld" "The $2 Utility '$(basename $VAR_UTILITY_FOLDER_PATH)' supports the following utility scripts:"
+    fi   
     PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Searching for utility scripts in '$VAR_UTILITY_FOLDER_PATH'..."
     for var_utility_script_file in "$VAR_UTILITY_FOLDER_PATH"/*; do
         if [[ -f $var_utility_script_file ]] && [[ $var_utility_script_file == *".bash" ]]; then
