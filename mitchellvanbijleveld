@@ -6,7 +6,7 @@
 ####################################################################################################
 # VAR_UTILITY="mitchell"
 # VAR_UTILITY_SCRIPT="vanbijleveld"
-VAR_UTILITY_SCRIPT_VERSION="2025.01.01-2321"
+VAR_UTILITY_SCRIPT_VERSION="2025.01.02-1539"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname echo eval exit find grep mktemp printf realpath sed shift tee tr type which"
 ####################################################################################################
 # BIN INFO - MITCHELL/VANBIJLEVELD
@@ -251,7 +251,20 @@ ForEachUtilityScript(){
         fi
         #
         for var_utility_script_file in $var_utility_folder/*; do
-            if [[ -f $var_utility_script_file ]] && [[ $var_utility_script_file == *".bash" ]]; then
+            if [[ -d $var_utility_script_file ]]; then
+                for var_utility_script_file in $var_utility_script_file/*; do
+                    var_utility_folder_basename="$(basename $(dirname $(dirname $var_utility_script_file)))/$(basename $(dirname $var_utility_script_file))"
+                    var_utility_script_file_basename=$(basename $var_utility_script_file)
+                    #
+                    # 
+                    #
+                    $1 $@
+                    #
+                    #
+                    #
+                done
+            elif [[ -f $var_utility_script_file ]] && [[ $var_utility_script_file == *".bash" ]]; then
+                var_utility_folder_basename=$(basename $var_utility_folder)
                 var_utility_script_file_basename=$(basename $var_utility_script_file)
                 #
                 # 
