@@ -8,6 +8,7 @@ VAR_UTILITY="Hello"
 VAR_UTILITY_SCRIPT="World"
 VAR_UTILITY_SCRIPT_VERSION="2024.12.23-0247"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit PrintMessage shift tr"
+VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="FirstName LastName"
 ####################################################################################################
 # UTILITY SCRIPT INFO - HELLO/WORLD
 ####################################################################################################
@@ -21,7 +22,12 @@ VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit PrintMessage shift tr"
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
-VAR_FIRST_NAME="World"
+VAR_FIRST_NAME_FILE="$UTILITY_SCRIPT_VAR_DIR_ETC/FirstName"
+if [[ -f $VAR_FIRST_NAME_FILE ]]; then
+    VAR_FIRST_NAME=$(cat $VAR_FIRST_NAME_FILE)
+else
+    VAR_FIRST_NAME="World"
+fi
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
@@ -91,13 +97,25 @@ PrintMessage
 #
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Hello, $VAR_FIRST_NAME! If you see this message, the Command Line Tools for Linux/macOS are working as expected!"
 #
-if [[ $VAR_NAME_CHANGED -ne 1 ]]; then
+PrintMessage
+#
+if [[ $VAR_NAME_CHANGED -ne 1 ]] && [[ ! -f $VAR_FIRST_NAME_FILE ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Try adding the flag --firstname followed by your first name to customize your greeting!"
-    PrintMessage
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Run something like 'mitchellvanbijleveld hello world --firstname HelloWorld'!"
-else
     PrintMessage
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "You can also change the default first name, so you don't have to always pass the flag!"
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Run something like 'mitchellvanbijleveld configure hello world firstname HelloWorld'!"
+elif [[ $VAR_NAME_CHANGED -eq 1 ]] && [[ ! -f $VAR_FIRST_NAME_FILE ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "You changed your name to '$VAR_FIRST_NAME' by using the flag --firstname!"
+    PrintMessage
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "You can also change the default first name, so you don't have to always pass the flag!"
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Run something like 'mitchellvanbijleveld configure hello world firstname HelloWorld'!"
+elif [[ $VAR_NAME_CHANGED -eq 1 ]] && [[ -f $VAR_FIRST_NAME_FILE ]]; then
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "You changed your name to '$VAR_FIRST_NAME' by using the flag --firstname!"
+    PrintMessage
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Flags (--firstname) overrule the default setting ($(cat $VAR_FIRST_NAME_FILE))!"
+elif [[ $VAR_NAME_CHANGED -ne 1 ]] && [[ -f $VAR_FIRST_NAME_FILE ]]; then
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "You changed your name to '$VAR_FIRST_NAME' by using a default setting!"
 fi
 #
 PrintMessage
