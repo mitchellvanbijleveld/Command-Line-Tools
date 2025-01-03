@@ -49,6 +49,9 @@ for var_argument in "$@"; do
         "--DEBUG")
             VAR_ENABLE_DEBUG=1
         ;;
+        "--DRY-RUN")
+            export GLOBAL_VAR_DRY_RUN=1
+        ;;
         "--INTERACTIVE" | "--INTERACTIVESHELL" | "--INTERACTIVE-SHELL")
             VAR_UTILITY="InteractiveShell"
             VAR_UTILITY_SCRIPT="InteractiveShell"
@@ -128,17 +131,25 @@ PrintMessage(){
         #
         case $GLOBAL_VAR_DEBUG in
             1) 
-                echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Created temporary file for script output: '$VAR_TMP_FILE_COMMAND_OUTPUT'..."
-                echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Executing command ($@) on behalf of $var_utility/$var_utility_script..."
-                eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
-                   echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_executed_command: $command_output_line"
-                done
+                if [[ $GLOBAL_VAR_DRY_RUN -eq 1 ]]; then
+                    echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel 'DRY RUN') Executing Command ($@)..."
+                else
+                    echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Created temporary file for script output: '$VAR_TMP_FILE_COMMAND_OUTPUT'..."
+                    echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Executing command ($@) on behalf of $var_utility/$var_utility_script..."
+                    eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
+                        echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_executed_command: $command_output_line"
+                    done
+                fi
             ;; 
             *) 
-                case $var_log_level in
-                    "CONFIG" | "DEBUG") eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT > /dev/null;; 
-                    *) eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT;;
-                esac
+                if [[ $GLOBAL_VAR_DRY_RUN -eq 1 ]]; then
+                    echo "$(PrintLogLine_LogLevel 'DRY RUN') Executing Command ($@)..."
+                else
+                    case $var_log_level in
+                        "CONFIG" | "DEBUG") eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT > /dev/null;;
+                        *) eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT;;
+                    esac
+                fi
             ;;
         esac
     elif [[ $var_log_level != "" ]] && [[ $var_utility != "" ]] && [[ $var_utility_script != "" ]] && [[ $var_message != "" ]]; then
@@ -147,7 +158,6 @@ PrintMessage(){
             *) 
                 case $var_log_level in
                     "CONFIG" | "DEBUG") return 0;;
-                    "DRY RUN") echo "$(PrintLogLine_LogLevel "$var_log_level") $var_message"; return 0;;
                     *) echo "$var_message"; return 0;;
                 esac
                 ;;
