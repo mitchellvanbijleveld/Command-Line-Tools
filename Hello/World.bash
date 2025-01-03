@@ -104,16 +104,17 @@ if [[ $VAR_NAME_CHANGED -ne 1 ]] && [[ ! -f $VAR_FIRST_NAME_FILE ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Run something like 'mitchellvanbijleveld hello world --firstname HelloWorld'!"
     PrintMessage
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "You can also change the default first name, so you don't have to always pass the flag!"
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Run something like 'mitchellvanbijleveld configure hello world firstname HelloWorld'!"
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Run something like 'mitchellvanbijleveld Configure Global Hello World FirstName HelloWorld'!"
 elif [[ $VAR_NAME_CHANGED -eq 1 ]] && [[ ! -f $VAR_FIRST_NAME_FILE ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "You changed your name to '$VAR_FIRST_NAME' by using the flag --firstname!"
     PrintMessage
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "You can also change the default first name, so you don't have to always pass the flag!"
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Run something like 'mitchellvanbijleveld configure hello world firstname HelloWorld'!"
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Run something like 'mitchellvanbijleveld Configure Global Hello World FirstName HelloWorld'!"
 elif [[ $VAR_NAME_CHANGED -eq 1 ]] && [[ -f $VAR_FIRST_NAME_FILE ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "You changed your name to '$VAR_FIRST_NAME' by using the flag --firstname!"
     PrintMessage
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Flags (--firstname) overrule the default setting ($(cat $VAR_FIRST_NAME_FILE))!"
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Even though you changed the default setting for FirstName to '$(cat $VAR_FIRST_NAME_FILE)',"
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "You can see that the flag '--firstname' overruled the default setting!"
 elif [[ $VAR_NAME_CHANGED -ne 1 ]] && [[ -f $VAR_FIRST_NAME_FILE ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "You changed your name to '$VAR_FIRST_NAME' by using a default setting!"
 fi
