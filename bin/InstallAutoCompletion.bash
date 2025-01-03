@@ -104,7 +104,7 @@ elif [[ -f $VAR_AUTOCOMPLETE_FILE_INSTALLATION_PATH ]]; then
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Updated file is available." 
         if [[ $VAR_REPLACE_FILE -ne 1 ]]; then
             PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Not replacing AutoComplete file. Use '--replace' to overwrite. Exiting..."
-        exit 1
+            exit 1
         fi
     else
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Installed file is the same as the latest available file. Nothing to do."
