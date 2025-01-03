@@ -2,14 +2,14 @@
 #
 ####################################################################################################
 ####################################################################################################
-# UTILITY SCRIPT INFO - bash/InstallAutoCompletion
+# UTILITY SCRIPT INFO - .bash/AutoCompletion
 ####################################################################################################
-VAR_UTILITY="bash"
-VAR_UTILITY_SCRIPT="InstallAutoCompletion"
+VAR_UTILITY=".bash"
+VAR_UTILITY_SCRIPT="AutoCompletion"
 VAR_UTILITY_SCRIPT_VERSION="2024.12.19-1805"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="compgen complete find PrintMessage shift tr"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="compgen complete echo find grep PrintMessage shift tr"
 ####################################################################################################
-# UTILITY SCRIPT INFO - bash/InstallAutoCompletion
+# UTILITY SCRIPT INFO - .bash/AutoCompletion
 ####################################################################################################
 ####################################################################################################
 #
