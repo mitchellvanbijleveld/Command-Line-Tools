@@ -94,8 +94,7 @@ for var_argument in "$@"; do
             SEARCH_WILDCARD=1
         ;;
         "--"*)
-            PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Invalid option given. Exiting..."
-            exit 1
+            die_ProcessArguments_InvalidFlag $var_argument
         ;;
         *)
             if [[ $VAR_SEARCH_QUERY == "" ]] || [[ $VAR_SEARCH_QUERY == $VAR_SEARCH_DIR ]]; then

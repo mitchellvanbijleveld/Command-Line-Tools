@@ -46,8 +46,7 @@ for var_argument in "$@"; do
             unset VAR_SUB_DIRECTORY_BASE_NAME
         ;;
         "--"*)
-            PrintMessage "FATAL" ".bin" "FindInSubDirectory" "Invalid option given. Exiting..."
-            exit 1
+            die_ProcessArguments_InvalidFlag $var_argument
         ;;
         *)       
             if [[ $VAR_VAR_UTILITY == "" ]] && [[ $var_argument_CAPS != "--"* ]]; then

@@ -60,8 +60,7 @@ for var_argument in "$@"; do
             PrintMessage "DEBUG" /opt/psa/admin/bin/php -dauto_prepend_file=sdk.php '/opt/psa/admin/plib/modules/email-security/scripts/update-stats.php'
         ;;
         "--"*)
-            PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Invalid option given. Exiting..."
-            exit 1
+            die_ProcessArguments_InvalidFlag $var_argument
         ;;
         *)
             PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Ignoring argument '$var_argument'..."

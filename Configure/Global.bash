@@ -47,8 +47,7 @@ for var_argument in "$@"; do
     #
     case $var_argument_CAPS in
         "--"*)
-            PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Invalid option given. Exiting..."
-            exit 1
+            die_ProcessArguments_InvalidFlag $var_argument
         ;;
         *)       
             if [[ $VAR_VAR_UTILITY == "" ]] && [[ $var_argument_CAPS != "--"* ]]; then

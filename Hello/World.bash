@@ -56,8 +56,7 @@ for var_argument in "$@"; do
             fi
         ;;
         "--"*)
-            PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Invalid option given. Exiting..."
-            exit 1
+            die_ProcessArguments_InvalidFlag $var_argument
         ;;
         *)
             PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Ignoring argument '$var_argument'..."
