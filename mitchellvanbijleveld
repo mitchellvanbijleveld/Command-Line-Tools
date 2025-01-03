@@ -49,6 +49,10 @@ for var_argument in "$@"; do
         "--DEBUG")
             VAR_ENABLE_DEBUG=1
         ;;
+        "--INTERACTIVE" | "--INTERACTIVESHELL" | "--INTERACTIVE-SHELL")
+            VAR_UTILITY="InteractiveShell"
+            VAR_UTILITY_SCRIPT="InteractiveShell"
+        ;;
         "--SKIP-DEPENDENCY-CHECK")
             VAR_SKIP_DEPENDENCY_CHECK=1
         ;;
@@ -102,7 +106,7 @@ export -f PrintLogLine_UtilityAndUtilityScript
 #
 PrintLogLine_LogLevel(){
     # $1 = LOG LEVEL
-    echo "[ $(printf '%-6s' $1) ]"
+    echo "[ $(printf '%-8s' "$1") ]"
 }
 export -f PrintLogLine_LogLevel
 #
@@ -127,22 +131,22 @@ PrintMessage(){
                 echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Created temporary file for script output: '$VAR_TMP_FILE_COMMAND_OUTPUT'..."
                 echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Executing command ($@) on behalf of $var_utility/$var_utility_script..."
                 eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
-                   echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel $var_log_level) $var_executed_command: $command_output_line"
+                   echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_executed_command: $command_output_line"
                 done
             ;; 
             *) 
                 case $var_log_level in
-                    "CONFIGURE" | "FATAL" | "INFO" | "WARN") eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT;;
+                    "CONFIGURE" | "DRY RUN" | "FATAL" | "INFO" | "WARN") eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT;;
                     *) eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT > /dev/null;;
                 esac
             ;;
         esac
     elif [[ $var_log_level != "" ]] && [[ $var_utility != "" ]] && [[ $var_utility_script != "" ]] && [[ $var_message != "" ]]; then
         case $GLOBAL_VAR_DEBUG in
-            1) echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel $var_log_level) $var_message"; return 0;;
+            1) echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_message"; return 0;;
             *) 
                 case $var_log_level in
-                    "CONFIGURE" | "FATAL" | "INFO" | "WARN") echo "$var_message"; return 0;;
+                    "CONFIGURE" | "DRY RUN" | "FATAL" | "INFO" | "WARN") echo "$var_message"; return 0;;
                     *) return 0;;
                 esac
                 ;;
