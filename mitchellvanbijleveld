@@ -136,8 +136,8 @@ PrintMessage(){
             ;; 
             *) 
                 case $var_log_level in
-                    "CONFIGURE" | "DRY RUN" | "FATAL" | "INFO" | "WARN") eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT;;
-                    *) eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT > /dev/null;;
+                    "CONFIG" | "DEBUG") eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT > /dev/null;; 
+                    *) eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT;;
                 esac
             ;;
         esac
@@ -146,8 +146,9 @@ PrintMessage(){
             1) echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_message"; return 0;;
             *) 
                 case $var_log_level in
-                    "CONFIGURE" | "DRY RUN" | "FATAL" | "INFO" | "WARN") echo "$var_message"; return 0;;
-                    *) return 0;;
+                    "CONFIG" | "DEBUG") return 0;;
+                    "DRY RUN") echo "$(PrintLogLine_LogLevel "$var_log_level") $var_message"; return 0;;
+                    *) echo "$var_message"; return 0;;
                 esac
                 ;;
         esac
