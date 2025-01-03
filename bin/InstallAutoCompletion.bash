@@ -104,11 +104,14 @@ elif [[ -f $VAR_AUTOCOMPLETE_FILE_INSTALLATION_PATH ]]; then
     #
     if [[ $var_current_autocomplete_file != $var_updated_autocomplete_file ]]; then
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Updated file is available." 
-        if [[ $VAR_REPLACE_FILE -ne 1 ]]; then
+
+        if [[ $VAR_REPLACE_FILE -eq 1 ]]; then
+            PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Replacing file as requested..."
+        else
             PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Not replacing AutoComplete file. Use '--replace' to overwrite."
 
             if [[ $VAR_SHOW_DIFF -eq 1 ]]; then
-                diff $VAR_AUTOCOMPLETE_FILE_INSTALLATION_PATH <(sed "s|GLOBAL_VAR_DIR_INSTALLATION|$GLOBAL_VAR_DIR_INSTALLATION|g" "$GLOBAL_VAR_DIR_INSTALLATION/.bash/AutoCompletion.bash")
+                PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which diff) $VAR_AUTOCOMPLETE_FILE_INSTALLATION_PATH <(sed "s|GLOBAL_VAR_DIR_INSTALLATION|$GLOBAL_VAR_DIR_INSTALLATION|g" "$GLOBAL_VAR_DIR_INSTALLATION/.bash/AutoCompletion.bash")
             else
                 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Use --show-diff to print the difference"
             fi
@@ -123,4 +126,4 @@ elif [[ -f $VAR_AUTOCOMPLETE_FILE_INSTALLATION_PATH ]]; then
 fi
 #
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Installing AutoCompletion File..."
-sed "s|GLOBAL_VAR_DIR_INSTALLATION|$GLOBAL_VAR_DIR_INSTALLATION|g" "$GLOBAL_VAR_DIR_INSTALLATION/.bash/AutoCompletion.bash" | tee $VAR_AUTOCOMPLETE_FILE_INSTALLATION_PATH > /dev/null
+PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which sed) "'s|GLOBAL_VAR_DIR_INSTALLATION|$GLOBAL_VAR_DIR_INSTALLATION|g' '$GLOBAL_VAR_DIR_INSTALLATION/.bash/AutoCompletion.bash' | tee '$VAR_AUTOCOMPLETE_FILE_INSTALLATION_PATH'"
