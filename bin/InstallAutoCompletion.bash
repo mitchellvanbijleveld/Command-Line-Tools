@@ -44,6 +44,9 @@ for var_argument in "$@"; do
             PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Replacing file if existing..."
             VAR_REPLACE_FILE=1
         ;;
+        "--SHOW-DIFF")
+            VAR_SHOW_DIFF=1
+        ;;
         "--"*)
             die_ProcessArguments_InvalidFlag $var_argument
         ;;
@@ -102,7 +105,14 @@ elif [[ -f $VAR_AUTOCOMPLETE_FILE_INSTALLATION_PATH ]]; then
     if [[ $var_current_autocomplete_file != $var_updated_autocomplete_file ]]; then
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Updated file is available." 
         if [[ $VAR_REPLACE_FILE -ne 1 ]]; then
-            PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Not replacing AutoComplete file. Use '--replace' to overwrite. Exiting..."
+            PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Not replacing AutoComplete file. Use '--replace' to overwrite."
+
+            if [[ $VAR_SHOW_DIFF -eq 1 ]]; then
+                diff $VAR_AUTOCOMPLETE_FILE_INSTALLATION_PATH <(sed "s|GLOBAL_VAR_DIR_INSTALLATION|$GLOBAL_VAR_DIR_INSTALLATION|g" "$GLOBAL_VAR_DIR_INSTALLATION/.bash/AutoCompletion.bash")
+            else
+                PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Use --show-diff to print the difference"
+            fi
+
             exit 1
         fi
     else
