@@ -6,7 +6,7 @@
 ####################################################################################################
 # VAR_UTILITY="mitchell"
 # VAR_UTILITY_SCRIPT="vanbijleveld"
-VAR_UTILITY_SCRIPT_VERSION="2025.01.02-1539"
+VAR_UTILITY_SCRIPT_VERSION="2025.01.03-1859"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname echo eval exit find grep mktemp printf realpath sed shift tee tr type which"
 ####################################################################################################
 # BIN INFO - MITCHELL/VANBIJLEVELD
@@ -118,50 +118,61 @@ PrintMessage(){
     var_log_level=$1; var_utility=$2; var_utility_script=$3; var_message=$4
     #
     if [[ $var_log_level == "" ]] && [[ $var_utility == "" ]] && [[ $var_utility_script == "" ]] && [[ $var_message == "" ]]; then
-        case $GLOBAL_VAR_DEBUG in
-            1) return 0;; 
-            *) echo; return 0;;
-        esac
+        if [[ $GLOBAL_VAR_DEBUG -eq 1 ]]; then 
+            return 0
+        else
+            echo
+        fi
+
     elif command -v "$var_message" &>/dev/null; then
         shift 3
         #
         var_executed_command=$(echo $@ | awk '{print $1}')
         #
-        export VAR_TMP_FILE_COMMAND_OUTPUT=$(mktemp "mitchellvanbijleveld-$var_utility-$var_utility_script.XXXXXXXX" --tmpdir)
-        #
-        case $GLOBAL_VAR_DEBUG in
-            1) 
-                if [[ $GLOBAL_VAR_DRY_RUN -eq 1 ]]; then
-                    echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel 'DRY RUN') Executing Command ($@)..."
+        if [[ $GLOBAL_VAR_DRY_RUN -eq 1 ]]; then
+
+            if [[ $GLOBAL_VAR_DEBUG -eq 1 ]]; then
+                echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel 'DRY RUN') $@"
+            else
+                echo "$(PrintLogLine_LogLevel 'DRY RUN') $@"
+            fi
+
+        else
+            export VAR_TMP_FILE_COMMAND_OUTPUT=$(mktemp "mitchellvanbijleveld-$var_utility-$var_utility_script.XXXXXXXX" --tmpdir)
+            if [[ $GLOBAL_VAR_DEBUG -eq 1 ]]; then
+                echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Created temporary file for script output: '$VAR_TMP_FILE_COMMAND_OUTPUT'..."
+                echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Executing command on behalf of $var_utility/$var_utility_script:"
+                echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel 'COMMAND') $@"
+                eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
+                    echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel 'COMMAND') $var_executed_command: $command_output_line"
+                done
+            else
+                
+                if [[ $var_log_level == "DEBUG" ]]; then
+                    eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT > /dev/null
                 else
-                    echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Created temporary file for script output: '$VAR_TMP_FILE_COMMAND_OUTPUT'..."
-                    echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Executing command ($@) on behalf of $var_utility/$var_utility_script..."
-                    eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
-                        echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_executed_command: $command_output_line"
-                    done
+                    eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT
                 fi
-            ;; 
-            *) 
-                if [[ $GLOBAL_VAR_DRY_RUN -eq 1 ]]; then
-                    echo "$(PrintLogLine_LogLevel 'DRY RUN') Executing Command ($@)..."
-                else
-                    case $var_log_level in
-                        "CONFIG" | "DEBUG") eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT > /dev/null;;
-                        *) eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT;;
-                    esac
-                fi
-            ;;
-        esac
+            fi
+        fi
+
     elif [[ $var_log_level != "" ]] && [[ $var_utility != "" ]] && [[ $var_utility_script != "" ]] && [[ $var_message != "" ]]; then
-        case $GLOBAL_VAR_DEBUG in
-            1) echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_message"; return 0;;
-            *) 
-                case $var_log_level in
-                    "CONFIG" | "DEBUG") return 0;;
-                    *) echo "$var_message"; return 0;;
-                esac
-                ;;
-        esac
+
+        if [[ $GLOBAL_VAR_DEBUG -eq 1 ]]; then
+            echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_message"
+        else
+
+            if [[ $var_log_level == "DEBUG" ]]; then
+                return 0
+            elif [[ $var_log_level == "CONFIG" ]]; then
+                return 0
+            else
+                echo "$var_message"
+            fi
+        fi
+
+    else
+        echo "Invalid PrintMessage..."
     fi
 }
 export -f PrintMessage
