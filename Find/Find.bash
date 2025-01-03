@@ -190,6 +190,11 @@ PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which find) "$VAR_FIN
 #
 PrintMessage
 #
+if [[ $GLOBAL_VAR_DRY_RUN -eq 1 ]]; then
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "No output is generated because of this search is a Dry Run. Exiting..."
+    exit 0
+fi
+#
 VAR_COUNT_FOUND_ITEMS=$(cat $VAR_TMP_FILE_COMMAND_OUTPUT | grep -Ev "$SUPPRESS_STRING" | wc -l)
 VAR_COUNT_FOUND_ERRORS=$(cat $VAR_TMP_FILE_COMMAND_OUTPUT | grep -E "$SUPPRESS_STRING" | wc -l)
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Found $(echo $VAR_COUNT_FOUND_ITEMS) files/folders and $(echo $VAR_COUNT_FOUND_ERRORS) errors/warnings in '$VAR_SEARCH_DIR' for '$VAR_SEARCH_QUERY'"
