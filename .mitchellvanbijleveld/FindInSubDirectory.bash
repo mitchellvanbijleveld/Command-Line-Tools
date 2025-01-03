@@ -7,7 +7,7 @@
 #VAR_UTILITY=".bin"
 #VAR_UTILITY_SCRIPT="FindInSubDirectory"
 VAR_UTILITY_SCRIPT_VERSION="2025.01.02-0018"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit PrintMessage shift tr"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename die_UtilityNotFound die_UtilityScriptNotFound dirname echo exit FindUtilityFolderPath FindUtilityScriptFilePath mkdir mktemp PrintMessage sed shift tr unset which"
 ####################################################################################################
 # UTILITY SCRIPT INFO - .mitchellvanbijleveld/FindInSubDirectory
 ####################################################################################################
