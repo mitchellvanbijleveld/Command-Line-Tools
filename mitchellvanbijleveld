@@ -159,7 +159,11 @@ PrintMessage(){
     elif [[ $var_log_level != "" ]] && [[ $var_utility != "" ]] && [[ $var_utility_script != "" ]] && [[ $var_message != "" ]]; then
 
         if [[ $GLOBAL_VAR_DEBUG -eq 1 ]]; then
-            echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_message"
+            if [[ $5 == "NoNewLine" ]]; then
+                echo -n "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_message"
+            else
+                echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_message"
+            fi
         else
 
             if [[ $var_log_level == "DEBUG" ]]; then
@@ -167,7 +171,11 @@ PrintMessage(){
             elif [[ $var_log_level == "CONFIG" ]]; then
                 return 0
             else
-                echo "$var_message"
+                if [[ $5 == "NoNewLine" ]]; then
+                    echo -n "$var_message"
+                else
+                    echo "$var_message"
+                fi
             fi
         fi
 
