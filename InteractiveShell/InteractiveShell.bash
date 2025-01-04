@@ -74,12 +74,12 @@ PrintAvailableUtilities(){
     for var_utility_folder in "$GLOBAL_VAR_DIR_INSTALLATION"/*; do
         if [[ -d  $var_utility_folder ]]; then
             AvailableUtilities+=($var_utility_folder)
-            var_utility_folder_basename=$(basename $var_utility_folder)
+            var_var_utility_folder_basename=$(basename $var_utility_folder)
             #
             if [[ $GLOBAL_VAR_DEBUG -eq 1 ]]; then
-                PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  [$(printf '%2d\n' ${#AvailableUtilities[@]})] $var_utility_folder_basename ($var_utility_folder)"
+                PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  [$(printf '%2d\n' ${#AvailableUtilities[@]})] $var_var_utility_folder_basename ($var_utility_folder)"
             else
-                PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  [$(printf '%2d\n' ${#AvailableUtilities[@]})] $var_utility_folder_basename"
+                PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  [$(printf '%2d\n' ${#AvailableUtilities[@]})] $var_var_utility_folder_basename"
             fi
         fi
     done
@@ -96,12 +96,12 @@ PrintAvailableUtilityScripts(){
     for var_utility_script_file in "$GLOBAL_VAR_DIR_INSTALLATION/$1/"*; do
         if [[ -f $var_utility_script_file ]] && [[ $var_utility_script_file == *".bash" ]]; then
             AvailableUtilityScripts+=($var_utility_script_file)  
-            var_utility_script_file_basename=$(basename $var_utility_script_file)
+            var_var_utility_script_file_basename=$(basename $var_utility_script_file)
             #
             if [[ $GLOBAL_VAR_DEBUG -eq 1 ]]; then
-                PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  [$(printf '%2d\n' ${#AvailableUtilityScripts[@]})] $(echo $var_utility_script_file_basename | sed 's/.bash$//') ($var_utility_script_file)"
+                PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  [$(printf '%2d\n' ${#AvailableUtilityScripts[@]})] $(echo $var_var_utility_script_file_basename | sed 's/.bash$//') ($var_utility_script_file)"
             else
-                PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  [$(printf '%2d\n' ${#AvailableUtilityScripts[@]})] $(echo $var_utility_script_file_basename | sed 's/.bash$//')"
+                PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  [$(printf '%2d\n' ${#AvailableUtilityScripts[@]})] $(echo $var_var_utility_script_file_basename | sed 's/.bash$//')"
             fi
         fi
     done

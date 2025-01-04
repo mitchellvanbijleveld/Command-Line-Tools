@@ -167,7 +167,11 @@ PrintMessage(){
             if [[ $5 == "NoNewLine" ]]; then
                 echo -n "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_message"
             else
-                echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_message"
+                if [[ $var_utility_folder_basename == "" ]] || [[ $var_utility_script_file_basename == "" ]]; then
+                    echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_message"
+                else
+                    echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_utility_folder_basename/$var_utility_script_file_basename: $var_message"
+                fi
             fi
         else
 
@@ -283,6 +287,7 @@ export -f FindUtilityScriptFilePath
 ForEachUtilityScript(){
     # $1 = FUNCTION TO EXECUTE
     for var_utility_folder in $GLOBAL_VAR_DIR_INSTALLATION/*; do
+        unset var_utility_folder_basename
         if [[ -d $var_utility_folder ]]; then
             var_utility_folder_basename=$(basename $var_utility_folder)
             PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Currently checking Utility '$var_utility_folder_basename'..."
@@ -291,6 +296,7 @@ ForEachUtilityScript(){
         fi
         #
         for var_utility_script_file in $var_utility_folder/*; do
+            unset var_utility_script_file_basename
             if [[ -d $var_utility_script_file ]]; then
                 for var_utility_script_file in $var_utility_script_file/*; do
                     var_utility_folder_basename="$(basename $(dirname $(dirname $var_utility_script_file)))/$(basename $(dirname $var_utility_script_file))"
