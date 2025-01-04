@@ -285,6 +285,7 @@ ForEachUtilityScript(){
     for var_utility_folder in $GLOBAL_VAR_DIR_INSTALLATION/*; do
         if [[ -d $var_utility_folder ]]; then
             var_utility_folder_basename=$(basename $var_utility_folder)
+            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Currently checking Utility '$var_utility_folder_basename'..."
         else
             continue
         fi
@@ -294,6 +295,7 @@ ForEachUtilityScript(){
                 for var_utility_script_file in $var_utility_script_file/*; do
                     var_utility_folder_basename="$(basename $(dirname $(dirname $var_utility_script_file)))/$(basename $(dirname $var_utility_script_file))"
                     var_utility_script_file_basename=$(basename $var_utility_script_file)
+                    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Currently checking Utility '$var_utility_folder_basename' Script '$var_utility_script_file_basename'..."
                     #
                     # 
                     #
@@ -305,6 +307,7 @@ ForEachUtilityScript(){
             elif [[ -f $var_utility_script_file ]] && [[ $var_utility_script_file == *".bash" ]]; then
                 var_utility_folder_basename=$(basename $var_utility_folder)
                 var_utility_script_file_basename=$(basename $var_utility_script_file)
+                PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Currently checking Utility '$var_utility_folder_basename' Script '$var_utility_script_file_basename'..."
                 #
                 # 
                 #
