@@ -4,10 +4,10 @@
 ####################################################################################################
 # BIN INFO - MITCHELL/VANBIJLEVELD
 ####################################################################################################
-# VAR_UTILITY="mitchell"
-# VAR_UTILITY_SCRIPT="vanbijleveld"
-VAR_UTILITY_SCRIPT_VERSION="2025.01.03-1859"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname echo eval exit find grep mktemp printf realpath sed shift tee tr type which"
+BIN_UTILITY="mitchell"
+BIN_UTILITY_SCRIPT="vanbijleveld"
+BIN_UTILITY_SCRIPT_VERSION="2025.01.03-1859"
+BIN_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname echo eval exit find grep mktemp printf realpath sed shift tee tr type which"
 ####################################################################################################
 # BIN INFO - MITCHELL/VANBIJLEVELD
 ####################################################################################################
@@ -42,12 +42,12 @@ ProcessArguments() {
 VAR_UTILITY_SCRIPT_ARGUMENTS=()
 #
 for var_argument in "$@"; do
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Processing argument '$var_argument'..."
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Processing argument '$var_argument'..."
     var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
     #
     case $var_argument_CAPS in
         "--DEBUG")
-            VAR_ENABLE_DEBUG=1
+            BIN_ENABLE_DEBUG=1
         ;;
         "--DRY-RUN")
             export GLOBAL_VAR_DRY_RUN=1
@@ -57,11 +57,11 @@ for var_argument in "$@"; do
             VAR_UTILITY_SCRIPT="InteractiveShell"
         ;;
         "--SKIP-DEPENDENCY-CHECK")
-            VAR_SKIP_DEPENDENCY_CHECK=1
+            BIN_SKIP_DEPENDENCY_CHECK=1
         ;;
         "--START-FROM-INTERACTIVE-SHELL")
             if [[ $GLOBAL_VAR_DEBUG -eq 1 ]]; then
-                VAR_DISABLE_DEBUG=1
+                BIN_DISABLE_DEBUG=1
             fi
         ;;
         "--UPDATE-FIRST")
@@ -69,16 +69,16 @@ for var_argument in "$@"; do
         ;;
         *)
             if [[ $VAR_UTILITY == "" ]] && [[ $var_argument_CAPS != "--"* ]]; then
-                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Setting '$var_argument' as VAR_UTILITY..."
+                PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Setting '$var_argument' as VAR_UTILITY..."
                 VAR_UTILITY=$var_argument_CAPS
             elif [[ $VAR_UTILITY_SCRIPT == "" ]] && [[ $var_argument_CAPS != "--"* ]]; then
-                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Setting '$var_argument' as VAR_UTILITY_SCRIPT..."
+                PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Setting '$var_argument' as VAR_UTILITY_SCRIPT..."
                 VAR_UTILITY_SCRIPT=$var_argument_CAPS
-            elif [[ $VAR_UTILITY == $var_argument_CAPS ]] && [[ $VAR_RECHECK_ARGUMENTS -eq 1 ]] ||
-                 [[ $VAR_UTILITY_SCRIPT == $var_argument_CAPS ]] && [[ $VAR_RECHECK_ARGUMENTS -eq 1 ]]; then
-                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Skip setting '$var_argument' as VAR_UTILITY or VAR_UTILITY_SCRIPT because of VAR_RECHECK_ARGUMENTS is true..."
+            elif [[ $VAR_UTILITY == $var_argument_CAPS ]] && [[ $BIN_RECHECK_ARGUMENTS -eq 1 ]] ||
+                 [[ $VAR_UTILITY_SCRIPT == $var_argument_CAPS ]] && [[ $BIN_RECHECK_ARGUMENTS -eq 1 ]]; then
+                PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Skip setting '$var_argument' as VAR_UTILITY or VAR_UTILITY_SCRIPT because of BIN_RECHECK_ARGUMENTS is true..."
             else
-                PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Ignoring argument '$var_argument'. Forwarding argument to Utility Script..."
+                PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Ignoring argument '$var_argument'. Forwarding argument to Utility Script..."
                 VAR_UTILITY_SCRIPT_ARGUMENTS+=("$var_argument")
             fi
         ;;
@@ -132,8 +132,6 @@ PrintMessage(){
     elif command -v "$var_message" &>/dev/null; then
         shift 3
         #
-        var_executed_command=$(echo $@ | awk '{print $1}')
-        #
         if [[ $GLOBAL_VAR_DRY_RUN -eq 1 ]]; then
 
             if [[ $GLOBAL_VAR_DEBUG -eq 1 ]]; then
@@ -149,7 +147,7 @@ PrintMessage(){
                 echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Executing command on behalf of $var_utility/$var_utility_script:"
                 echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel 'COMMAND') $@"
                 eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
-                    echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel 'COMMAND') $var_executed_command: $command_output_line"
+                    echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel 'COMMAND') $(echo $@ | awk '{print $1}'): $command_output_line"
                 done
             else
                 
@@ -208,20 +206,20 @@ export -f eval_FromFile
 die_UtilityNotFound () {
     # $1 = MESSAGE
     # $2 = NAME OF SUB DIRECTORY
-    PrintMessage "FATAL" "mitchell" "vanbijleveld" "$1"
+    PrintMessage "FATAL" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "$1"
     PrintMessage
     if [[ $2 == "" ]]; then
-        SEARCH_DIR=$GLOBAL_VAR_DIR_INSTALLATION
-        PrintMessage "INFO" "mitchell" "vanbijleveld" "The bin 'mitchellvanbijleveld' supports the following utilities:"
+        var_search_dir=$GLOBAL_VAR_DIR_INSTALLATION
+        PrintMessage "INFO" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "The bin 'mitchellvanbijleveld' supports the following utilities:"
     else
-        SEARCH_DIR="$GLOBAL_VAR_DIR_INSTALLATION/$2"
-        PrintMessage "INFO" "mitchell" "vanbijleveld" "The $2 Utility supports the following utilities:"
+        var_search_dir="$GLOBAL_VAR_DIR_INSTALLATION/$2"
+        PrintMessage "INFO" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "The $2 Utility supports the following utilities:"
     fi    
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Searching for utilities in '$SEARCH_DIR'..."
-    for var_utility_dir in "$SEARCH_DIR"/*; do
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Searching for utilities in '$var_search_dir'..."
+    for var_utility_dir in "$var_search_dir"/*; do
         if [[ -d  $var_utility_dir ]]; then
             var_utility=$(basename $var_utility_dir)
-            PrintMessage "INFO" "mitchell" "vanbijleveld" "  - $var_utility"
+            PrintMessage "INFO" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "  - $var_utility"
         fi
     done
     PrintMessage
@@ -233,23 +231,23 @@ die_UtilityScriptNotFound (){
     # $1 = MESSAGE
     # $2 = NAME OF SUB UTILITY
     var_utility_scripts_found=0
-    PrintMessage "FATAL" "mitchell" "vanbijleveld" "$1"
+    PrintMessage "FATAL" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "$1"
     PrintMessage
     if [[ $2 == "" ]]; then
-        PrintMessage "INFO" "mitchell" "vanbijleveld" "The utility '$(basename $VAR_UTILITY_FOLDER_PATH)' supports the following utility scripts:"
+        PrintMessage "INFO" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "The utility '$(basename $VAR_UTILITY_FOLDER_PATH)' supports the following utility scripts:"
     else
-        PrintMessage "INFO" "mitchell" "vanbijleveld" "The $2 Utility '$(basename $VAR_UTILITY_FOLDER_PATH)' supports the following utility scripts:"
+        PrintMessage "INFO" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "The $2 Utility '$(basename $VAR_UTILITY_FOLDER_PATH)' supports the following utility scripts:"
     fi   
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Searching for utility scripts in '$VAR_UTILITY_FOLDER_PATH'..."
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Searching for utility scripts in '$VAR_UTILITY_FOLDER_PATH'..."
     for var_utility_script_file in "$VAR_UTILITY_FOLDER_PATH"/*; do
         if [[ -f $var_utility_script_file ]] && [[ $var_utility_script_file == *".bash" ]]; then
             var_utility_script=$(basename $var_utility_script_file)
-            PrintMessage "INFO" "mitchell" "vanbijleveld" "  - ${var_utility_script%.bash}"
+            PrintMessage "INFO" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "  - ${var_utility_script%.bash}"
             ((var_utility_scripts_found++))
         fi
     done
     if [[ $var_utility_scripts_found -eq 0 ]]; then
-        PrintMessage "INFO" "mitchell" "vanbijleveld" "  No Utility Scripts available."
+        PrintMessage "INFO" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "  No Utility Scripts available."
     fi
     PrintMessage
     exit 1
@@ -259,12 +257,12 @@ export -f die_UtilityScriptNotFound
 FindUtilityFolderPath(){
     # $1 = FIND FOLDER PATH
     # $2 = FIND FOLDER NAME
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Finding Utility Folder for '$2'..."
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Finding Utility Folder for '$2'..."
     VAR_UTILITY_FOLDER_PATH=$(find -L $1 -maxdepth 1 -iname "$2" -type d)
     if [[ -d $VAR_UTILITY_FOLDER_PATH ]]; then
         return 0
     else
-        PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Folder for '$2' not found!"
+        PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Utility Folder for '$2' not found!"
         return 1
     fi
 }
@@ -273,12 +271,12 @@ export -f FindUtilityFolderPath
 FindUtilityScriptFilePath(){
     # $1 = FIND FOLDER PATH
     # $2 = FIND FILE NAME
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Finding Utility Script File for '$2'..."
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Finding Utility Script File for '$2'..."
     VAR_UTILITY_SCRIPT_FILE_PATH=$(find -L $1 -maxdepth 1 -iname "$2.bash" -type f)
     if [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
         return 0
     else
-        PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script File for '$2' not found!"
+        PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Utility Script File for '$2' not found!"
         return 1
     fi
 }
@@ -299,16 +297,20 @@ ForEachUtilityScript(){
             unset var_utility_script_file_basename
             if [[ -d $var_utility_script_file ]]; then
                 for var_utility_script_file in $var_utility_script_file/*; do
-                    var_utility_folder_basename="$(basename $(dirname $(dirname $var_utility_script_file)))/$(basename $(dirname $var_utility_script_file))"
-                    var_utility_script_file_basename=$(basename $var_utility_script_file)
-                    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Currently checking Utility '$var_utility_folder_basename' Script '$var_utility_script_file_basename'..."
-                    #
-                    # 
-                    #
-                    $1 $@
-                    #
-                    #
-                    #
+                    if [[ -f $var_utility_script_file ]] && [[ $var_utility_script_file == *".bash" ]]; then
+                        var_utility_folder_basename="$(basename $(dirname $(dirname $var_utility_script_file)))/$(basename $(dirname $var_utility_script_file))"
+                        var_utility_script_file_basename=$(basename $var_utility_script_file)
+                        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Currently checking Utility '$var_utility_folder_basename' Script '$var_utility_script_file_basename'..."
+                        #
+                        # 
+                        #
+                        $1 $@
+                        #
+                        #
+                        #
+                    else
+                        continue
+                    fi
                 done
             elif [[ -f $var_utility_script_file ]] && [[ $var_utility_script_file == *".bash" ]]; then
                 var_utility_folder_basename=$(basename $var_utility_folder)
@@ -337,35 +339,35 @@ export -f ForEachUtilityScript
 ProcessArguments "$@"
 #
 #
-if [[ $VAR_ENABLE_DEBUG -eq 1 ]] && [[ $VAR_BIN_RESTARTED -ne 1 ]]; then
+if [[ $BIN_ENABLE_DEBUG -eq 1 ]] && [[ $BIN_RESTARTED -ne 1 ]]; then
     export GLOBAL_VAR_DEBUG=1
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "The bin will be restarted in order to enable debug logging..."
-    export VAR_BIN_RESTARTED=1; "$(realpath $0)" "$@"; exit 0
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "The bin will be restarted in order to enable debug logging..."
+    export BIN_RESTARTED=1; "$(realpath $0)" "$@"; exit 0
 
-elif [[ $VAR_DISABLE_DEBUG -eq 1 ]] && [[ $VAR_BIN_RESTARTED -ne 1 ]]; then
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "The bin will be restarted in order to disable debug logging..."
+elif [[ $BIN_DISABLE_DEBUG -eq 1 ]] && [[ $BIN_RESTARTED -ne 1 ]]; then
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "The bin will be restarted in order to disable debug logging..."
     export GLOBAL_VAR_DEBUG=0
-    export VAR_BIN_RESTARTED=1; "$(realpath $0)" "$@"; exit 0
+    export BIN_RESTARTED=1; "$(realpath $0)" "$@"; exit 0
 
-elif [[ $VAR_BIN_RESTARTED -eq 1 ]]; then
-    export VAR_BIN_RESTARTED=0
+elif [[ $BIN_RESTARTED -eq 1 ]]; then
+    export BIN_RESTARTED=0
 fi
 #
 if [[ $VAR_UPDATE_FIRST -eq 1 ]] && [[ $VAR_UPDATE_DONE -ne 1 ]] && [[ $VAR_UTILITY == "BIN" ]] && [[ $VAR_UTILITY_SCRIPT == "UPDATE" ]]; then
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Not updating automatically because 'bin' 'update' is already requested by user..."
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Not updating automatically because 'bin' 'update' is already requested by user..."
 elif [[ $VAR_UPDATE_FIRST -eq 1 ]] && [[ $VAR_UPDATE_DONE -ne 1 ]] && [[ $VAR_UTILITY == "UPDATE" ]]; then
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Not updating automatically because 'update' is already requested by user..."
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Not updating automatically because 'update' is already requested by user..."
 elif [[ $VAR_UPDATE_FIRST -eq 1 ]] && [[ $VAR_UPDATE_DONE -ne 1 ]]; then
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Updating bin, utilities and utility scripts..."
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Updating bin, utilities and utility scripts..."
     #
-    export UTILITY_SCRIPT_VAR_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-bin-update-before-run.XXXXXXXX" --tmpdir)
+    export VAR_UTILITY_SCRIPT_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-bin-update-before-run.XXXXXXXX" --tmpdir)
     #
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Running update script..."
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Running update script..."
     $(which bash) "$GLOBAL_VAR_DIR_INSTALLATION/bin/update.bash"
     export VAR_UPDATE_DONE=1
 
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "The bin will be restarted in order to complete the update..."
-    export VAR_BIN_RESTARTED=1
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "The bin will be restarted in order to complete the update..."
+    export BIN_RESTARTED=1
     "$(realpath $0)" "$@"
     exit 0
 fi
@@ -378,19 +380,19 @@ fi
 ####################################################################################################
 # FIND UTILITY FOLDER PATH
 ####################################################################################################
-PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Checking variable 'VAR_UTILITY' with value '$VAR_UTILITY'..."
+PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Checking variable 'VAR_UTILITY' with value '$VAR_UTILITY'..."
 if [[ $VAR_UTILITY == "" ]]; then
     die_UtilityNotFound "No Utility specified!"
 fi
 #
 if FindUtilityFolderPath "$GLOBAL_VAR_DIR_INSTALLATION" "$VAR_UTILITY"; then
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Folder '$VAR_UTILITY' found!"
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Utility Folder '$VAR_UTILITY' found!"
 elif FindUtilityScriptFilePath "$GLOBAL_VAR_DIR_INSTALLATION/bin" "$VAR_UTILITY"; then
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Folder '$VAR_UTILITY' was not found..."
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script '$VAR_UTILITY' found in Utility 'bin'!"
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Changing variable 'VAR_UTILITY' from '$VAR_UTILITY' to 'BIN'..."
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Changing variable 'VAR_UTILITY_SCRIPT' from '$VAR_UTILITY_SCRIPT' to '$VAR_UTILITY'..."
-    VAR_UTILITY_SCRIPT=$VAR_UTILITY; VAR_UTILITY="BIN"; VAR_RECHECK_ARGUMENTS=1
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Utility Folder '$VAR_UTILITY' was not found..."
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Utility Script '$VAR_UTILITY' found in Utility 'bin'!"
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Changing variable 'VAR_UTILITY' from '$VAR_UTILITY' to 'BIN'..."
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Changing variable 'VAR_UTILITY_SCRIPT' from '$VAR_UTILITY_SCRIPT' to '$VAR_UTILITY'..."
+    VAR_UTILITY_SCRIPT=$VAR_UTILITY; VAR_UTILITY="BIN"; BIN_RECHECK_ARGUMENTS=1
 else
     die_UtilityNotFound "Utility '$VAR_UTILITY' not found!"  
 fi
@@ -404,13 +406,13 @@ fi
 # FIND UTILITY SCRIPT FILE PATH
 ####################################################################################################
 if [[ ! $VAR_UTILITY_SCRIPT_FILE_PATH == "" ]]; then
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script File Path is already set! No need to search for it..."
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Utility Script File Path is already set! No need to search for it..."
 elif FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY_SCRIPT"; then
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script File '$VAR_UTILITY_SCRIPT' found in Utility '$VAR_UTILITY'!"
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Utility Script File '$VAR_UTILITY_SCRIPT' found in Utility '$VAR_UTILITY'!"
 elif FindUtilityScriptFilePath "$VAR_UTILITY_FOLDER_PATH" "$VAR_UTILITY"; then
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Utility Script '$VAR_UTILITY' found in Utility '$VAR_UTILITY'!"
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Changing variable 'VAR_UTILITY_SCRIPT' from '$VAR_UTILITY_SCRIPT' to '$VAR_UTILITY'..."
-    VAR_UTILITY_SCRIPT=$VAR_UTILITY; VAR_RECHECK_ARGUMENTS=1
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Utility Script '$VAR_UTILITY' found in Utility '$VAR_UTILITY'!"
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Changing variable 'VAR_UTILITY_SCRIPT' from '$VAR_UTILITY_SCRIPT' to '$VAR_UTILITY'..."
+    VAR_UTILITY_SCRIPT=$VAR_UTILITY; BIN_RECHECK_ARGUMENTS=1
 elif [[ $VAR_UTILITY_SCRIPT == "" ]]; then
     die_UtilityScriptNotFound "No Utility Script specified!"
 else
@@ -422,7 +424,7 @@ fi
 ####################################################################################################
 #
 #
-if [[ $VAR_RECHECK_ARGUMENTS -eq 1 ]]; then
+if [[ $BIN_RECHECK_ARGUMENTS -eq 1 ]]; then
     ProcessArguments "$@"
 fi
 #
@@ -431,10 +433,10 @@ fi
 ####################################################################################################
 # EXPORT UTILITY SCRIPT VARIABLES
 ####################################################################################################
-PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Exporting Utility Script Variables..."
-export UTILITY_SCRIPT_VAR_DIR_ETC="$GLOBAL_VAR_DIR_ETC/$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))/$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')"
-#export UTILITY_SCRIPT_VAR_DIR_TMP="$GLOBAL_VAR_DIR_TMP/$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))/$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')"
-export UTILITY_SCRIPT_VAR_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-$VAR_UTILITY-$VAR_UTILITY_SCRIPT.XXXXXXXX" --tmpdir)
+PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Exporting Utility Script Variables..."
+export VAR_UTILITY_SCRIPT_DIR_ETC="$GLOBAL_VAR_DIR_ETC/$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))/$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')"
+#export VAR_UTILITY_SCRIPT_DIR_TMP="$GLOBAL_VAR_DIR_TMP/$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))/$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')"
+export VAR_UTILITY_SCRIPT_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-$VAR_UTILITY-$VAR_UTILITY_SCRIPT.XXXXXXXX" --tmpdir)
 #
 VAR_UTILITY=$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))
 VAR_UTILITY_SCRIPT=$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')
@@ -451,17 +453,17 @@ VAR_UTILITY_SCRIPT=$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')
 ####################################################################################################
 # PRINT CONFIG 
 ####################################################################################################
-PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Printing configuration..."
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "GLOBAL_VAR_DIR_INSTALLATION  = $GLOBAL_VAR_DIR_INSTALLATION"
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "GLOBAL_VAR_DIR_ETC           = $GLOBAL_VAR_DIR_ETC"
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "GLOBAL_VAR_DIR_TMP           = $GLOBAL_VAR_DIR_TMP"
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "VAR_UTILITY                  = $VAR_UTILITY"
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "VAR_UTILITY_SCRIPT           = $VAR_UTILITY_SCRIPT"
+PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Printing configuration..."
+PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "GLOBAL_VAR_DIR_INSTALLATION  = $GLOBAL_VAR_DIR_INSTALLATION"
+PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "GLOBAL_VAR_DIR_ETC           = $GLOBAL_VAR_DIR_ETC"
+PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "GLOBAL_VAR_DIR_TMP           = $GLOBAL_VAR_DIR_TMP"
+PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "VAR_UTILITY                  = $VAR_UTILITY"
+PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "VAR_UTILITY_SCRIPT           = $VAR_UTILITY_SCRIPT"
 #
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "VAR_UTILITY_FOLDER_PATH      = $VAR_UTILITY_FOLDER_PATH"
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "VAR_UTILITY_SCRIPT_FILE_PATH = $VAR_UTILITY_SCRIPT_FILE_PATH"
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "UTILITY_SCRIPT_VAR_DIR_ETC   = $UTILITY_SCRIPT_VAR_DIR_ETC"
-PrintMessage "CONFIG" "mitchell" "vanbijleveld" "UTILITY_SCRIPT_VAR_DIR_TMP   = $UTILITY_SCRIPT_VAR_DIR_TMP"
+PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "VAR_UTILITY_FOLDER_PATH      = $VAR_UTILITY_FOLDER_PATH"
+PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "VAR_UTILITY_SCRIPT_FILE_PATH = $VAR_UTILITY_SCRIPT_FILE_PATH"
+PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "VAR_UTILITY_SCRIPT_DIR_ETC   = $VAR_UTILITY_SCRIPT_DIR_ETC"
+PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "VAR_UTILITY_SCRIPT_DIR_TMP   = $VAR_UTILITY_SCRIPT_DIR_TMP"
 ####################################################################################################
 # PRINT CONFIG 
 ####################################################################################################
@@ -475,16 +477,16 @@ PrintMessage "CONFIG" "mitchell" "vanbijleveld" "UTILITY_SCRIPT_VAR_DIR_TMP   = 
 ####################################################################################################
 # CHECK DEPENDENCIES
 ####################################################################################################
-if [[ $VAR_SKIP_DEPENDENCY_CHECK -eq 1 ]]; then
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Skipping dependency check..."
+if [[ $BIN_SKIP_DEPENDENCY_CHECK -eq 1 ]]; then
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Skipping dependency check..."
 else
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Fetching dependencies from utility script..."
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Fetching dependencies from utility script..."
     eval_FromFile "VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" $VAR_UTILITY_SCRIPT_FILE_PATH
-    PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Starting script to check dependencies..."
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Starting script to check dependencies..."
     $(which bash) "$GLOBAL_VAR_DIR_INSTALLATION/bin/CheckDependencies.bash" $VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS "--run-in-background"
     #
     if [[ $? -eq 1 ]]; then
-        PrintMessage "FATAL" "mitchell" "vanbijleveld" "Could not start Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' because dependencies are missing. Exiting..."
+        PrintMessage "FATAL" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Could not start Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' because dependencies are missing. Exiting..."
         exit 1
     fi
 fi
@@ -515,5 +517,5 @@ source "$GLOBAL_VAR_DIR_INSTALLATION/.mitchellvanbijleveld/Functions/Die.bash"
 ####################################################################################################
 # START UTILITY SCRIPT
 ####################################################################################################
-PrintMessage "DEBUG" "mitchell" "vanbijleveld" "Starting Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' with arguments: $(printf "'%s' " "${VAR_UTILITY_SCRIPT_ARGUMENTS[@]}")"
+PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Starting Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' with arguments: $(printf "'%s' " "${VAR_UTILITY_SCRIPT_ARGUMENTS[@]}")"
 $(which bash) $VAR_UTILITY_SCRIPT_FILE_PATH "${VAR_UTILITY_SCRIPT_ARGUMENTS[@]}"

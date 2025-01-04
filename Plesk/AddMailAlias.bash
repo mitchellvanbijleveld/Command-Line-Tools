@@ -24,7 +24,7 @@ VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="DefaultEmailAddress"
 ####################################################################################################
 VAR_EMAIL_ADDRESS_ALIAS=$1
 VAR_EMAIL_ADDRESS=$2
-VAR_DEFAULT_EMAIL_ADDRESS_FILE="$UTILITY_SCRIPT_VAR_DIR_ETC/DefaultEmailAddress"
+VAR_DEFAULT_EMAIL_ADDRESS_FILE="$VAR_UTILITY_SCRIPT_DIR_ETC/DefaultEmailAddress"
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
