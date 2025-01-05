@@ -122,13 +122,12 @@ fi
 #
 PrintMessage "DEBUG " "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Checking if all configurable items are set correctly..."
 ProcessArguments "VALIDATE" "$@"
+PrintMessage
 #
 if [[ $VAR_CONFIGURATE_POSSIBLE -eq 1 ]]; then
-    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "OK"
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting to configure $VAR_VAR_UTILITY/$VAR_VAR_UTILITY_SCRIPT..."
     ProcessArguments "CONFIGURE" "$@"
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "OK"
-    PrintMessage
 else
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "No configuration paramaters passed."
     PrintMessage    
@@ -136,5 +135,5 @@ else
     for var_configurable_setting in $VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS; do
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - $var_configurable_setting"
     done
-    PrintMessage
 fi
+PrintMessage
