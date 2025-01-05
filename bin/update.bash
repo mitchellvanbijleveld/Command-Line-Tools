@@ -64,7 +64,7 @@ done
 # FUNCTIONS
 ####################################################################################################
 WriteUtilityScriptInfo(){
-    mkdir -p "$VAR_UTILITY_SCRIPT_DIR_TMP/$var_utility_folder_basename"
+    mkdir -p "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename"
     var_utility_script_file_basename=$(basename $var_utility_script_file)
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Getting current version..."
     var_utility_script_version=$(eval_FromFile "VAR_UTILITY_SCRIPT_VERSION" $var_utility_script_file; echo $VAR_UTILITY_SCRIPT_VERSION)
@@ -72,8 +72,8 @@ WriteUtilityScriptInfo(){
     var_utility_script_shasum=$(shasum $var_utility_script_file | awk '{print $1}')
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Current version is $var_utility_script_version"
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Current shasum is $var_utility_script_shasum"
-    echo $var_utility_script_version > "$VAR_UTILITY_SCRIPT_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename"
-    echo $var_utility_script_shasum > "$VAR_UTILITY_SCRIPT_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename.shasum"
+    echo $var_utility_script_version > "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename"
+    echo $var_utility_script_shasum > "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename.shasum"
 }
 #
 CompareUtilityScriptInfo(){
@@ -85,14 +85,14 @@ CompareUtilityScriptInfo(){
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "New version is $var_utility_script_version"
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "New shasum is $var_utility_script_shasum"
     #
-    if [[ -f "$VAR_UTILITY_SCRIPT_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename" ]]; then
-        var_utility_script_old_version=$(cat "$VAR_UTILITY_SCRIPT_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename")
+    if [[ -f "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename" ]]; then
+        var_utility_script_old_version=$(cat "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename")
     else
         var_utility_script_old_version=""
     fi
     #
-    if [[ -f "$VAR_UTILITY_SCRIPT_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename.shasum" ]]; then
-        var_utility_script_old_shasum=$(cat "$VAR_UTILITY_SCRIPT_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename.shasum")
+    if [[ -f "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename.shasum" ]]; then
+        var_utility_script_old_shasum=$(cat "$UTILITY_SCRIPT_VAR_DIR_TMP/$var_utility_folder_basename/$var_utility_script_file_basename.shasum")
     else
         var_utility_script_old_shasum=""
     fi

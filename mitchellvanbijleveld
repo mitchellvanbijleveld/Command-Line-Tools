@@ -360,7 +360,7 @@ elif [[ $VAR_UPDATE_FIRST -eq 1 ]] && [[ $VAR_UPDATE_DONE -ne 1 ]] && [[ $VAR_UT
 elif [[ $VAR_UPDATE_FIRST -eq 1 ]] && [[ $VAR_UPDATE_DONE -ne 1 ]]; then
     PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Updating bin, utilities and utility scripts..."
     #
-    export VAR_UTILITY_SCRIPT_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-bin-update-before-run.XXXXXXXX" --tmpdir)
+    export UTILITY_SCRIPT_VAR_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-bin-update-before-run.XXXXXXXX" --tmpdir)
     #
     PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Running update script..."
     $(which bash) "$GLOBAL_VAR_DIR_INSTALLATION/bin/update.bash"
@@ -434,9 +434,9 @@ fi
 # EXPORT UTILITY SCRIPT VARIABLES
 ####################################################################################################
 PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Exporting Utility Script Variables..."
-export VAR_UTILITY_SCRIPT_DIR_ETC="$GLOBAL_VAR_DIR_ETC/$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))/$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')"
-#export VAR_UTILITY_SCRIPT_DIR_TMP="$GLOBAL_VAR_DIR_TMP/$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))/$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')"
-export VAR_UTILITY_SCRIPT_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-$VAR_UTILITY-$VAR_UTILITY_SCRIPT.XXXXXXXX" --tmpdir)
+export UTILITY_SCRIPT_VAR_DIR_ETC="$GLOBAL_VAR_DIR_ETC/$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))/$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')"
+#export UTILITY_SCRIPT_VAR_DIR_TMP="$GLOBAL_VAR_DIR_TMP/$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))/$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')"
+export UTILITY_SCRIPT_VAR_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-$VAR_UTILITY-$VAR_UTILITY_SCRIPT.XXXXXXXX" --tmpdir)
 #
 VAR_UTILITY=$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))
 VAR_UTILITY_SCRIPT=$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')
@@ -457,13 +457,14 @@ PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Printing configuratio
 PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "GLOBAL_VAR_DIR_INSTALLATION  = $GLOBAL_VAR_DIR_INSTALLATION"
 PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "GLOBAL_VAR_DIR_ETC           = $GLOBAL_VAR_DIR_ETC"
 PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "GLOBAL_VAR_DIR_TMP           = $GLOBAL_VAR_DIR_TMP"
+#
 PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "VAR_UTILITY                  = $VAR_UTILITY"
 PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "VAR_UTILITY_SCRIPT           = $VAR_UTILITY_SCRIPT"
-#
 PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "VAR_UTILITY_FOLDER_PATH      = $VAR_UTILITY_FOLDER_PATH"
 PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "VAR_UTILITY_SCRIPT_FILE_PATH = $VAR_UTILITY_SCRIPT_FILE_PATH"
-PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "VAR_UTILITY_SCRIPT_DIR_ETC   = $VAR_UTILITY_SCRIPT_DIR_ETC"
-PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "VAR_UTILITY_SCRIPT_DIR_TMP   = $VAR_UTILITY_SCRIPT_DIR_TMP"
+#
+PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "UTILITY_SCRIPT_VAR_DIR_ETC   = $UTILITY_SCRIPT_VAR_DIR_ETC"
+PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "UTILITY_SCRIPT_VAR_DIR_TMP   = $UTILITY_SCRIPT_VAR_DIR_TMP"
 ####################################################################################################
 # PRINT CONFIG 
 ####################################################################################################

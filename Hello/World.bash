@@ -22,7 +22,7 @@ VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="FirstName LastName"
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
-VAR_FIRST_NAME_FILE="$VAR_UTILITY_SCRIPT_DIR_ETC/FirstName"
+VAR_FIRST_NAME_FILE="$UTILITY_SCRIPT_VAR_DIR_ETC/FirstName"
 if [[ -f $VAR_FIRST_NAME_FILE ]]; then
     VAR_FIRST_NAME=$(cat $VAR_FIRST_NAME_FILE)
 else

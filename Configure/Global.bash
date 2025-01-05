@@ -62,8 +62,8 @@ for var_argument in "$@"; do
                     if [[ $var_configurable_setting_CAPS == $var_argument_CAPS ]]; then
                         case $VAR_PROCESS_ARGUMENT_MODE in
                             "CONFIGURE")
-                                PrintMessage "CONFIGURE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Configuring '$var_configurable_setting' with value '$2' to '$VAR_UTILITY_SCRIPT_DIR_ETC/$var_configurable_setting'..."
-                                echo "$2" > "$VAR_UTILITY_SCRIPT_DIR_ETC/$var_configurable_setting"
+                                PrintMessage "CONFIGURE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Configuring '$var_configurable_setting' with value '$2' to '$UTILITY_SCRIPT_VAR_DIR_ETC/$var_configurable_setting'..."
+                                echo "$2" > "$UTILITY_SCRIPT_VAR_DIR_ETC/$var_configurable_setting"
                             ;;
                             "VALIDATE")
                                 if [[ $2 == "" ]]; then
