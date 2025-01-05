@@ -4,8 +4,8 @@
 ####################################################################################################
 # BIN INFO - MITCHELL/VANBIJLEVELD
 ####################################################################################################
-BIN_UTILITY="mitchell"
-BIN_UTILITY_SCRIPT="vanbijleveld"
+export BIN_UTILITY="mitchell"
+export BIN_UTILITY_SCRIPT="vanbijleveld"
 BIN_UTILITY_SCRIPT_VERSION="2025.01.03-1859"
 BIN_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname echo eval exit find grep mktemp printf realpath sed shift tee tr type which"
 ####################################################################################################
