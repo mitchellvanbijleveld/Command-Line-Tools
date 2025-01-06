@@ -63,7 +63,11 @@ for var_argument in "$@"; do
                         case $VAR_PROCESS_ARGUMENT_MODE in
                             "CONFIGURE")
                                 if [[ -f "$UTILITY_SCRIPT_VAR_DIR_ETC/$var_configurable_setting" ]]; then
-                                    PrintMessage "CONFIGURE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Configuring '$var_configurable_setting' with value '$2' from '$(cat "$UTILITY_SCRIPT_VAR_DIR_ETC/$var_configurable_setting")' to '$UTILITY_SCRIPT_VAR_DIR_ETC/$var_configurable_setting'..."                   
+                                    if [[ $2 == $(cat "$UTILITY_SCRIPT_VAR_DIR_ETC/$var_configurable_setting") ]]; then
+                                        PrintMessage "CONFIGURE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Skipping Configuring '$var_configurable_setting' with value '$2' because it has already been configured with this value..."  
+                                    else
+                                        PrintMessage "CONFIGURE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Configuring '$var_configurable_setting' with value '$2' from '$(cat "$UTILITY_SCRIPT_VAR_DIR_ETC/$var_configurable_setting")' to '$UTILITY_SCRIPT_VAR_DIR_ETC/$var_configurable_setting'..."                   
+                                    fi
                                 else
                                     PrintMessage "CONFIGURE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Configuring '$var_configurable_setting' with value '$2' to '$UTILITY_SCRIPT_VAR_DIR_ETC/$var_configurable_setting'..."
                                 fi
