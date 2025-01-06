@@ -23,7 +23,7 @@ BIN_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname e
 ####################################################################################################
 export GLOBAL_VAR_DIR_INSTALLATION=$(dirname $(realpath $0))
 export GLOBAL_VAR_DIR_ETC="/etc/mitchellvanbijleveld/Command-Line-Tools"
-GLOBAL_VAR_DIR_TMP="/tmp/mitchellvanbijleveld/Command-Line-Tools"
+export GLOBAL_VAR_DIR_TMP="/tmp/mitchellvanbijleveld/Command-Line-Tools"
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
@@ -52,7 +52,7 @@ for var_argument in "$@"; do
         "--DRY-RUN")
             export GLOBAL_VAR_DRY_RUN=1
         ;;
-        "--INTERACTIVE" | "--INTERACTIVESHELL" | "--INTERACTIVE-SHELL")
+        "--INTERACTIVE" | "--INTERACTIVESHELL" | "--INTERACTIVE-SHELL" | "--IS")
             VAR_UTILITY="InteractiveShell"
             VAR_UTILITY_SCRIPT="InteractiveShell"
         ;;
