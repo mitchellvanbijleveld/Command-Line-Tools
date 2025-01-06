@@ -71,8 +71,8 @@ VAR_DAEMON_PID_FILE="$GLOBAL_VAR_DIR_TMP/$VAR_UTILITY/$VAR_DAEMON_NAME"
 ####################################################################################################
 # FUNCTIONS
 ####################################################################################################
-mkdir -pv "$GLOBAL_VAR_DIR_ETC/$VAR_UTILITY"
-mkdir -pv "$GLOBAL_VAR_DIR_TMP/$VAR_UTILITY"
+PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which mkdir) -pv "$GLOBAL_VAR_DIR_ETC/$VAR_UTILITY"
+PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which mkdir) -pv "$GLOBAL_VAR_DIR_TMP/$VAR_UTILITY"
 ####################################################################################################
 # FUNCTIONS
 ####################################################################################################
