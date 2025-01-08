@@ -7,7 +7,7 @@
 VAR_UTILITY="bin"
 VAR_UTILITY_SCRIPT="InstallAutoCompletion"
 VAR_UTILITY_SCRIPT_VERSION="2024.12.19-1805"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit PrintMessage sed shift tr"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit PrintMessage sed shasum shift tr"
 ####################################################################################################
 # UTILITY SCRIPT INFO - bin/InstallAutoCompletion
 ####################################################################################################
@@ -40,6 +40,9 @@ for var_argument in "$@"; do
     var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
     #
     case $var_argument_CAPS in
+        "--IGNORE-SHELL")
+            VAR_IGNORE_SHELL=1
+        ;;
         "--REPLACE")
             PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Replacing file if existing..."
             VAR_REPLACE_FILE=1
@@ -85,8 +88,13 @@ done
 # START UTILITY SCRIPT
 ####################################################################################################
 if [[ $SHELL != "/bin/bash" ]]; then
-    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Current shell is not '/bin/bash'. Exiting..."
-    #exit 1
+    PrintMessage "INGO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Current shell is not '/bin/bash'."
+    if [[ $VAR_IGNORE_SHELL -eq 1 ]]; then
+        PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Continuing installation becasue --ignore-shell is passed..."
+    else
+        PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Exiting because of unsupported shell..."
+        exit 0
+    fi
 fi
 #
 if [[ ! -d "/etc/bash_completion.d" ]]; then
@@ -104,20 +112,19 @@ elif [[ -f $VAR_AUTOCOMPLETE_FILE_INSTALLATION_PATH ]]; then
     #
     if [[ $var_current_autocomplete_file != $var_updated_autocomplete_file ]]; then
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Updated file is available." 
-
+        #
         if [[ $VAR_SHOW_DIFF -eq 1 ]]; then
             PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which diff) $VAR_AUTOCOMPLETE_FILE_INSTALLATION_PATH <(sed "s|GLOBAL_VAR_DIR_INSTALLATION|$GLOBAL_VAR_DIR_INSTALLATION|g" "$GLOBAL_VAR_DIR_INSTALLATION/.bash/AutoCompletion.bash")
         else
             PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Use --show-diff to print the difference"
         fi
-        
+        #
         PrintMessage
-
+        #
         if [[ $VAR_REPLACE_FILE -eq 1 ]]; then
             PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Replacing file as requested..."
         else
             PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Not replacing AutoComplete file. Use '--replace' to overwrite."
-
             exit 1
         fi
     else
