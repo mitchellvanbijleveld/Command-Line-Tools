@@ -42,7 +42,7 @@ for var_argument in "$@"; do
     var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
     #
     case $var_argument_CAPS in
-        "--DIRS-ONLY") 
+        "--DIRS-ONLY" | "--SKIP-FILES") 
             if [[ $VAR_FILES_ONLY -eq 1 ]]; then
                 PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Argument '--DIRS-ONLY' was not accepted because '--FILES-ONLY' was already set. Exiting..."
                 exit 1
@@ -50,7 +50,10 @@ for var_argument in "$@"; do
                 VAR_DIRS_ONLY=1
             fi
         ;;
-        "--FILES-ONLY") 
+        "--EXCLUDE-DIR" | "--EXCLUDE-DIRECTORY")
+            VAR_EXCLUDE_DIR=$2
+        ;;
+        "--FILES-ONLY" | "--SKIP-DIRS" | "--SKIP-DIRECTORIES") 
             if [[ $VAR_DIRS_ONLY -eq 1 ]]; then
                 PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Argument '--FILES-ONLY' was not accepted because '--DIRS-ONLY' was already set. Exiting..."
                 exit 1
@@ -58,7 +61,7 @@ for var_argument in "$@"; do
                 VAR_FILES_ONLY=1
             fi
         ;;
-        "--SEARCH-DIR")
+        "--SEARCH-DIR" | "--SEARCH-DIRECTORY")
             if [[ $VAR_SEARCH_DIR != $HOME ]]; then
                 PrintMessage "WARN" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Argument '--SEARCH-DIR' should only be set once. Overriding..,"
             fi
@@ -72,7 +75,7 @@ for var_argument in "$@"; do
                 PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Search directory real path is '$(realpath $VAR_SEARCH_DIR)'..."
             fi
         ;;
-        "--SORT")
+        "--SORT" | "--SORT-OUTPUT")
             PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sorting output when done..."
             SORT_OUTPUT=1
         ;;
@@ -80,7 +83,7 @@ for var_argument in "$@"; do
             PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Suppressing warnings and errors in output..."
             SUPPRESS_PERMISSION_DENIED=1
         ;;
-        "--RUN-COMMAND")
+        "--EXECUTE-COMMAND" | "--RUN-COMMAND")
             if type $2 &> /dev/null && [[ $2 == *"{}"* ]]; then
                 PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Running command '$2' for every found item..."
                 VAR_RUN_COMMAND=$2
@@ -89,7 +92,7 @@ for var_argument in "$@"; do
                 exit 1
             fi
         ;;
-        "--WILDCARD")
+        "--WILDCARD" | "--WILDCARD-SEARCH")
             PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Searching for search string with wildcards before and after..."
             SEARCH_WILDCARD=1
         ;;
@@ -149,7 +152,13 @@ fi
 #
 $(which clear)
 #
-VAR_FIND_COMMAND="'$VAR_SEARCH_DIR' -iname '$VAR_SEARCH_QUERY'"
+if [[ $VAR_EXCLUDE_DIR != "" ]]; then
+    VAR_FIND_COMMAND="'$VAR_SEARCH_DIR' -path '$VAR_EXCLUDE_DIR' -prune -o -iname '$VAR_SEARCH_QUERY' -print"
+else
+    VAR_FIND_COMMAND="'$VAR_SEARCH_DIR' -iname '$VAR_SEARCH_QUERY'"
+fi
+#
+
 #
 if [[ $VAR_DIRS_ONLY -eq 1 ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Searching for directories only in '$VAR_SEARCH_DIR' for '$VAR_SEARCH_QUERY'..."
