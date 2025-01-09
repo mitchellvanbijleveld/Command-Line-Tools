@@ -67,6 +67,9 @@ for var_argument in "$@"; do
         "--UPDATE-FIRST")
             VAR_UPDATE_FIRST=1
         ;;
+        "--VERBOSE")
+            export GLOBAL_VAR_VERBOSE=1
+        ;;
         *)
             if [[ $VAR_UTILITY == "" ]] && [[ $var_argument_CAPS != "--"* ]]; then
                 PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Setting '$var_argument' as VAR_UTILITY..."
@@ -129,13 +132,8 @@ PrintMessage(){
             echo
         fi
 
-    elif command -v "$var_message" &>/dev/null || command -v "$5" &>/dev/null; then
-        if [[ $var_message == "SKIP_SUPER_DEBUG" ]]; then
-            shift 4
-            SKIP_SUPER_DEBUG=1
-        else
-            shift 3
-        fi
+    elif command -v "$var_message" &>/dev/null; then
+        shift 3
         #
         if [[ $GLOBAL_VAR_DRY_RUN -eq 1 ]]; then
             if [[ $GLOBAL_VAR_DEBUG -eq 1 ]]; then
@@ -147,14 +145,16 @@ PrintMessage(){
         else
             export VAR_TMP_FILE_COMMAND_OUTPUT=$(mktemp "mitchellvanbijleveld-$var_utility-$var_utility_script.XXXXXXXX" --tmpdir)
             if [[ $GLOBAL_VAR_DEBUG -eq 1 ]]; then
-                if [[ $SKIP_SUPER_DEBUG -ne 1 ]]; then
-                    echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Created temporary file for script output: '$VAR_TMP_FILE_COMMAND_OUTPUT'..."
-                    echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Executing command on behalf of $var_utility/$var_utility_script:"
-                fi    
+                echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Created temporary file for script output: '$VAR_TMP_FILE_COMMAND_OUTPUT'..."
+                echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Executing command on behalf of $var_utility/$var_utility_script:"  
                 echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel 'COMMAND') $@"
                 eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
                     echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel 'COMMAND') $(echo $@ | awk '{print $1}'): $command_output_line"
-                done; unset SKIP_SUPER_DEBUG
+                done;
+            elif [[ $GLOBAL_VAR_VERBOSE -eq 1 ]]; then
+                eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
+                    echo "$(PrintLogLine_LogLevel 'VERBOSE') $command_output_line"
+                done;
             else
                 
                 if [[ $var_log_level == "DEBUG" ]]; then
