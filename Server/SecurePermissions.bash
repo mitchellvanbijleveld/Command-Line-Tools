@@ -113,4 +113,5 @@ find $VAR_FOLDER | while IFS= read -r var_found_item; do
     fi
 done
 #
+PrintMessage
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Secured the permissions of files and folders within '$(realpath $VAR_FOLDER)'!"
