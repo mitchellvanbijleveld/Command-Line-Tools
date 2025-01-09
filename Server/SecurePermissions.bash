@@ -41,6 +41,12 @@ for var_argument in "$@"; do
     var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
     #
     case $var_argument_CAPS in
+        "--GROUP")
+            VAR_GROUP=$2
+        ;;
+        "--USER")
+            VAR_USER=$2
+        ;;
         "--"*)
             die_ProcessArguments_InvalidFlag $var_argument
         ;;
@@ -111,6 +117,21 @@ find $VAR_FOLDER | while IFS= read -r var_found_item; do
     else
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Not a valid file or directory ($var_found_item). Skipping..."
     fi
+
+
+
+
+    if [[ -d $var_found_item ]] || [[ -f $var_found_item ]]; then
+
+        if [[ $VAR_GROUP != "" ]] && [[ $VAR_USER != "" ]]; then
+            PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chown) -v $VAR_USER:$VAR_GROUP "'$var_found_item'"
+        elif [[ $VAR_USER != "" ]]; then
+            PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chown) -v $VAR_USER "'$var_found_item'"
+        fi
+    fi
+
+
+
 done
 #
 PrintMessage
