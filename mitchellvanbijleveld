@@ -138,7 +138,6 @@ PrintMessage(){
         fi
         #
         if [[ $GLOBAL_VAR_DRY_RUN -eq 1 ]]; then
-
             if [[ $GLOBAL_VAR_DEBUG -eq 1 ]]; then
                 echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel 'DRY RUN') $@"
             else

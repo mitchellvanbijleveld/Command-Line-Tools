@@ -83,10 +83,18 @@ done
 ####################################################################################################
 # START UTILITY SCRIPT
 ####################################################################################################
-if [[ ! -d $VAR_FOLDER ]]; then
-    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The directory '$VAR_FOLDER' does not exist. Exiting..."
+if [[ $VAR_FOLDER == "" ]]; then
+    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The search folder can not be empty. Exiting..."
     exit 1
 fi
+#
+if [[ ! -d $VAR_FOLDER ]]; then
+    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The folder '$VAR_FOLDER' does not exist. Exiting..."
+    exit 1
+fi
+#
+PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting to secure the folder '$(realpath $VAR_FOLDER)'..."
+PrintMessage
 #
 find $VAR_FOLDER | while IFS= read -r var_found_item; do
     if [[ -d $var_found_item ]]; then
@@ -104,3 +112,5 @@ find $VAR_FOLDER | while IFS= read -r var_found_item; do
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Not a valid file or directory ($var_found_item). Skipping..."
     fi
 done
+#
+PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Secured the permissions of files and folders within '$(realpath $VAR_FOLDER)'!"
