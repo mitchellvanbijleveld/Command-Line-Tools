@@ -98,14 +98,14 @@ PrintMessage
 #
 find $VAR_FOLDER | while IFS= read -r var_found_item; do
     if [[ -d $var_found_item ]]; then
-        PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 700 $var_found_item
+        PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 700 "'$var_found_item'"
     elif [[ -f $var_found_item ]]; then
         case $var_found_item in
             *".bash" | *".sh")
-                PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 700 $var_found_item
+                PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 700 "'$var_found_item'"
             ;;
             *)
-                PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 600 $var_found_item
+                PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 600 "'$var_found_item'"
             ;;
         esac   
     else
