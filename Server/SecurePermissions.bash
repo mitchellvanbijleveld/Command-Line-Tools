@@ -99,10 +99,10 @@ if [[ ! -d $VAR_FOLDER ]]; then
     exit 1
 fi
 #
-PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting to secure the folder '$(realpath $VAR_FOLDER)'..."
+PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting to secure the folder '$(realpath "$VAR_FOLDER")'..."
 PrintMessage
 #
-find $VAR_FOLDER | while IFS= read -r var_found_item; do
+find "$VAR_FOLDER" | while IFS= read -r var_found_item; do
     if [[ -d $var_found_item ]]; then
         PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 700 "'$var_found_item'"
     elif [[ -f $var_found_item ]]; then
@@ -135,4 +135,4 @@ find $VAR_FOLDER | while IFS= read -r var_found_item; do
 done
 #
 PrintMessage
-PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Secured the permissions of files and folders within '$(realpath $VAR_FOLDER)'!"
+PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Secured the permissions of files and folders within '$(realpath "$VAR_FOLDER")'!"
