@@ -141,7 +141,6 @@ PrintMessage(){
             else
                 echo "$(PrintLogLine_LogLevel 'DRY RUN') $@"
             fi
-
         else
             export VAR_TMP_FILE_COMMAND_OUTPUT=$(mktemp "mitchellvanbijleveld-$var_utility-$var_utility_script.XXXXXXXX" --tmpdir)
             if [[ $GLOBAL_VAR_DEBUG -eq 1 ]]; then
@@ -151,13 +150,12 @@ PrintMessage(){
                 eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
                     echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel 'COMMAND') $(echo $@ | awk '{print $1}'): $command_output_line"
                 done;
-            elif [[ $GLOBAL_VAR_VERBOSE -eq 1 ]]; then
+            elif [[ $GLOBAL_VAR_VERBOSE -eq 1 ]] && [[ $var_log_level == "VERBOSE" ]]; then
                 eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
                     echo "$(PrintLogLine_LogLevel 'VERBOSE') $command_output_line"
                 done;
             else
-                
-                if [[ $var_log_level == "DEBUG" ]]; then
+                if [[ $var_log_level == "DEBUG" ]] || [[ $var_log_level == "VERBOSE" ]]; then
                     eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT > /dev/null
                 else
                     eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT
