@@ -120,20 +120,17 @@ fi
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting to secure the folder '$(realpath "$VAR_FOLDER")'..."
 #
 
-eval $(which find) $VAR_COMMAND_STRING | while IFS= read -r var_found_item; do
+while IFS= read -r var_found_item; do
     if [[ -d $var_found_item ]]; then
-        PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Processing item $((VAR_PROCESSED_ITEMS + 1))/$(echo $VAR_ITEM_COUNT): $var_found_item"
         PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 700 "'$var_found_item'"
         ((VAR_PROCESSED_ITEMS++))
     elif [[ -f $var_found_item ]]; then
         case $var_found_item in
             *".bash" | *".sh")
-                PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Processing item $((VAR_PROCESSED_ITEMS + 1))/$(echo $VAR_ITEM_COUNT): $var_found_item"
                 PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 700 "'$var_found_item'"
                 ((VAR_PROCESSED_ITEMS++))
             ;;
             *)
-                PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Processing item $((VAR_PROCESSED_ITEMS + 1))/$(echo $VAR_ITEM_COUNT): $var_found_item"
                 PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 600 "'$var_found_item'"
                 ((VAR_PROCESSED_ITEMS++))
             ;;
@@ -149,7 +146,7 @@ eval $(which find) $VAR_COMMAND_STRING | while IFS= read -r var_found_item; do
             PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chown) -v $VAR_USER "'$var_found_item'"
         fi
     fi
-done
+done < <(eval $(which find) $VAR_COMMAND_STRING)
 #
 PrintMessage
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Secured the permissions of $VAR_PROCESSED_ITEMS/$(echo $VAR_ITEM_COUNT) items within '$(realpath "$VAR_FOLDER")'!"
