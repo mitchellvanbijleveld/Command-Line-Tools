@@ -152,7 +152,7 @@ PrintMessage(){
                 done;
             elif [[ $GLOBAL_VAR_VERBOSE -eq 1 ]] && [[ $var_log_level == "VERBOSE" ]]; then
                 eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
-                    echo "$(PrintLogLine_LogLevel 'VERBOSE') $command_output_line"
+                    echo "$(PrintLogLine_LogLevel "$var_log_level") $command_output_line"
                 done;
             else
                 if [[ $var_log_level == "DEBUG" ]] || [[ $var_log_level == "VERBOSE" ]]; then
@@ -175,11 +175,18 @@ PrintMessage(){
                     echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_utility_folder_basename/$var_utility_script_file_basename: $var_message"
                 fi
             fi
+        elif [[ $GLOBAL_VAR_VERBOSE -eq 1 ]] && [[ $var_log_level == "VERBOSE" ]]; then
+            if [[ $5 == "NoNewLine" ]]; then
+                echo -n "$(PrintLogLine_LogLevel "$var_log_level") $var_message"
+            else
+                echo "$(PrintLogLine_LogLevel "$var_log_level") $var_message"
+            fi
         else
-
             if [[ $var_log_level == "DEBUG" ]]; then
                 return 0
             elif [[ $var_log_level == "CONFIG" ]]; then
+                return 0
+            elif [[ $var_log_level == "VERBOSE" ]]; then
                 return 0
             else
                 if [[ $5 == "NoNewLine" ]]; then
