@@ -6,7 +6,7 @@
 ####################################################################################################
 export BIN_UTILITY="mitchell"
 export BIN_UTILITY_SCRIPT="vanbijleveld"
-BIN_UTILITY_SCRIPT_VERSION="2025.01.03-1859"
+BIN_UTILITY_SCRIPT_VERSION="2025.01.11-0028"
 BIN_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname echo eval exit find grep mktemp printf realpath sed shift tee tr type which"
 ####################################################################################################
 # BIN INFO - MITCHELL/VANBIJLEVELD
@@ -149,11 +149,11 @@ PrintMessage(){
                 echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel 'COMMAND') $@"
                 eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
                     echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel 'COMMAND') $(echo $@ | awk '{print $1}'): $command_output_line"
-                done;
+                done
             elif [[ $GLOBAL_VAR_VERBOSE -eq 1 ]] && [[ $var_log_level == "VERBOSE" ]]; then
                 eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
                     echo "$(PrintLogLine_LogLevel "$var_log_level") $command_output_line"
-                done;
+                done
             else
                 if [[ $var_log_level == "DEBUG" ]] || [[ $var_log_level == "VERBOSE" ]]; then
                     eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT > /dev/null
