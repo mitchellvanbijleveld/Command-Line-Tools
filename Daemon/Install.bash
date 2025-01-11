@@ -101,7 +101,6 @@ if [[ -f $VAR_DAEMON_CONFIG_FILE ]]; then
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "No update for Daemon '$VAR_DAEMON_NAME' available. Nothing to do. Exiting..."
         exit 0
     fi
-
 else
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Daemon '$VAR_DAEMON_NAME' is not installed."
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Installing version $ExampleDaemonVersion ($ExampleDaemonShasum) of daemon '$VAR_DAEMON_NAME'..."
