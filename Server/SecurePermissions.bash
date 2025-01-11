@@ -125,16 +125,16 @@ while IFS= read -r var_found_item; do
     PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$(printf "Processing file %*d of %d\n" "$max_length" "$(($VAR_PROCESSED_ITEMS + 1))" "$VAR_ITEM_COUNT"): $var_found_item"
     #  
     if [[ -d $var_found_item ]]; then
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 700 "'$var_found_item'"
+        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 700 "\"$var_found_item\""
         ((VAR_PROCESSED_ITEMS++))
     elif [[ -f $var_found_item ]]; then
         case $var_found_item in
             *".bash" | *".sh")
-                PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 700 "'$var_found_item'"
+                PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 700 "\"$var_found_item\""
                 ((VAR_PROCESSED_ITEMS++))
             ;;
             *)
-                PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 600 "'$var_found_item'"
+                PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 600 "\"$var_found_item\""
                 ((VAR_PROCESSED_ITEMS++))
             ;;
         esac   
