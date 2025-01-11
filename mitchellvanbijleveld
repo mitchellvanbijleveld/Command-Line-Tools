@@ -154,7 +154,7 @@ PrintMessage(){
                 eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
                     echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel 'COMMAND') $(echo $@ | awk '{print $1}'): $command_output_line"
                 done
-            elif [[ $GLOBAL_VAR_VERBOSE -eq 1 ]] && [[ $var_log_level == "VERBOSE" ]]; then
+            elif ( [[ $GLOBAL_VAR_VERBOSE -eq 1 ]] && [[ $var_log_level == "VERBOSE" ]] ) || [[ $var_log_level == "WARNING" ]]; then
                 eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
                     echo "$(PrintLogLine_LogLevel "$var_log_level") $command_output_line"
                 done
@@ -184,6 +184,12 @@ PrintMessage(){
                 echo -n "$(PrintLogLine_LogLevel "$var_log_level") $var_message"
             else
                 echo "$(PrintLogLine_LogLevel "$var_log_level") $var_message"
+            fi
+        elif [[ $var_log_level == "WARNING" ]]; then
+            if [[ $5 == "NoNewLine" ]]; then
+                echo -n "$(PrintLogLine_LogLevel 'WARNING') $var_message"
+            else
+                echo "$(PrintLogLine_LogLevel 'WARNING') $var_message"
             fi
         else
             if [[ $var_log_level == "DEBUG" ]]; then
