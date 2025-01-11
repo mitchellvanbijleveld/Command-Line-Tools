@@ -6,8 +6,8 @@
 ####################################################################################################
 VAR_UTILITY="Server"
 VAR_UTILITY_SCRIPT="SecurePermissions"
-VAR_UTILITY_SCRIPT_VERSION="2025.01.10-2333"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="chmod echo eval exit find PrintMessage shift tr which"
+VAR_UTILITY_SCRIPT_VERSION="2025.01.11-0101"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="chmod echo eval exit find printf PrintMessage shift tr which"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - Server/SecurePermissions
@@ -115,23 +115,26 @@ PrintMessage
 if [[ $VAR_ITEM_COUNT -eq 0 ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Folder seems to be secured already. Use --force to resecure the folder. Exiting..."
     exit 0
+else
+    max_length=$(echo -n "$(echo $VAR_ITEM_COUNT)" | wc -c)
 fi
 #
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting to secure the folder '$(realpath "$VAR_FOLDER")'..."
 #
-
 while IFS= read -r var_found_item; do
+    PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$(printf "Processing file %*d of %d\n" "$max_length" "$(($VAR_PROCESSED_ITEMS + 1))" "$VAR_ITEM_COUNT"): $var_found_item"
+    #  
     if [[ -d $var_found_item ]]; then
-        PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 700 "'$var_found_item'"
+        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 700 "'$var_found_item'"
         ((VAR_PROCESSED_ITEMS++))
     elif [[ -f $var_found_item ]]; then
         case $var_found_item in
             *".bash" | *".sh")
-                PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 700 "'$var_found_item'"
+                PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 700 "'$var_found_item'"
                 ((VAR_PROCESSED_ITEMS++))
             ;;
             *)
-                PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 600 "'$var_found_item'"
+                PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 600 "'$var_found_item'"
                 ((VAR_PROCESSED_ITEMS++))
             ;;
         esac   
@@ -141,9 +144,9 @@ while IFS= read -r var_found_item; do
     #
     if [[ -d $var_found_item ]] || [[ -f $var_found_item ]]; then
         if [[ $VAR_GROUP != "" ]] && [[ $VAR_USER != "" ]]; then
-            PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chown) -v $VAR_USER:$VAR_GROUP "'$var_found_item'"
+            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chown) -v $VAR_USER:$VAR_GROUP "'$var_found_item'"
         elif [[ $VAR_USER != "" ]]; then
-            PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chown) -v $VAR_USER "'$var_found_item'"
+            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chown) -v $VAR_USER "'$var_found_item'"
         fi
     fi
 done < <(eval $(which find) $VAR_COMMAND_STRING)
