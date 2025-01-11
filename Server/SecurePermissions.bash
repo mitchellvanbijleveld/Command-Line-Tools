@@ -130,7 +130,7 @@ fi
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting to secure the folder '$(realpath "$VAR_FOLDER")'..."
 #
 while IFS= read -r var_found_item; do
-    PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$(printf "Processing file %*d of %d\n" "$max_length" "$(($VAR_PROCESSED_ITEMS + 1))" "$VAR_ITEM_COUNT"): $var_found_item"
+    PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$(printf "Processing file or folder %*d / %d\n" "$max_length" "$(($VAR_PROCESSED_ITEMS + 1))" "$VAR_ITEM_COUNT") @ $(printf "%3s\n" $(( ( (($VAR_PROCESSED_ITEMS + 1)) * 100) / $VAR_ITEM_COUNT )) )% : $var_found_item"
     #  
     if [[ -d $var_found_item ]]; then
         PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which chmod) -v 700 "\"$var_found_item\""
