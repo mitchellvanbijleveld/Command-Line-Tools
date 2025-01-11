@@ -105,9 +105,17 @@ fi
 if [[ $VAR_FORCE -eq 1 ]]; then
     VAR_COMMAND_STRING="'$VAR_FOLDER'"
 else
-    VAR_COMMAND_STRING="'$VAR_FOLDER' ! -perm 600 ! -perm 700"
+    # VAR_COMMAND_STRING="'$VAR_FOLDER' ! -perm 600 ! -perm 700"
+    VAR_COMMAND_STRING="'$VAR_FOLDER' \( -type d ! -perm 700 \) -o \( -type f ! -perm 700 -a \( -name '*.bash' -o -name '*.sh' \) \) -o \( -type f ! -perm 600 -a ! \( -name '*.bash' -o -name '*.sh' \) \)"
+    # FIND:
+    # FOLDERS WITHOUT PERMISSIONS 700
+    # \( -type d ! -perm 700 \)
+    # FILES WITHOUT PERMISSIONS 700 IF ENDING WITH .SH OR .BASH
+    # \( -type f ! -perm 700 -a \( -name "*.bash" -o -name "*.sh" \) \)
+    # FILES WITHOUT PERMISSION 600 NOT ENDING WITH .SH OR .BASH
+    # \( -type f ! -perm 600 -a ! \( -name "*.bash" -o -name "*.sh" \) \)
 fi
-
+#
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Scanning folder '$(realpath "$VAR_FOLDER")'..."; VAR_ITEM_COUNT=$(eval $(which find) $VAR_COMMAND_STRING | wc -l)
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Files found not matching secure permissions: $(echo $VAR_ITEM_COUNT)"
 PrintMessage
