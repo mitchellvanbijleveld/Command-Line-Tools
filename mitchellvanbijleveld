@@ -241,7 +241,6 @@ export -f PrintMessage_UnsetVariables
 export -f PrintMessage_Internal_UnsetVariables
 #
 PrintMessageV2() {
-    PrintMessage_SupportedLogLevel="COMMAND CONFIG DEBUG DRY RUN FATAL INFO VERBOSE WARNING"
     #
     if [[ -z $@ ]]; then
         [[ $GLOBAL_VAR_DEBUG ]] || echo
@@ -278,14 +277,13 @@ PrintMessageV2() {
         #
         if [[ $GLOBAL_VAR_DRY_RUN ]]; then
             PrintMessage_Internal "DRY RUN" "$PrintMessage_Utility" "$PrintMessage_UtilityScript" "$PrintMessage_Command $PrintMessage_Text"
-            PrintMessage_UnsetVariables; return 0
         else
             PrintMessage_Internal "COMMAND" "$PrintMessage_Utility" "$PrintMessage_UtilityScript" "$PrintMessage_Command $PrintMessage_Text"
+            #
+            eval $PrintMessage_Command $PrintMessage_Text 2>&1 | while IFS= read -r PrintMessage_Command_Result; do
+                PrintMessage_Internal "$PrintMessage_LogLevel" "COMMAND" "$PrintMessage_Command" "$PrintMessage_Command_Result"
+            done       
         fi
-        #
-        eval $PrintMessage_Command $PrintMessage_Text 2>&1 | while IFS= read -r PrintMessage_Command_Result; do
-            PrintMessage_Internal "$PrintMessage_LogLevel" "COMMAND" "$PrintMessage_Command" "$PrintMessage_Command_Result"
-        done
         #
         PrintMessage_UnsetVariables; return 0
     fi
