@@ -6,7 +6,7 @@
 ####################################################################################################
 export BIN_UTILITY="mitchell"
 export BIN_UTILITY_SCRIPT="vanbijleveld"
-BIN_UTILITY_SCRIPT_VERSION="2025.01.11-0028"
+BIN_UTILITY_SCRIPT_VERSION="2025.01.13-1222"
 BIN_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname echo eval exit find grep mktemp printf realpath sed shift tee tr type which"
 ####################################################################################################
 # BIN INFO - MITCHELL/VANBIJLEVELD
@@ -115,7 +115,7 @@ export -f PrintLogLine_TimeStamp
 PrintLogLine_UtilityAndUtilityScript(){
     # $1 = UTILITY
     # $2 = UTILITY SCRIPT
-    echo "$(printf '%-24s' $1/$2)"
+    echo "$(printf '%-24s' $(echo "$1/$2" | sed 's|//|=/|g'))"
 }
 export -f PrintLogLine_UtilityAndUtilityScript
 #
@@ -212,6 +212,119 @@ PrintMessage(){
     fi
 }
 export -f PrintMessage
+####################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+PrintMessage_UnsetVariables() {
+    unset PrintMessage_LogLevel
+    unset PrintMessage_Utility
+    unset PrintMessage_UtilityScript
+    unset PrintMessage_Text
+    unset PrintMessage_Command
+}
+#
+eval_PrintMessage_Internal_UnsetVariables=$(declare -f PrintMessage_UnsetVariables | sed '
+    1s/PrintMessage_UnsetVariables/PrintMessage_Internal_UnsetVariables/;
+    s/PrintMessage_LogLevel/PrintMessage_Internal_LogLevel/g;
+    s/PrintMessage_Utility/PrintMessage_Internal_Utility/g;
+    s/PrintMessage_UtilityScript/PrintMessage_Internal_UtilityScript/g;
+    s/PrintMessage_Text/PrintMessage_Internal_Text/g;
+    s/PrintMessage_Command/PrintMessage_Internal_Command/g'); eval "$eval_PrintMessage_Internal_UnsetVariables"
+#
+export -f PrintMessage_UnsetVariables
+export -f PrintMessage_Internal_UnsetVariables
+#
+PrintMessageV2() {
+    PrintMessage_SupportedLogLevel="COMMAND CONFIG DEBUG DRY RUN FATAL INFO VERBOSE WARNING"
+    #
+    if [[ -z $@ ]]; then
+        [[ $GLOBAL_VAR_DEBUG ]] || echo
+        PrintMessage_UnsetVariables; return 0
+    fi
+    #
+    #
+    #
+    for PrintMessage_Part in "$@"; do
+        if [[ -z $PrintMessage_LogLevel ]]; then
+            PrintMessage_LogLevel=$PrintMessage_Part; shift
+        elif [[ -z $PrintMessage_Utility ]]; then
+            PrintMessage_Utility=$PrintMessage_Part; shift
+        elif [[ -z $PrintMessage_UtilityScript ]]; then
+            PrintMessage_UtilityScript=$PrintMessage_Part; shift
+        elif [[ -z $PrintMessage_Text ]] && [[ -z $PrintMessage_Command ]]; then
+            if command -v "$PrintMessage_Part" > /dev/null; then
+                PrintMessage_Command=$PrintMessage_Part; shift
+            fi
+            PrintMessage_Text=$@
+        fi
+    done
+    #
+    #
+    #
+    if [[ -z $PrintMessage_LogLevel ]] || [[ -z $PrintMessage_Utility ]] || [[ -z $PrintMessage_UtilityScript ]] || [[ -z $PrintMessage_Text ]]; then
+        echo "!!!!! INVALID PRINTMESSAGE: ONE OF THE VALUES IS EMPTY !!!!!"
+        PrintMessage_UnsetVariables; return 0
+    fi
+    #
+    #
+    #
+    if [[ $PrintMessage_Command ]]; then
+        #
+        if [[ $GLOBAL_VAR_DRY_RUN ]]; then
+            PrintMessage_Internal "DRY RUN" "$PrintMessage_Utility" "$PrintMessage_UtilityScript" "$PrintMessage_Command $PrintMessage_Text"
+            PrintMessage_UnsetVariables; return 0
+        else
+            PrintMessage_Internal "COMMAND" "$PrintMessage_Utility" "$PrintMessage_UtilityScript" "$PrintMessage_Command $PrintMessage_Text"
+        fi
+        #
+        eval $PrintMessage_Command $PrintMessage_Text 2>&1 | while IFS= read -r PrintMessage_Command_Result; do
+            PrintMessage_Internal "$PrintMessage_LogLevel" "COMMAND" "$PrintMessage_Command" "$PrintMessage_Command_Result"
+        done
+        #
+        PrintMessage_UnsetVariables; return 0
+    fi
+    #
+    #
+    #
+    if [[ $GLOBAL_VAR_DEBUG ]]; then
+        case $PrintMessage_LogLevel in
+            'COMMAND' | 'CONFIG' | 'DEBUG' | 'DRY RUN' | 'FATAL' | 'INFO' | 'VERBOSE' | 'WARNING')
+                echo "$(PrintLogLine_TimeStamp)" "$(PrintLogLine_UtilityAndUtilityScript "$PrintMessage_Utility" "$PrintMessage_UtilityScript")" "$(PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text"
+            ;;
+            *) echo "$(PrintLogLine_TimeStamp)" "$(PrintLogLine_UtilityAndUtilityScript "$PrintMessage_Utility" "$PrintMessage_UtilityScript")" "$(PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "!!!!! INVALID PRINTMESSAGE: LOG LEVEL '$PrintMessage_LogLevel' IS NOT SUPPORTED !!!!!";;
+        esac
+    else
+        case $PrintMessage_LogLevel in
+            'COMMAND' | 'CONFIG' | 'DEBUG') [[ $GLOBAL_VAR_DEBUG ]] && echo "$(PrintLogLine_TimeStamp)" "$(PrintLogLine_UtilityAndUtilityScript "$PrintMessage_Utility" "$PrintMessage_UtilityScript")" "$(PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text";;
+            'DRY RUN' | 'FATAL' | 'WARNING') echo "$(PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text";;
+            'INFO') echo "$PrintMessage_Text";;
+            'VERBOSE') [[ $GLOBAL_VAR_VERBOSE ]] && echo "$(PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text";;
+            *) echo "!!!!! INVALID PRINTMESSAGE: LOG LEVEL '$PrintMessage_LogLevel' IS NOT SUPPORTED !!!!!";;
+        esac
+    fi
+    #
+    #
+    #
+    PrintMessage_UnsetVariables; return 0
+}
+#
+eval_PrintMessage_Internal=$(declare -f PrintMessageV2 | sed '
+    1s/PrintMessageV2/PrintMessage_Internal/;
+    s/PrintMessage_UnsetVariables/PrintMessage_Internal_UnsetVariables/g;
+    s/PrintMessage_LogLevel/PrintMessage_Internal_LogLevel/g;
+    s/PrintMessage_Utility/PrintMessage_Internal_Utility/g;
+    s/PrintMessage_UtilityScript/PrintMessage_Internal_UtilityScript/g;
+    s/PrintMessage_Text/PrintMessage_Internal_Text/g;
+    s/PrintMessage_Command/PrintMessage_Internal_Command/g'); eval "$eval_PrintMessage_Internal"
+export -f PrintMessageV2
+export -f PrintMessage_Internal
+####################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
 #
 eval_FromFile(){
     # $1 = NAME OF VARIABLE
