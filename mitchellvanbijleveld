@@ -303,7 +303,15 @@ PrintMessageV2() {
             'COMMAND' | 'CONFIG' | 'DEBUG') [[ $GLOBAL_VAR_DEBUG ]] && echo "$(PrintLogLine_TimeStamp)" "$(PrintLogLine_UtilityAndUtilityScript "$PrintMessage_Utility" "$PrintMessage_UtilityScript")" "$(PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text";;
             'DRY RUN' | 'FATAL' | 'WARNING') echo "$(PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text";;
             'INFO') echo "$PrintMessage_Text";;
-            'VERBOSE') [[ $GLOBAL_VAR_VERBOSE ]] && echo "$(PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text";;
+            'VERBOSE') 
+            if [[ $GLOBAL_VAR_VERBOSE ]]; then
+                if [[ $PrintMessage_Utility == "COMMAND" ]]; then
+                    echo "$(PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$(echo $(PrintLogLine_UtilityAndUtilityScript "$PrintMessage_Utility" "$PrintMessage_UtilityScript")):" "$PrintMessage_Text"
+                else
+                    echo "$(PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text"
+                fi
+            fi
+            ;;
             *) echo "!!!!! INVALID PRINTMESSAGE: LOG LEVEL '$PrintMessage_LogLevel' IS NOT SUPPORTED !!!!!";;
         esac
     fi
