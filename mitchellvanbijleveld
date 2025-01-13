@@ -113,9 +113,13 @@ PrintLogLine_TimeStamp(){
 export -f PrintLogLine_TimeStamp
 #
 PrintLogLine_UtilityAndUtilityScript(){
-    # $1 = UTILITY
-    # $2 = UTILITY SCRIPT
-    echo "$(printf '%-24s' $(echo "$1/$2" | sed 's|//|=/|g'))"
+    # $1 = UTILITY | COMMAND
+    # $2 = UTILITY SCRIPT | COMMAND
+    if [[ $1 == "COMMAND" ]]; then
+        echo "$(printf '%-24s' $(echo "$1=$2"))"
+    else
+        echo "$(printf '%-24s' $(echo "$1/$2"))"
+    fi
 }
 export -f PrintLogLine_UtilityAndUtilityScript
 #
