@@ -145,18 +145,19 @@ PrintVersionComparison(){
 ####################################################################################################
 PrintMessageV2 "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Checking for updates..."
 #
+PrintMessageV2 "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Getting current versions and hashes for all utility scripts..."
 ForEachUtilityScript WriteUtilityScriptInfo
 #
-PrintMessageV2 "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Getting current version and shasum for bin..."
+PrintMessageV2 "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Getting current version and shasum for bin..."
 VAR_OLD_VERSION=$(eval_FromFile "VAR_UTILITY_SCRIPT_VERSION" "$GLOBAL_VAR_DIR_INSTALLATION/mitchellvanbijleveld"; echo $VAR_UTILITY_SCRIPT_VERSION)
 VAR_OLD_SHASUM=$(shasum "$GLOBAL_VAR_DIR_INSTALLATION/mitchellvanbijleveld" | awk '{print $1}')
 PrintMessageV2 "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Current version for bin is $VAR_OLD_VERSION"
 PrintMessageV2 "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Current shasum for bin is $VAR_OLD_SHASUM"
 #
-PrintMessageV2 "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Using command 'git' to pull the latest version..."
+PrintMessageV2 "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Pull git repository..."
 PrintMessageV2 "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which git) -C $GLOBAL_VAR_DIR_INSTALLATION pull --rebase
 #
-PrintMessageV2 "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Getting new version and shasum for bin..."
+PrintMessageV2 "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Getting new version and shasum for bin..."
 VAR_NEW_VERSION=$(eval_FromFile "VAR_UTILITY_SCRIPT_VERSION" "$GLOBAL_VAR_DIR_INSTALLATION/mitchellvanbijleveld"; echo $VAR_UTILITY_SCRIPT_VERSION)
 VAR_NEW_SHASUM=$(shasum "$GLOBAL_VAR_DIR_INSTALLATION/mitchellvanbijleveld" | awk '{print $1}')
 PrintMessageV2 "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "New version for bin is $VAR_NEW_VERSION"
@@ -164,6 +165,7 @@ PrintMessageV2 "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "New shasum for bin 
 #
 PrintVersionComparison "$VAR_NEW_VERSION" "$VAR_OLD_VERSION" "$VAR_NEW_SHASUM" "$VAR_OLD_SHASUM" "Command Line Tools"
 #
+PrintMessageV2 "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Getting updated versions and hashes for all utility scripts..."
 ForEachUtilityScript CompareUtilityScriptInfo
 #
 PrintMessageV2
