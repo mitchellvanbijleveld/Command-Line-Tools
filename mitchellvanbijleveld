@@ -257,8 +257,7 @@ PrintMessageV2() {
         elif [[ -z $PrintMessage_UtilityScript ]]; then
             PrintMessage_UtilityScript=$PrintMessage_Part; shift
         elif [[ -z $PrintMessage_Text ]] && [[ -z $PrintMessage_Command ]]; then
-            # if command -v "$PrintMessage_Part" > /dev/null; then
-            if [[ $PrintMessage_Utility != 'COMMAND' ]] && [[ $PrintMessage_Part == $(which $PrintMessage_Part) ]]; then
+            if [[ $PrintMessage_Part == $(which $PrintMessage_Part) ]] && [[ $PrintMessage_Utility != 'COMMAND' ]]; then
                 PrintMessage_Command=$PrintMessage_Part; shift
             fi
             PrintMessage_Text=$@
