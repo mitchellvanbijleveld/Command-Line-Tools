@@ -627,6 +627,15 @@ PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "UTILITY_SCRIPT_VAR_D
 #
 #
 #
+if [[ $(shasum $VAR_UTILITY_SCRIPT_FILE_PATH | awk '{print $1}') == 'da39a3ee5e6b4b0d3255bfef95601890afd80709' ]]; then
+    PrintMessage "FATAL" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Not starting Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' because it's empty. Exiting..."
+    exit 0
+fi
+#
+#
+#
+#
+#
 ####################################################################################################
 ####################################################################################################
 # CHECK DEPENDENCIES
