@@ -6,7 +6,7 @@
 ####################################################################################################
 VAR_UTILITY="Daemon"
 VAR_UTILITY_SCRIPT="Daemon"
-VAR_UTILITY_SCRIPT_VERSION="2025.01.07-0036"
+VAR_UTILITY_SCRIPT_VERSION="2025.01.25-0059"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit mkdir PrintMessageV2 shift tr"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
