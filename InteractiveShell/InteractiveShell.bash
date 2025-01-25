@@ -94,7 +94,7 @@ PrintAvailableUtilityScripts(){
     AvailableUtilityScripts=()
     #
     for var_utility_script_file in "$GLOBAL_VAR_DIR_INSTALLATION/$1/"*; do
-        if [[ -f $var_utility_script_file ]] && [[ $var_utility_script_file == *".bash" ]]; then
+        if [[ -f $var_utility_script_file ]] && [[ $var_utility_script_file == *".bash" ]] && [[ $(shasum $var_utility_script_file | awk '{print $1}') != 'da39a3ee5e6b4b0d3255bfef95601890afd80709' ]]; then
             AvailableUtilityScripts+=($var_utility_script_file)  
             var_var_utility_script_file_basename=$(basename $var_utility_script_file)
             #
