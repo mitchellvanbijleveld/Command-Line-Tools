@@ -87,10 +87,10 @@ if DaemonHasSession; then
 fi
 #
 if DaemonConfigFileExists; then
-    PrintMessageV2 "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting Session for Daemon '$VAR_DAEMON_NAME'..." 
+    PrintMessageV2 "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting Session for Daemon '$VAR_DAEMON_NAME'..." 
     tmux new-session -d -s $VAR_DAEMON_NAME $(which bash) $VAR_DAEMON_CONFIG_FILE
     #
-    PrintMessageV2 "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Creating PID File for Daemon '$VAR_DAEMON_NAME'..." 
+    PrintMessageV2 "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Creating PID File for Daemon '$VAR_DAEMON_NAME'..." 
     echo $(eval_FromFile "VAR_DAEMON_VERSION" $VAR_DAEMON_CONFIG_FILE; echo $VAR_DAEMON_VERSION) > "$VAR_DAEMON_PID_FILE"
 else
     PrintMessageV2 "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Daemon '$VAR_DAEMON_NAME' is not installed. Nothing to start..."
