@@ -21,7 +21,8 @@ VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo eval_FromFile exit PrintMes
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
-#
+VAR_CONFIGURATE_ITEMS=0
+VAR_CONFIGURATE_POSSIBLE=1
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
@@ -75,11 +76,10 @@ for var_argument in "$@"; do
                             ;;
                             "VALIDATE")
                                 if [[ $2 == "" ]]; then
-                                    echo "Setting '$var_configurable_setting' needs a value! ..."
-                                    exit 1
-                                else
-                                    VAR_CONFIGURATE_POSSIBLE=1
+                                    PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Configuration parameter '$var_configurable_setting' needs a value..."
+                                    VAR_CONFIGURATE_POSSIBLE=0
                                 fi
+                                ((VAR_CONFIGURATE_ITEMS++))
                             ;;
                         esac
                     fi
@@ -132,16 +132,18 @@ PrintMessage "DEBUG " "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Checking if all conf
 ProcessArguments "VALIDATE" "$@"
 PrintMessage
 #
-if [[ $VAR_CONFIGURATE_POSSIBLE -eq 1 ]]; then
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting to configure $VAR_VAR_UTILITY/$VAR_VAR_UTILITY_SCRIPT..."
-    ProcessArguments "CONFIGURE" "$@"
-    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "OK"
-else
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "No configuration paramaters passed."
-    PrintMessage    
+if [[ $VAR_CONFIGURATE_ITEMS -eq 0 ]]; then
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "No configurable arguments passed."
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The following parameters are available:"
     for var_configurable_setting in $VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS; do
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - $var_configurable_setting"
     done
+elif [[ $VAR_CONFIGURATE_POSSIBLE -eq 1 ]]; then
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting to configure $VAR_VAR_UTILITY/$VAR_VAR_UTILITY_SCRIPT..."
+    ProcessArguments "CONFIGURE" "$@"
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "OK"
+else
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Configuration is not possible!"  
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Please check the 'WARNING' messages above this line."
 fi
 PrintMessage
