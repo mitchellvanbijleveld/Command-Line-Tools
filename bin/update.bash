@@ -118,6 +118,9 @@ PrintVersionComparison(){
     if [[ $2 != "" ]] && [[ $4 != "da39a3ee5e6b4b0d3255bfef95601890afd80709" ]] &&
        [[ $1 == "" ]] && [[ $3 == "da39a3ee5e6b4b0d3255bfef95601890afd80709" ]]; then
         PrintMessageV2 "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - $5 version $2 has been replaced by an empty Utility Script for future use!"
+    elif [[ $2 != "" ]] && [[ $4 != "" ]] &&
+         [[ $1 == "" ]] && [[ $3 == "" ]]; then
+        PrintMessageV2 "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - $5 has been removed!"
     elif [[ $1 > $2 ]]; then
         PrintMessageV2 "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - $5 has been updated from version $2 to $1!"
         UPDATED=1
