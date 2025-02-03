@@ -593,9 +593,6 @@ fi
 # EXPORT UTILITY SCRIPT VARIABLES
 ####################################################################################################
 PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Exporting Utility Script Variables..."
-export UTILITY_SCRIPT_VAR_DIR_ETC="$GLOBAL_VAR_DIR_ETC/$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))/$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')"
-#export UTILITY_SCRIPT_VAR_DIR_TMP="$GLOBAL_VAR_DIR_TMP/$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))/$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')"
-export UTILITY_SCRIPT_VAR_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-$(echo $VAR_UTILITY | sed 's|/|-|')-$VAR_UTILITY_SCRIPT.XXXXXXXX" --tmpdir)
 #
 if [[ $VAR_UTILITY == *"/"* ]]; then
     VAR_UTILITY="$(basename $(dirname $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH)))/$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))"
@@ -603,6 +600,10 @@ else
     VAR_UTILITY=$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))
 fi
 VAR_UTILITY_SCRIPT=$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')
+#
+export UTILITY_SCRIPT_VAR_DIR_ETC="$GLOBAL_VAR_DIR_ETC/$VAR_UTILITY/$VAR_UTILITY_SCRIPT"
+# export UTILITY_SCRIPT_VAR_DIR_TMP="$GLOBAL_VAR_DIR_TMP/$VAR_UTILITY/$VAR_UTILITY_SCRIPT"
+export UTILITY_SCRIPT_VAR_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-$(echo $VAR_UTILITY | sed 's|/|-|')-$VAR_UTILITY_SCRIPT.XXXXXXXX" --tmpdir)
 ####################################################################################################
 # EXPORT UTILITY SCRIPT VARIABLES
 ####################################################################################################
