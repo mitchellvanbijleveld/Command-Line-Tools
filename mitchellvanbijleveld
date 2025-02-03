@@ -412,7 +412,7 @@ FindUtilityFolderPath(){
     # $2 = FIND FOLDER NAME
     PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Finding Utility Folder for '$2' in '$1'..."
     if [[ $2 == *"/"* ]]; then
-        VAR_UTILITY_FOLDER_PATH=$(find -L "$1/$2" -maxdepth 0 -type d)
+        VAR_UTILITY_FOLDER_PATH=$(find -L $1 -maxdepth 2 -ipath "*$2" -type d)
     else
         VAR_UTILITY_FOLDER_PATH=$(find -L $1 -maxdepth 1 -iname "$2" -type d)
     fi
