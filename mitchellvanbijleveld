@@ -410,9 +410,15 @@ export -f die_UtilityScriptNotFound
 FindUtilityFolderPath(){
     # $1 = FIND FOLDER PATH
     # $2 = FIND FOLDER NAME
-    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Finding Utility Folder for '$2'..."
-    VAR_UTILITY_FOLDER_PATH=$(find -L $1 -maxdepth 1 -iname "$2" -type d)
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Finding Utility Folder for '$2' in '$1'..."
+    if [[ $2 == *"/"* ]]; then
+        VAR_UTILITY_FOLDER_PATH=$(find -L "$1/$2" -maxdepth 0 -type d)
+    else
+        VAR_UTILITY_FOLDER_PATH=$(find -L $1 -maxdepth 1 -iname "$2" -type d)
+    fi
+    #
     if [[ -d $VAR_UTILITY_FOLDER_PATH ]]; then
+        VAR_UTILITY_FOLDER_PATH=$(realpath $VAR_UTILITY_FOLDER_PATH)
         return 0
     else
         PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Utility Folder for '$2' not found!"
@@ -589,9 +595,13 @@ fi
 PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Exporting Utility Script Variables..."
 export UTILITY_SCRIPT_VAR_DIR_ETC="$GLOBAL_VAR_DIR_ETC/$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))/$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')"
 #export UTILITY_SCRIPT_VAR_DIR_TMP="$GLOBAL_VAR_DIR_TMP/$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))/$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')"
-export UTILITY_SCRIPT_VAR_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-$VAR_UTILITY-$VAR_UTILITY_SCRIPT.XXXXXXXX" --tmpdir)
+export UTILITY_SCRIPT_VAR_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-$(echo $VAR_UTILITY | sed 's|/|-|')-$VAR_UTILITY_SCRIPT.XXXXXXXX" --tmpdir)
 #
-VAR_UTILITY=$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))
+if [[ $VAR_UTILITY == *"/"* ]]; then
+    VAR_UTILITY="$(basename $(dirname $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH)))/$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))"
+else
+    VAR_UTILITY=$(basename $(dirname $VAR_UTILITY_SCRIPT_FILE_PATH))
+fi
 VAR_UTILITY_SCRIPT=$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')
 ####################################################################################################
 # EXPORT UTILITY SCRIPT VARIABLES
