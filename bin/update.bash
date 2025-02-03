@@ -121,6 +121,9 @@ PrintVersionComparison(){
     elif [[ $2 != "" ]] && [[ $4 != "" ]] &&
          [[ $1 == "" ]] && [[ $3 == "" ]]; then
         PrintMessageV2 "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - $5 has been removed!"
+    elif [[ $2 == "" ]] && [[ $4 != "" ]] &&
+         [[ $1 == "" ]] && [[ $3 == "" ]]; then
+        PrintMessageV2 "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - $5 has been removed!"
     elif [[ $1 > $2 ]]; then
         PrintMessageV2 "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - $5 has been updated from version $2 to $1!"
         UPDATED=1
