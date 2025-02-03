@@ -21,9 +21,17 @@ BIN_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash date dirname e
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
-export GLOBAL_VAR_DIR_INSTALLATION=$(dirname $(realpath $0))
-export GLOBAL_VAR_DIR_ETC="/etc/mitchellvanbijleveld/Command-Line-Tools"
-export GLOBAL_VAR_DIR_TMP="/tmp/mitchellvanbijleveld/Command-Line-Tools"
+if [[ -z $GLOBAL_VAR_DIR_INSTALLATION ]]; then
+    export GLOBAL_VAR_DIR_INSTALLATION=$(dirname $(realpath $0))
+fi
+#
+if [[ -z $GLOBAL_VAR_DIR_ETC ]]; then
+    export GLOBAL_VAR_DIR_ETC="/etc/mitchellvanbijleveld/Command-Line-Tools"
+fi
+#
+if [[ -z $GLOBAL_VAR_DIR_TMP ]]; then
+    export GLOBAL_VAR_DIR_TMP="/tmp/mitchellvanbijleveld/Command-Line-Tools"
+fi
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
@@ -37,7 +45,7 @@ export GLOBAL_VAR_DIR_TMP="/tmp/mitchellvanbijleveld/Command-Line-Tools"
 ####################################################################################################
 # PROCESS ARGUMENTS
 ####################################################################################################
-ProcessArguments() {
+BIN_ProcessArguments() {
 #
 VAR_UTILITY_SCRIPT_ARGUMENTS=()
 #
@@ -107,12 +115,12 @@ done
 ####################################################################################################
 # FUNCTIONS
 ####################################################################################################
-PrintLogLine_TimeStamp(){
+BIN_PrintLogLine_TimeStamp(){
     echo $(date +'%Y-%m-%d %H:%M:%S')
 }
-export -f PrintLogLine_TimeStamp
+export -f BIN_PrintLogLine_TimeStamp
 #
-PrintLogLine_UtilityAndUtilityScript(){
+BIN_PrintLogLine_UtilityAndUtilityScript(){
     # $1 = UTILITY | COMMAND
     # $2 = UTILITY SCRIPT | COMMAND
     if [[ $1 == "COMMAND" ]]; then
@@ -121,13 +129,13 @@ PrintLogLine_UtilityAndUtilityScript(){
         echo "$(printf '%-24s' $(echo "$1/$2"))"
     fi
 }
-export -f PrintLogLine_UtilityAndUtilityScript
+export -f BIN_PrintLogLine_UtilityAndUtilityScript
 #
-PrintLogLine_LogLevel(){
+BIN_PrintLogLine_LogLevel(){
     # $1 = LOG LEVEL
     echo "[ $(printf '%-8s' "$1") ]"
 }
-export -f PrintLogLine_LogLevel
+export -f BIN_PrintLogLine_LogLevel
 #
 PrintMessage(){
     # $1 = LOG LEVEL  $2 = UTILITY    $3 = SCRIPT            $4 = MESSAGE | COMMAND
@@ -145,22 +153,22 @@ PrintMessage(){
         #
         if [[ $GLOBAL_VAR_DRY_RUN -eq 1 ]]; then
             if [[ $GLOBAL_VAR_DEBUG -eq 1 ]]; then
-                echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel 'DRY RUN') $@"
+                echo "$(BIN_PrintLogLine_TimeStamp) $(BIN_PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(BIN_PrintLogLine_LogLevel 'DRY RUN') $@"
             else
-                echo "$(PrintLogLine_LogLevel 'DRY RUN') $@"
+                echo "$(BIN_PrintLogLine_LogLevel 'DRY RUN') $@"
             fi
         else
             export VAR_TMP_FILE_COMMAND_OUTPUT=$(mktemp "mitchellvanbijleveld-$var_utility-$var_utility_script.XXXXXXXX" --tmpdir)
             if [[ $GLOBAL_VAR_DEBUG -eq 1 ]]; then
-                echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Created temporary file for script output: '$VAR_TMP_FILE_COMMAND_OUTPUT'..."
-                echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(PrintLogLine_LogLevel 'DEBUG') Executing command on behalf of $var_utility/$var_utility_script:"  
-                echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel 'COMMAND') $@"
+                echo "$(BIN_PrintLogLine_TimeStamp) $(BIN_PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(BIN_PrintLogLine_LogLevel 'DEBUG') Created temporary file for script output: '$VAR_TMP_FILE_COMMAND_OUTPUT'..."
+                echo "$(BIN_PrintLogLine_TimeStamp) $(BIN_PrintLogLine_UtilityAndUtilityScript 'mitchell' 'vanbijleveld') $(BIN_PrintLogLine_LogLevel 'DEBUG') Executing command on behalf of $var_utility/$var_utility_script:"  
+                echo "$(BIN_PrintLogLine_TimeStamp) $(BIN_PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(BIN_PrintLogLine_LogLevel 'COMMAND') $@"
                 eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
-                    echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel 'COMMAND') $(echo $@ | awk '{print $1}'): $command_output_line"
+                    echo "$(BIN_PrintLogLine_TimeStamp) $(BIN_PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(BIN_PrintLogLine_LogLevel 'COMMAND') $(echo $@ | awk '{print $1}'): $command_output_line"
                 done
             elif ( [[ $GLOBAL_VAR_VERBOSE -eq 1 ]] && [[ $var_log_level == "VERBOSE" ]] ) || [[ $var_log_level == "WARNING" ]]; then
                 eval "$@" 2>&1 | tee $VAR_TMP_FILE_COMMAND_OUTPUT | while IFS= read -r command_output_line; do
-                    echo "$(PrintLogLine_LogLevel "$var_log_level") $command_output_line"
+                    echo "$(BIN_PrintLogLine_LogLevel "$var_log_level") $command_output_line"
                 done
             else
                 if [[ $var_log_level == "DEBUG" ]] || [[ $var_log_level == "VERBOSE" ]]; then
@@ -175,25 +183,25 @@ PrintMessage(){
 
         if [[ $GLOBAL_VAR_DEBUG -eq 1 ]]; then
             if [[ $5 == "NoNewLine" ]]; then
-                echo -n "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_message"
+                echo -n "$(BIN_PrintLogLine_TimeStamp) $(BIN_PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(BIN_PrintLogLine_LogLevel "$var_log_level") $var_message"
             else
                 if [[ $var_utility_folder_basename == "" ]] || [[ $var_utility_script_file_basename == "" ]]; then
-                    echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_message"
+                    echo "$(BIN_PrintLogLine_TimeStamp) $(BIN_PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(BIN_PrintLogLine_LogLevel "$var_log_level") $var_message"
                 else
-                    echo "$(PrintLogLine_TimeStamp) $(PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(PrintLogLine_LogLevel "$var_log_level") $var_utility_folder_basename/$var_utility_script_file_basename: $var_message"
+                    echo "$(BIN_PrintLogLine_TimeStamp) $(BIN_PrintLogLine_UtilityAndUtilityScript $var_utility $var_utility_script) $(BIN_PrintLogLine_LogLevel "$var_log_level") $var_utility_folder_basename/$var_utility_script_file_basename: $var_message"
                 fi
             fi
         elif [[ $GLOBAL_VAR_VERBOSE -eq 1 ]] && [[ $var_log_level == "VERBOSE" ]]; then
             if [[ $5 == "NoNewLine" ]]; then
-                echo -n "$(PrintLogLine_LogLevel "$var_log_level") $var_message"
+                echo -n "$(BIN_PrintLogLine_LogLevel "$var_log_level") $var_message"
             else
-                echo "$(PrintLogLine_LogLevel "$var_log_level") $var_message"
+                echo "$(BIN_PrintLogLine_LogLevel "$var_log_level") $var_message"
             fi
         elif [[ $var_log_level == "WARNING" ]]; then
             if [[ $5 == "NoNewLine" ]]; then
-                echo -n "$(PrintLogLine_LogLevel 'WARNING') $var_message"
+                echo -n "$(BIN_PrintLogLine_LogLevel 'WARNING') $var_message"
             else
-                echo "$(PrintLogLine_LogLevel 'WARNING') $var_message"
+                echo "$(BIN_PrintLogLine_LogLevel 'WARNING') $var_message"
             fi
         else
             if [[ $var_log_level == "DEBUG" ]]; then
@@ -221,7 +229,7 @@ export -f PrintMessage
 ####################################################################################################
 ####################################################################################################
 ####################################################################################################
-PrintMessage_UnsetVariables() {
+BIN_PrintMessage_UnsetVariables() {
     unset PrintMessage_LogLevel
     unset PrintMessage_Utility
     unset PrintMessage_UtilityScript
@@ -229,22 +237,22 @@ PrintMessage_UnsetVariables() {
     unset PrintMessage_Command
 }
 #
-eval_PrintMessage_Internal_UnsetVariables=$(declare -f PrintMessage_UnsetVariables | sed '
-    1s/PrintMessage_UnsetVariables/PrintMessage_Internal_UnsetVariables/;
+eval_PrintMessage_Internal_UnsetVariables=$(declare -f BIN_PrintMessage_UnsetVariables | sed '
+    1s/BIN_PrintMessage_UnsetVariables/BIN_PrintMessage_Internal_UnsetVariables/;
     s/PrintMessage_LogLevel/PrintMessage_Internal_LogLevel/g;
     s/PrintMessage_Utility/PrintMessage_Internal_Utility/g;
     s/PrintMessage_UtilityScript/PrintMessage_Internal_UtilityScript/g;
     s/PrintMessage_Text/PrintMessage_Internal_Text/g;
     s/PrintMessage_Command/PrintMessage_Internal_Command/g'); eval "$eval_PrintMessage_Internal_UnsetVariables"
 #
-export -f PrintMessage_UnsetVariables
-export -f PrintMessage_Internal_UnsetVariables
+export -f BIN_PrintMessage_UnsetVariables
+export -f BIN_PrintMessage_Internal_UnsetVariables
 #
 PrintMessageV2() {
     #
     if [[ -z $@ ]]; then
         [[ $GLOBAL_VAR_DEBUG ]] || echo
-        PrintMessage_UnsetVariables; return 0
+        BIN_PrintMessage_UnsetVariables; return 0
     fi
     #
     #
@@ -277,7 +285,7 @@ PrintMessageV2() {
     #
     if [[ -z $PrintMessage_LogLevel ]] || [[ -z $PrintMessage_Utility ]] || [[ -z $PrintMessage_UtilityScript ]] || [[ -z $PrintMessage_Text ]]; then
         echo "!!!!! INVALID PRINTMESSAGE: ONE OF THE VALUES IS EMPTY !!!!!"
-        PrintMessage_UnsetVariables; return 0
+        BIN_PrintMessage_UnsetVariables; return 0
     fi
     #
     #
@@ -285,16 +293,16 @@ PrintMessageV2() {
     if [[ $PrintMessage_Command ]]; then
         #
         if [[ $GLOBAL_VAR_DRY_RUN ]]; then
-            PrintMessage_Internal "DRY RUN" "$PrintMessage_Utility" "$PrintMessage_UtilityScript" "$PrintMessage_Command $PrintMessage_Text"
+            BIN_PrintMessage_Internal "DRY RUN" "$PrintMessage_Utility" "$PrintMessage_UtilityScript" "$PrintMessage_Command $PrintMessage_Text"
         else
-            PrintMessage_Internal "COMMAND" "$PrintMessage_Utility" "$PrintMessage_UtilityScript" "$PrintMessage_Command $PrintMessage_Text"
+            BIN_PrintMessage_Internal "COMMAND" "$PrintMessage_Utility" "$PrintMessage_UtilityScript" "$PrintMessage_Command $PrintMessage_Text"
             #
             eval $PrintMessage_Command $PrintMessage_Text 2>&1 | while IFS= read -r PrintMessage_Command_Result; do
-                PrintMessage_Internal "$PrintMessage_LogLevel" "COMMAND" "$PrintMessage_Command" "$PrintMessage_Command_Result"
+                BIN_PrintMessage_Internal "$PrintMessage_LogLevel" "COMMAND" "$PrintMessage_Command" "$PrintMessage_Command_Result"
             done       
         fi
         #
-        PrintMessage_UnsetVariables; return 0
+        BIN_PrintMessage_UnsetVariables; return 0
     fi
     #
     #
@@ -302,21 +310,21 @@ PrintMessageV2() {
     if [[ $GLOBAL_VAR_DEBUG ]]; then
         case $PrintMessage_LogLevel in
             'COMMAND' | 'CONFIG' | 'DEBUG' | 'DRY RUN' | 'FATAL' | 'INFO' | 'VERBOSE' | 'WARNING')
-                echo "$(PrintLogLine_TimeStamp)" "$(PrintLogLine_UtilityAndUtilityScript "$PrintMessage_Utility" "$PrintMessage_UtilityScript")" "$(PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text"
+                echo "$(BIN_PrintLogLine_TimeStamp)" "$(BIN_PrintLogLine_UtilityAndUtilityScript "$PrintMessage_Utility" "$PrintMessage_UtilityScript")" "$(BIN_PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text"
             ;;
-            *) echo "$(PrintLogLine_TimeStamp)" "$(PrintLogLine_UtilityAndUtilityScript "$PrintMessage_Utility" "$PrintMessage_UtilityScript")" "$(PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "!!!!! INVALID PRINTMESSAGE: LOG LEVEL '$PrintMessage_LogLevel' IS NOT SUPPORTED !!!!!";;
+            *) echo "$(BIN_PrintLogLine_TimeStamp)" "$(BIN_PrintLogLine_UtilityAndUtilityScript "$PrintMessage_Utility" "$PrintMessage_UtilityScript")" "$(BIN_PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "!!!!! INVALID PRINTMESSAGE: LOG LEVEL '$PrintMessage_LogLevel' IS NOT SUPPORTED !!!!!";;
         esac
     else
         case $PrintMessage_LogLevel in
-            'COMMAND' | 'CONFIG' | 'DEBUG') [[ $GLOBAL_VAR_DEBUG ]] && echo "$(PrintLogLine_TimeStamp)" "$(PrintLogLine_UtilityAndUtilityScript "$PrintMessage_Utility" "$PrintMessage_UtilityScript")" "$(PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text";;
-            'DRY RUN' | 'FATAL' | 'WARNING') echo "$(PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text";;
+            'COMMAND' | 'CONFIG' | 'DEBUG') [[ $GLOBAL_VAR_DEBUG ]] && echo "$(BIN_PrintLogLine_TimeStamp)" "$(BIN_PrintLogLine_UtilityAndUtilityScript "$PrintMessage_Utility" "$PrintMessage_UtilityScript")" "$(BIN_PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text";;
+            'DRY RUN' | 'FATAL' | 'WARNING') echo "$(BIN_PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text";;
             'INFO') echo "$PrintMessage_Text";;
             'VERBOSE') 
             if [[ $GLOBAL_VAR_VERBOSE ]]; then
                 if [[ $PrintMessage_Utility == "COMMAND" ]]; then
-                    echo "$(PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$(echo $(PrintLogLine_UtilityAndUtilityScript "$PrintMessage_Utility" "$PrintMessage_UtilityScript")):" "$PrintMessage_Text"
+                    echo "$(BIN_PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$(echo $(BIN_PrintLogLine_UtilityAndUtilityScript "$PrintMessage_Utility" "$PrintMessage_UtilityScript")):" "$PrintMessage_Text"
                 else
-                    echo "$(PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text"
+                    echo "$(BIN_PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text"
                 fi
             fi
             ;;
@@ -326,19 +334,19 @@ PrintMessageV2() {
     #
     #
     #
-    PrintMessage_UnsetVariables; return 0
+    BIN_PrintMessage_UnsetVariables; return 0
 }
 #
 eval_PrintMessage_Internal=$(declare -f PrintMessageV2 | sed '
-    1s/PrintMessageV2/PrintMessage_Internal/;
-    s/PrintMessage_UnsetVariables/PrintMessage_Internal_UnsetVariables/g;
+    1s/PrintMessageV2/BIN_PrintMessage_Internal/;
+    s/BIN_PrintMessage_UnsetVariables/BIN_PrintMessage_Internal_UnsetVariables/g;
     s/PrintMessage_LogLevel/PrintMessage_Internal_LogLevel/g;
     s/PrintMessage_Utility/PrintMessage_Internal_Utility/g;
     s/PrintMessage_UtilityScript/PrintMessage_Internal_UtilityScript/g;
     s/PrintMessage_Text/PrintMessage_Internal_Text/g;
     s/PrintMessage_Command/PrintMessage_Internal_Command/g'); eval "$eval_PrintMessage_Internal"
 export -f PrintMessageV2
-export -f PrintMessage_Internal
+export -f BIN_PrintMessage_Internal
 ####################################################################################################
 ####################################################################################################
 ####################################################################################################
@@ -495,7 +503,7 @@ export -f ForEachUtilityScript
 ####################################################################################################
 #
 #
-ProcessArguments "$@"
+BIN_ProcessArguments "$@"
 #
 #
 if [[ $BIN_ENABLE_DEBUG -eq 1 ]] && [[ $BIN_RESTARTED -ne 1 ]]; then
@@ -584,7 +592,7 @@ fi
 #
 #
 if [[ $BIN_RECHECK_ARGUMENTS -eq 1 ]]; then
-    ProcessArguments "$@"
+    BIN_ProcessArguments "$@"
 fi
 #
 #
