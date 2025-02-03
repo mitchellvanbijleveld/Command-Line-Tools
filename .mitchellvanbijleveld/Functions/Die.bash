@@ -4,8 +4,8 @@
 ####################################################################################################
 # UTILITY SCRIPT INFO - .mitchellvanbijleveld/Functions/Die
 ####################################################################################################
-VAR_UTILITY=".mitchellvanbijleveld/Functions"
-VAR_UTILITY_SCRIPT="Die"
+#VAR_UTILITY=".mitchellvanbijleveld/Functions"
+#VAR_UTILITY_SCRIPT="Die"
 VAR_UTILITY_SCRIPT_VERSION="2025.01.03-1916"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit PrintMessage shift tr"
 ####################################################################################################
