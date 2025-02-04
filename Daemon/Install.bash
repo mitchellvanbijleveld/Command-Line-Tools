@@ -7,7 +7,7 @@
 VAR_UTILITY="Daemon"
 VAR_UTILITY_SCRIPT="Install"
 VAR_UTILITY_SCRIPT_VERSION="2025.01.25-0047"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk cp echo eval_FromFile exit PrintMessageV2 shasum shift source tr"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk cp echo eval_FromFile exit PrintMessage shasum shift source tr"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - Daemon/Install
@@ -40,7 +40,7 @@ source "$GLOBAL_VAR_DIR_INSTALLATION/Daemon/Daemon.bash" "$@"
 # PROCESS ARGUMENTS
 ####################################################################################################
 for var_argument in "$@"; do
-    PrintMessageV2 "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Processing argument '$var_argument'..."
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Processing argument '$var_argument'..."
     var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
     #
     case $var_argument_CAPS in
@@ -48,7 +48,7 @@ for var_argument in "$@"; do
             die_ProcessArguments_InvalidFlag $var_argument
         ;;
         *)
-            PrintMessageV2 "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Ignoring argument '$var_argument'..."
+            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Ignoring argument '$var_argument'..."
         ;;
     esac
     #
@@ -85,29 +85,29 @@ if DaemonExampleFileExists; then
     ExampleDaemonVersion=$(eval_FromFile "VAR_DAEMON_VERSION" "$VAR_DAEMON_EXAMPLE_FILE"; echo $VAR_DAEMON_VERSION)
     ExampleDaemonShasum=$(shasum $VAR_DAEMON_EXAMPLE_FILE | awk '{print $1}')
 else
-    PrintMessageV2 "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Daemon '$VAR_DAEMON_NAME' does not exist as an example. Exiting..."
+    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Daemon '$VAR_DAEMON_NAME' does not exist as an example. Exiting..."
     exit 1
 fi
 #
 if DaemonConfigFileExists; then
-    PrintMessageV2 "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Daemon '$VAR_DAEMON_NAME' is currently installed. Checking if an update is available..."
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Daemon '$VAR_DAEMON_NAME' is currently installed. Checking if an update is available..."
     InstalledDaemonVersion=$(eval_FromFile "VAR_DAEMON_VERSION" "$VAR_DAEMON_CONFIG_FILE"; echo $VAR_DAEMON_VERSION)
     InstalledDaemonShasum=$(shasum $VAR_DAEMON_CONFIG_FILE | awk '{print $1}')
 else
-    PrintMessageV2 "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Daemon '$VAR_DAEMON_NAME' is not currently installed"
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Daemon '$VAR_DAEMON_NAME' is not currently installed"
 fi
 #
 if [[ $InstalledDaemonVersion ]] && [[ $InstalledDaemonShasum ]]; then
     if [[ $ExampleDaemonShasum == $InstalledDaemonShasum ]]; then
-        PrintMessageV2 "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Daemon '$VAR_DAEMON_NAME' is already up-to-date. Nothing to do!"
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Daemon '$VAR_DAEMON_NAME' is already up-to-date. Nothing to do!"
         exit 0
     elif [[ $ExampleDaemonShasum > $InstalledDaemonShasum ]]; then
-        PrintMessageV2 "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Upgrading Daemon '$VAR_DAEMON_NAME' from version $InstalledDaemonVersion ($InstalledDaemonShasum) to $ExampleDaemonVersion ($ExampleDaemonShasum)..."
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Upgrading Daemon '$VAR_DAEMON_NAME' from version $InstalledDaemonVersion ($InstalledDaemonShasum) to $ExampleDaemonVersion ($ExampleDaemonShasum)..."
     elif [[ $ExampleDaemonShasum < $InstalledDaemonShasum ]]; then
-        PrintMessageV2 "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Downgrading Daemon '$VAR_DAEMON_NAME' from version $InstalledDaemonVersion ($InstalledDaemonShasum) to $ExampleDaemonVersion ($ExampleDaemonShasum)..."
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Downgrading Daemon '$VAR_DAEMON_NAME' from version $InstalledDaemonVersion ($InstalledDaemonShasum) to $ExampleDaemonVersion ($ExampleDaemonShasum)..."
     fi
 else
-    PrintMessageV2 "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Installing version $ExampleDaemonVersion ($ExampleDaemonShasum) of daemon '$VAR_DAEMON_NAME'..."
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Installing version $ExampleDaemonVersion ($ExampleDaemonShasum) of daemon '$VAR_DAEMON_NAME'..."
 fi
 #
-PrintMessageV2 "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which cp) -v $VAR_DAEMON_EXAMPLE_FILE $VAR_DAEMON_CONFIG_FILE
+PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which cp) -v $VAR_DAEMON_EXAMPLE_FILE $VAR_DAEMON_CONFIG_FILE

@@ -7,7 +7,7 @@
 VAR_UTILITY="Daemon"
 VAR_UTILITY_SCRIPT="Stop"
 VAR_UTILITY_SCRIPT_VERSION="2025.01.25-0146"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit PrintMessageV2 shift source tmux tr"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit PrintMessage shift source tmux tr"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - Daemon/Stop
@@ -40,7 +40,7 @@ source "$GLOBAL_VAR_DIR_INSTALLATION/Daemon/Daemon.bash" "$@"
 # PROCESS ARGUMENTS
 ####################################################################################################
 for var_argument in "$@"; do
-    PrintMessageV2 "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Processing argument '$var_argument'..."
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Processing argument '$var_argument'..."
     var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
     #
     case $var_argument_CAPS in
@@ -51,7 +51,7 @@ for var_argument in "$@"; do
             die_ProcessArguments_InvalidFlag $var_argument
         ;;
         *)
-            PrintMessageV2 "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Ignoring argument '$var_argument'..."
+            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Ignoring argument '$var_argument'..."
         ;;
     esac
     #
@@ -85,24 +85,24 @@ done
 # START UTILITY SCRIPT
 ####################################################################################################
 if ! DaemonHasSession && ! DaemonPidFileExists; then
-    PrintMessageV2 "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Daemon '$VAR_DAEMON_NAME' is not running and has no PID File. Nothing to do..." 
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Daemon '$VAR_DAEMON_NAME' is not running and has no PID File. Nothing to do..." 
     exit 0
 fi
 #
 if DaemonHasSession; then
-    PrintMessageV2 "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Stopping Session for Daemon '$VAR_DAEMON_NAME'..." 
+    PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Stopping Session for Daemon '$VAR_DAEMON_NAME'..." 
     tmux send-keys -t $VAR_DAEMON_NAME C-c
 fi
 #
 if DaemonPidFileExists; then
-    PrintMessageV2 "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Removing PID File for Daemon '$VAR_DAEMON_NAME'..." 
+    PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Removing PID File for Daemon '$VAR_DAEMON_NAME'..." 
     rm $VAR_DAEMON_PID_FILE
 fi
 #
 if DaemonHasSession || DaemonPidFileExists; then
-    PrintMessageV2 "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Something went wrong while stopping Daemon '$VAR_DAEMON_NAME'..."
+    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Something went wrong while stopping Daemon '$VAR_DAEMON_NAME'..."
     exit 1
 else
-    PrintMessageV2 "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Stopped Daemon '$VAR_DAEMON_NAME'!"
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Stopped Daemon '$VAR_DAEMON_NAME'!"
     exit 0
 fi
