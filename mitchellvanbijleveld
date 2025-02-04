@@ -32,7 +32,6 @@ fi
 if [[ -z $GLOBAL_VAR_DIR_TMP ]]; then
     export GLOBAL_VAR_DIR_TMP="/tmp/mitchellvanbijleveld/Command-Line-Tools"
 fi
-#
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
@@ -121,6 +120,12 @@ source "$GLOBAL_VAR_DIR_INSTALLATION/.mitchellvanbijleveld/PrintMessage.bash"
 #
 # Source 'ForEachUtilityScript'
 source "$GLOBAL_VAR_DIR_INSTALLATION/.mitchellvanbijleveld/ForEachUtilityScript.bash"
+#
+# Source 'FindUtilityFolderPath'
+source "$GLOBAL_VAR_DIR_INSTALLATION/.mitchellvanbijleveld/FindUtilityFolderPath.bash"
+#
+# Source 'FindUtilityScriptFilePath'
+source "$GLOBAL_VAR_DIR_INSTALLATION/.mitchellvanbijleveld/FindUtilityScriptFilePath.bash"
 ####################################################################################################
 # SOURCE FILES
 ####################################################################################################
@@ -196,40 +201,6 @@ die_UtilityScriptNotFound (){
 }
 export -f die_UtilityScriptNotFound
 #
-FindUtilityFolderPath(){
-    # $1 = FIND FOLDER PATH
-    # $2 = FIND FOLDER NAME
-    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Finding Utility Folder for '$2' in '$1'..."
-    if [[ $2 == *"/"* ]]; then
-        VAR_UTILITY_FOLDER_PATH=$(find -L $1 -maxdepth 2 -ipath "*$2" -type d)
-    else
-        VAR_UTILITY_FOLDER_PATH=$(find -L $1 -maxdepth 1 -iname "$2" -type d)
-    fi
-    #
-    if [[ -d $VAR_UTILITY_FOLDER_PATH ]]; then
-        VAR_UTILITY_FOLDER_PATH=$(realpath $VAR_UTILITY_FOLDER_PATH)
-        return 0
-    else
-        PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Utility Folder for '$2' not found!"
-        return 1
-    fi
-}
-export -f FindUtilityFolderPath
-#
-FindUtilityScriptFilePath(){
-    # $1 = FIND FOLDER PATH
-    # $2 = FIND FILE NAME
-    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Finding Utility Script File for '$2'..."
-    VAR_UTILITY_SCRIPT_FILE_PATH=$(find -L $1 -maxdepth 1 -iname "$2.bash" -type f)
-    if [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
-        return 0
-    else
-        PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Utility Script File for '$2' not found!"
-        return 1
-    fi
-}
-export -f FindUtilityScriptFilePath
-#
 die_ProcessArguments_InvalidFlag(){
     # $1 = FLAG
     PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The provided flag ($1) is not supported. Exiting..."
@@ -278,11 +249,6 @@ elif [[ $VAR_UPDATE_FIRST -eq 1 ]] && [[ $VAR_UPDATE_DONE -ne 1 ]]; then
     "$(realpath $0)" "$@"
     exit 0
 fi
-#
-#
-#
-#
-#
 ####################################################################################################
 ####################################################################################################
 # FIND UTILITY FOLDER PATH
