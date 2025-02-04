@@ -2,15 +2,15 @@
 #
 ####################################################################################################
 ####################################################################################################
-# UTILITY SCRIPT INFO - .mitchellvanbijleveld/Functions/PrintMessage
+# UTILITY SCRIPT INFO - .mitchellvanbijleveld/PrintMessage
 ####################################################################################################
-#VAR_UTILITY=".mitchellvanbijleveld/Functions"
+#VAR_UTILITY=".mitchellvanbijleveld"
 #VAR_UTILITY_SCRIPT="PrintMessage"
 VAR_UTILITY_SCRIPT_VERSION="2025.02.04-1048"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="date echo shift"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
-# UTILITY SCRIPT INFO - .mitchellvanbijleveld/Functions/PrintMessage
+# UTILITY SCRIPT INFO - .mitchellvanbijleveld/PrintMessage
 ####################################################################################################
 ####################################################################################################
 #
