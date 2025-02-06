@@ -6,8 +6,8 @@
 ####################################################################################################
 #VAR_UTILITY=".mitchellvanbijleveld"
 #VAR_UTILITY_SCRIPT="PrintMessage"
-VAR_UTILITY_SCRIPT_VERSION="2025.02.04-1048"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="date echo shift"
+VAR_UTILITY_SCRIPT_VERSION="2025.02.06-1610"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="date echo eval printf shift"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - .mitchellvanbijleveld/PrintMessage
@@ -109,13 +109,13 @@ PrintMessage() {
             PrintMessage_UtilityScript=$PrintMessage_Part; shift
         elif [[ -z $PrintMessage_Text ]] && [[ -z $PrintMessage_Command ]]; then
             if [[ $PrintMessage_Utility == 'COMMAND' ]]; then
-                PrintMessage_Text=$@
+                PrintMessage_Text="$@"
             else
                 if [[ $PrintMessage_Part == $(which $PrintMessage_Part) ]]; then
                     PrintMessage_Command=$PrintMessage_Part; shift
                 fi
                 #
-                PrintMessage_Text=$@
+                PrintMessage_Text="$@"
             fi
             #
             if [[ -z $PrintMessage_Text ]]; then
