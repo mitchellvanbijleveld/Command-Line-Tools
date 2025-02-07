@@ -103,8 +103,18 @@ until [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]] || [[ $# -eq 0 ]]; do
         unset last_search
     fi
     #
-    PrintMessage "DEBUG" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Find Utility Script File Path '$1' in '$VAR_UTILITY_FOLDER_PATH'..."
-    export VAR_UTILITY_SCRIPT_FILE_PATH=$(find -L $VAR_UTILITY_FOLDER_PATH -maxdepth 1 -iname "$1.bash" -type f) 
+    if [[ -n $2 && $2 != "--"* ]]; then
+        PrintMessage "DEBUG" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Find Utility Script File Path '$2' in '$VAR_UTILITY_FOLDER_PATH'..."
+        export VAR_UTILITY_SCRIPT_FILE_PATH=$(find -L $VAR_UTILITY_FOLDER_PATH -maxdepth 1 -iname "$2.bash" -type f) 
+        if [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
+            found_by_second=1
+        fi
+    fi
+    #
+    if [[ ! -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
+        PrintMessage "DEBUG" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Find Utility Script File Path '$1' in '$VAR_UTILITY_FOLDER_PATH'..."
+        export VAR_UTILITY_SCRIPT_FILE_PATH=$(find -L $VAR_UTILITY_FOLDER_PATH -maxdepth 1 -iname "$1.bash" -type f) 
+    fi
     #
     if [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
         PrintMessage "DEBUG" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Found Utility Script File Path '$VAR_UTILITY_SCRIPT_FILE_PATH'!"
@@ -112,7 +122,7 @@ until [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]] || [[ $# -eq 0 ]]; do
         unset last_search
     fi
     #
-    if [[ $1 == $2 ]]; then
+    if [[ $1 == $2 ]] || [[ $found_by_second -eq 1 ]]; then
         shift 2
     else
         shift
