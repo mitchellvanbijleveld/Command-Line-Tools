@@ -59,9 +59,9 @@ BIN_PrintLogLine_UtilityAndUtilityScript(){
     # $1 = UTILITY | COMMAND
     # $2 = UTILITY SCRIPT | COMMAND
     if [[ $1 == "COMMAND" ]]; then
-        echo "$(printf '%-24s' $(echo "$1=$2"))"
+        echo "$(printf '%-28s' $(echo "$1=$2"))"
     else
-        echo "$(printf '%-24s' $(echo "$1/$2"))"
+        echo "$(printf '%-28s' $(echo "$1/$2"))"
     fi
 }
 export -f BIN_PrintLogLine_UtilityAndUtilityScript
