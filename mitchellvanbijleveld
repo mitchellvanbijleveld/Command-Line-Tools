@@ -8,7 +8,7 @@ export BIN_UTILITY="mitchell"
 export BIN_UTILITY_SCRIPT="vanbijleveld"
 BIN_UTILITY_SCRIPT_VERSION="2025.02.07-1325"
 BIN_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash break date dirname echo eval exit export find grep mktemp printf PrintMessage realpath sed shasum shift source tee tr type which"
-BIN_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
+BIN_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="LogLevel"
 ####################################################################################################
 # BIN INFO - MITCHELL/VANBIJLEVELD
 ####################################################################################################
