@@ -6,8 +6,8 @@
 ####################################################################################################
 BIN_HELPER_UTILITY=".Find"
 BIN_HELPER_UTILITY_SCRIPT="UtilityScriptFilePath"
-VAR_UTILITY_SCRIPT_VERSION="2025.02.07-1323"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename echo exit export find PrintMessage sed shift"
+VAR_UTILITY_SCRIPT_VERSION="2025.02.09-0109"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename echo exit export find printf PrintMessage realpath sed shift"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
 # BIN HELPER UTILITY SCRIPT INFO - .Find/UtilityScriptFilePath
@@ -22,7 +22,12 @@ VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
-export VAR_UTILITY_FOLDER_PATH=$GLOBAL_VAR_DIR_INSTALLATION
+if [[ -z $VAR_UTILITY_FOLDER_PATH ]]; then
+    export VAR_UTILITY_FOLDER_PATH=$GLOBAL_VAR_DIR_INSTALLATION
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Export Variable 'VAR_UTILITY_FOLDER_PATH' with value '$VAR_UTILITY_FOLDER_PATH'."
+else
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Variable 'VAR_UTILITY_FOLDER_PATH' is already set."
+fi
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
@@ -52,18 +57,58 @@ export VAR_UTILITY_FOLDER_PATH=$GLOBAL_VAR_DIR_INSTALLATION
 ####################################################################################################
 Die_UnknownCommand(){
     #
+    if [[ -z $@ ]] || [[ $(echo $1 | tr '[:lower:]' '[:upper:]') == $(echo $(basename $VAR_UTILITY_FOLDER_PATH) | tr '[:lower:]' '[:upper:]') ]]; then
+        PrintMessage "FATAL" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Please provide a command for '${VAR_UTILITY:-mitchellvanbijleveld}'..."
+    else
+        PrintMessage "FATAL" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Invalid command ('$1') given for Utility '${VAR_UTILITY:-mitchellvanbijleveld}'..."
+    fi
+    #
     PrintMessage
     #
-    PrintMessage "INFO" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "The following commands are available for '${VAR_UTILITY:-mitchellvanbijleveld}':"
+    PrintMessage "INFO" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "The following commands are available for Utility '${VAR_UTILITY:-mitchellvanbijleveld}':"
     #
     for var_utility_dir in "$VAR_UTILITY_FOLDER_PATH"/*; do
-        if [[ -d  $var_utility_dir ]] || [[ -f  $var_utility_dir && $var_utility_dir == *".bash" ]]; then
+        if [[ -d  $var_utility_dir ]] || [[ -f $var_utility_dir && $var_utility_dir == *".bash" ]]; then
             var_utility=$(basename $var_utility_dir)
             PrintMessage "INFO" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "  - ${var_utility%.bash}"
         fi
     done
+}
+#
+FindUtilityFolder(){
+    # $1 = Name Of Utility
+    PrintMessage "DEBUG" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Find Utility Folder Path '$1' in '$VAR_UTILITY_FOLDER_PATH'..."
     #
-    exit 1
+    find_result=$(find -L $VAR_UTILITY_FOLDER_PATH -mindepth 1 -maxdepth 1 -iname $1 -type d)
+    #
+    if [[ -d $find_result ]]; then
+        VAR_UTILITY_FOLDER_PATH=$(realpath $find_result)
+        VAR_UTILITY=$(echo $VAR_UTILITY_FOLDER_PATH | sed "s|$GLOBAL_VAR_DIR_INSTALLATION||; s|^/||"); VAR_UTILITY=${VAR_UTILITY:-mitchellvanbijleveld}
+        #
+        PrintMessage "VERBOSE" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Found Utility Folder Path '$VAR_UTILITY_FOLDER_PATH'!"
+        #
+        return 0
+    else
+        return 1
+    fi
+}
+#
+FindUtilityScriptFilePath(){
+    # $1 = Name Of Utility Script
+    PrintMessage "DEBUG" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Find Utility Script File Path '$1' in '$VAR_UTILITY_FOLDER_PATH'..."
+    #
+    find_result=$(find -L $VAR_UTILITY_FOLDER_PATH -mindepth 1 -maxdepth 1 -iname "$1.bash" -type f)
+    #
+    if [[ -f $find_result ]]; then
+        VAR_UTILITY_SCRIPT_FILE_PATH=$(realpath $find_result)
+        VAR_UTILITY_SCRIPT=$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')
+        #
+        PrintMessage "VERBOSE" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Found Utility Script File Path '$VAR_UTILITY_SCRIPT_FILE_PATH'!"
+        #
+        return 0
+    else
+        return 1
+    fi
 }
 ####################################################################################################
 # FUNCTIONS
@@ -79,70 +124,36 @@ Die_UnknownCommand(){
 # START UTILITY SCRIPT
 ####################################################################################################
 if [[ -z $@ ]]; then
-    PrintMessage "INFO" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "You need to provide a command!"
-    Die_UnknownCommand
+    Die_UnknownCommand; exit 1
+else
+    PrintMessage "DEBUG" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Find Utility Script File Path with given arguments: $(echo $(printf "'%s' " "$@"))..."
 fi
 #
-PrintMessage "DEBUG" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Find Utility Script File Path in arguments '$@'..."
-#
 until [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]] || [[ $# -eq 0 ]]; do
-    found_file=0; found_folder=0; last_search=$1
     #
     if [[ $1 == "--"* ]]; then
-        PrintMessage "DEBUG" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Skip flag '$1'..."
+        PrintMessage "DEBUG" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Skip flag '$1' in arguments..."
         shift; continue
     fi
     #
-    PrintMessage "DEBUG" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Find Utility Folder Path '$1' in '$VAR_UTILITY_FOLDER_PATH'..."
-    find_folder=$(find -L $VAR_UTILITY_FOLDER_PATH -maxdepth 1 -iname $1 -type d)
-    #
-    if [[ -d $find_folder ]]; then
-        export VAR_UTILITY_FOLDER_PATH=$find_folder
-        PrintMessage "DEBUG" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Found Utility Folder Path '$VAR_UTILITY_FOLDER_PATH'!"
-        found_folder=1
-        unset last_search
-    fi
-    #
-    if [[ -n $2 && $2 != "--"* ]]; then
-        PrintMessage "DEBUG" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Find Utility Script File Path '$2' in '$VAR_UTILITY_FOLDER_PATH'..."
-        export VAR_UTILITY_SCRIPT_FILE_PATH=$(find -L $VAR_UTILITY_FOLDER_PATH -maxdepth 1 -iname "$2.bash" -type f) 
-        if [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
-            found_by_second=1
+    if FindUtilityFolder $1; then
+        if [[ $# -gt 1 ]]; then
+            shift; continue
         fi
     fi
     #
-    if [[ ! -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
-        PrintMessage "DEBUG" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Find Utility Script File Path '$1' in '$VAR_UTILITY_FOLDER_PATH'..."
-        export VAR_UTILITY_SCRIPT_FILE_PATH=$(find -L $VAR_UTILITY_FOLDER_PATH -maxdepth 1 -iname "$1.bash" -type f) 
+    if FindUtilityScriptFilePath $1; then
+        shift; continue
     fi
     #
-    if [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
-        PrintMessage "DEBUG" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Found Utility Script File Path '$VAR_UTILITY_SCRIPT_FILE_PATH'!"
-        found_file=1
-        unset last_search
-    fi
+    FindUtilityScriptFilePath $(basename $VAR_UTILITY_FOLDER_PATH)
     #
-    if [[ $1 == $2 ]] || [[ $found_by_second -eq 1 ]]; then
-        shift 2
-    else
-        shift
-    fi
-    #
-    export VAR_UTILITY=$(echo $VAR_UTILITY_FOLDER_PATH | sed "s|$GLOBAL_VAR_DIR_INSTALLATION||; s|^/||"); VAR_UTILITY=${VAR_UTILITY:-mitchellvanbijleveld}
-    #
-    if [[ $found_folder -eq 0 && $found_file -eq 0 ]] || [[ $found_file -eq 0 && $# -eq 0 ]]; then
-        if [[ -z $last_search ]]; then
-            PrintMessage "INFO" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "please provide command for '$VAR_UTILITY'...'"
-        else
-            PrintMessage "INFO" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Command '$last_search' is not valid for '$VAR_UTILITY'..."
-        fi
-        #
-        Die_UnknownCommand
-        #
-    fi
+    break
     #
 done
 #
-export VAR_UTILITY_SCRIPT=$(basename $VAR_UTILITY_SCRIPT_FILE_PATH | sed 's/.bash$//')
-
-PrintMessage "VERBOSE" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Remaining arguments '$@'..."
+PrintMessage "VERBOSE" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Remaining arguments: $(echo $(printf "'%s' " "$@"))..."
+#
+if [[ -z $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
+    Die_UnknownCommand $@
+fi
