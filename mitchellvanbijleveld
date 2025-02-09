@@ -6,7 +6,7 @@
 ####################################################################################################
 export BIN_UTILITY="mitchell"
 export BIN_UTILITY_SCRIPT="vanbijleveld"
-BIN_UTILITY_SCRIPT_VERSION="2025.02.07-1325"
+BIN_UTILITY_SCRIPT_VERSION="2025.02.09-0116"
 BIN_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash break date dirname echo eval exit export find grep mktemp printf PrintMessage realpath sed shasum shift source tee tr type which"
 BIN_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="LogLevel"
 ####################################################################################################
@@ -16,11 +16,22 @@ BIN_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="LogLevel"
 #
 #
 for var_argument in "$@"; do 
-    if [[ $(echo $var_argument | tr '[:lower:]' '[:upper:]') == "--DEBUG" ]]; then
+    var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
+    #
+    case $var_argument_CAPS in
+    "--DEBUG")
         if [[ -z $GLOBAL_VAR_DEBUG ]]; then
-            echo "Flag '--DEBUG' found in arguments!"; export GLOBAL_VAR_DEBUG=1; break
+            echo "Flag '--DEBUG' found in arguments!"
+            export GLOBAL_VAR_DEBUG=1
         fi
-    fi
+    ;;
+    "--VERBOSE")
+        if [[ -z $GLOBAL_VAR_VERBOSE ]]; then
+            echo "Flag '--VERBOSE' found in arguments!"
+            export GLOBAL_VAR_VERBOSE=1
+        fi
+    ;;
+    esac
 done
 #
 if ! declare -F PrintMessage > /dev/null; then
@@ -75,6 +86,13 @@ fi
 ##################################################
 if [[ -z $VAR_UTILITY && -z $VAR_UTILITY_SCRIPT ]]; then
     source "$GLOBAL_VAR_DIR_INSTALLATION/.mitchellvanbijleveld/Find/UtilityScriptFilePath.bash"
+else
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Variable 'VAR_UTILITY' is already set."
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Variable 'VAR_UTILITY_SCRIPT' is already set."
+fi
+#
+if [[ ! -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
+    exit 1
 fi
 ##################################################
 # FIND UTILITY SCRIPT FILE PATH IN ARGUMENTS
