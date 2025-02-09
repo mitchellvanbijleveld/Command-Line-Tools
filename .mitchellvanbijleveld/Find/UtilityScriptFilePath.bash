@@ -158,7 +158,11 @@ until [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]] || [[ $# -eq 0 ]]; do
     #
 done
 #
-PrintMessage "VERBOSE" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Remaining arguments: $(echo $(printf "'%s' " "$@"))..."
+if [[ -z $@ ]]; then
+    PrintMessage "VERBOSE" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "No arguments remaining..."
+else
+    PrintMessage "VERBOSE" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Remaining Argument List: $(echo $(printf "'%s' " "$@"))..."
+fi
 #
 if [[ -z $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
     Die_UnknownCommand $@
