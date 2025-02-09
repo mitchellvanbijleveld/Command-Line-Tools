@@ -152,16 +152,16 @@ PrintMessage() {
     #
     if [[ $GLOBAL_VAR_DEBUG ]]; then
         case $PrintMessage_LogLevel in
-            'COMMAND' | 'CONFIG' | 'DEBUG' | 'DRY RUN' | 'FATAL' | 'INFO' | 'VERBOSE' | 'WARNING')
+            'COMMAND' | 'CONFIG' | 'CONFIGURE' | 'DEBUG' | 'DRY RUN' | 'FATAL' | 'INFO' | 'VERBOSE' | 'WARNING')
                 echo "$(BIN_PrintLogLine_TimeStamp)" "$(BIN_PrintLogLine_UtilityAndUtilityScript "$PrintMessage_Utility" "$PrintMessage_UtilityScript")" "$(BIN_PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text"
             ;;
             *) echo "$(BIN_PrintLogLine_TimeStamp)" "$(BIN_PrintLogLine_UtilityAndUtilityScript "$PrintMessage_Utility" "$PrintMessage_UtilityScript")" "$(BIN_PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "!!!!! INVALID PRINTMESSAGE: LOG LEVEL '$PrintMessage_LogLevel' IS NOT SUPPORTED !!!!!";;
         esac
     else
         case $PrintMessage_LogLevel in
-            'COMMAND' | 'CONFIG' | 'DEBUG') [[ $GLOBAL_VAR_DEBUG ]] && echo "$(BIN_PrintLogLine_TimeStamp)" "$(BIN_PrintLogLine_UtilityAndUtilityScript "$PrintMessage_Utility" "$PrintMessage_UtilityScript")" "$(BIN_PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text";;
+            'COMMAND' | 'CONFIG' | 'DEBUG') BIN_PrintMessage_UnsetVariables; return 0;;
             'DRY RUN' | 'FATAL' | 'WARNING') echo "$(BIN_PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text";;
-            'INFO') echo "$PrintMessage_Text";;
+            'CONFIGURE' | 'INFO') echo "$PrintMessage_Text";;
             'VERBOSE') 
             if [[ $GLOBAL_VAR_VERBOSE ]]; then
                 if [[ $PrintMessage_Utility == "COMMAND" ]]; then
