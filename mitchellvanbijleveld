@@ -6,46 +6,44 @@
 ####################################################################################################
 export BIN_UTILITY="mitchell"
 export BIN_UTILITY_SCRIPT="vanbijleveld"
-BIN_UTILITY_SCRIPT_VERSION="2025.02.09-0116"
+BIN_UTILITY_SCRIPT_VERSION="2025.02.09-2101"
 BIN_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash break date dirname echo eval exit export find grep mktemp printf PrintMessage realpath sed shasum shift source tee tr type which"
 BIN_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="LogLevel"
+BIN_PRODUCT_NAME="Mitchell van Bijleveld Command Line Tools"
 ####################################################################################################
 # BIN INFO - MITCHELL/VANBIJLEVELD
 ####################################################################################################
 ####################################################################################################
 #
 #
-for var_argument in "$@"; do 
-    var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
-    #
-    case $var_argument_CAPS in
-    "--DEBUG")
-        if [[ -z $GLOBAL_VAR_DEBUG ]]; then
-            echo "Flag '--DEBUG' found in arguments!"
-            export GLOBAL_VAR_DEBUG=1
-        fi
-    ;;
-    "--VERBOSE")
-        if [[ -z $GLOBAL_VAR_VERBOSE ]]; then
-            echo "Flag '--VERBOSE' found in arguments!"
-            export GLOBAL_VAR_VERBOSE=1
-        fi
-    ;;
-    esac
-done
 #
+#
+#
+####################################################################################################
+####################################################################################################
+# SOURCE FUNCTION 'PrintMessage'
+####################################################################################################
 if ! declare -F PrintMessage > /dev/null; then
     source "$(dirname $(realpath $0))/.mitchellvanbijleveld/PrintMessage.bash"
     PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Function 'PrintMessage' has been sourced."
 else    
     PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Function 'PrintMessage' is already available."
 fi
+####################################################################################################
+# SOURCE FUNCTION 'PrintMessage'
+####################################################################################################
+####################################################################################################
+#
+#
+#
 #
 #
 ####################################################################################################
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
+# PrintMessage "INFO" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Starting $BIN_PRODUCT_NAME with Argument List: $(printf "'%s' " "$@")"
+#
 if [[ -z $GLOBAL_VAR_DIR_INSTALLATION ]]; then
     export GLOBAL_VAR_DIR_INSTALLATION=$(dirname $(realpath $0))
     PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Export Global Variable 'GLOBAL_VAR_DIR_INSTALLATION' with value '$GLOBAL_VAR_DIR_INSTALLATION'."
@@ -79,37 +77,26 @@ fi
 ####################################################################################################
 # PROCESS ARGUMENTS
 ####################################################################################################
-#
-##################################################
-##################################################
-# FIND UTILITY SCRIPT FILE PATH IN ARGUMENTS
-##################################################
-if [[ -z $VAR_UTILITY && -z $VAR_UTILITY_SCRIPT ]]; then
-    source "$GLOBAL_VAR_DIR_INSTALLATION/.mitchellvanbijleveld/Find/UtilityScriptFilePath.bash"
-else
-    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Variable 'VAR_UTILITY' is already set."
-    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Variable 'VAR_UTILITY_SCRIPT' is already set."
-fi
-#
-if [[ ! -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
-    exit 1
-fi
-##################################################
-# FIND UTILITY SCRIPT FILE PATH IN ARGUMENTS
-##################################################
-##################################################
-VAR_UTILITY_SCRIPT_ARGUMENTS=()
-#
-for var_argument in "$@"; do
-    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Processing argument '$var_argument'..."
-    var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
+while [[ $1 == "--"* ]]; do
+    CAPS_1=$(echo $1 | tr '[:lower:]' '[:upper:]')
     #
-    case $var_argument_CAPS in
+    case $CAPS_1 in
         "--DEBUG")
-            PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Flag '--DEBUG' has already been checked."
+            if [[ -z $GLOBAL_VAR_DEBUG ]]; then
+                export GLOBAL_VAR_DEBUG=1
+                PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Restart $BIN_PRODUCT_NAME to enable debug logging..."
+                shift; $(which bash) $(realpath $0) "$@"; exit 0
+            else
+                PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Debug logging is already enabled..."
+            fi
         ;;
         "--DRY-RUN")
-            export GLOBAL_VAR_DRY_RUN=1
+            if [[ -z $GLOBAL_VAR_DRY_RUN ]]; then
+                PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Enabling Dry Mode. Commands will not be executed..."
+                export GLOBAL_VAR_DRY_RUN=1
+            else
+                PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Dry Mode is already enabled..."
+            fi
         ;;
         "--HELP")
             VAR_UTILITY="Help"
@@ -120,28 +107,32 @@ for var_argument in "$@"; do
             VAR_UTILITY_SCRIPT="InteractiveShell"
         ;;
         "--SKIP-DEPENDENCY-CHECK")
-            BIN_SKIP_DEPENDENCY_CHECK=1
-        ;;
-        "--START-FROM-INTERACTIVE-SHELL")
-            if [[ $GLOBAL_VAR_DEBUG -eq 1 ]]; then
-                BIN_DISABLE_DEBUG=1
+            if [[ -z $BIN_SKIP_DEPENDENCY_CHECK ]]; then
+                BIN_SKIP_DEPENDENCY_CHECK=1
+                PrintMessage "VERBOSE" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Utility Script Dependency Check will be skipped..."
+            else
+                PrintMessage "VERBOSE" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Utility Script Dependency Check will be skipped..."
             fi
         ;;
         "--UPDATE-FIRST")
             VAR_UPDATE_FIRST=1
         ;;
         "--VERBOSE")
-            export GLOBAL_VAR_VERBOSE=1
+            if [[ -z $GLOBAL_VAR_VERBOSE ]]; then
+                export GLOBAL_VAR_VERBOSE=1
+                PrintMessage "VERBOSE" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Restart $BIN_PRODUCT_NAME to enable verbose logging..."
+                shift; $(which bash) $(realpath $0) "$@"; exit 0
+            else
+                PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Verbose logging is already enabled..."
+            fi
         ;;
         "--"*)
-            PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Flag '$var_argument_CAPS' will be forwarded to Utility Script."
-            VAR_UTILITY_SCRIPT_ARGUMENTS+=("$var_argument")
-        ;;
-        *)
-            PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Argument '$var_argument_CAPS' will be forwarded to Utility Script."
-            VAR_UTILITY_SCRIPT_ARGUMENTS+=("$var_argument")
+            PrintMessage "FATAL" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Unrecognized flag '$1'. Exiting..."
+            exit 1
         ;;
     esac
+    #
+    shift
     #
 done
 ####################################################################################################
@@ -155,31 +146,13 @@ done
 #
 ####################################################################################################
 ####################################################################################################
-# FUNCTIONS
+# SOURCE FUNCTIONS
 ####################################################################################################
-# Source 'ForEachUtilityScript'
+source "$GLOBAL_VAR_DIR_INSTALLATION/.mitchellvanbijleveld/die_ProcessArguments_InvalidFlag.bash"
+source "$GLOBAL_VAR_DIR_INSTALLATION/.mitchellvanbijleveld/eval_FromFile.bash"
 source "$GLOBAL_VAR_DIR_INSTALLATION/.mitchellvanbijleveld/ForEachUtilityScript.bash"
-#
-eval_FromFile(){
-    # $1 = NAME OF VARIABLE
-    # $2 = FILE PATH
-    if grep -q "^$1=" "$2"; then
-        eval $(grep "^$1=" "$2")
-    else
-        eval "$1="
-    fi
-}
-export -f eval_FromFile
-#
-die_ProcessArguments_InvalidFlag(){
-    # $1 = FLAG
-    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The provided flag ($1) is not supported. Exiting..."
-    PrintMessage
-    exit 1
-}
-export -f die_ProcessArguments_InvalidFlag
 ####################################################################################################
-# FUNCTIONS
+# SOURCE FUNCTIONS
 ####################################################################################################
 ####################################################################################################
 #
@@ -187,15 +160,10 @@ export -f die_ProcessArguments_InvalidFlag
 #
 #
 #
-if [[ $BIN_DISABLE_DEBUG -eq 1 ]] && [[ $BIN_RESTARTED -ne 1 ]]; then
-    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "The bin will be restarted in order to disable debug logging..."
-    export GLOBAL_VAR_DEBUG=0
-    export BIN_RESTARTED=1; "$(realpath $0)" "$@"; exit 0
-
-elif [[ $BIN_RESTARTED -eq 1 ]]; then
-    export BIN_RESTARTED=0
-fi
-#
+####################################################################################################
+####################################################################################################
+# UPDATE FIRST IF REQUESTED
+####################################################################################################
 if [[ $VAR_UPDATE_FIRST -eq 1 ]] && [[ $VAR_UPDATE_DONE -ne 1 ]] && [[ $VAR_UTILITY == "BIN" ]] && [[ $VAR_UTILITY_SCRIPT == "UPDATE" ]]; then
     PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Not updating automatically because 'bin' 'update' is already requested by user..."
 elif [[ $VAR_UPDATE_FIRST -eq 1 ]] && [[ $VAR_UPDATE_DONE -ne 1 ]] && [[ $VAR_UTILITY == "UPDATE" ]]; then
@@ -214,6 +182,30 @@ elif [[ $VAR_UPDATE_FIRST -eq 1 ]] && [[ $VAR_UPDATE_DONE -ne 1 ]]; then
     "$(realpath $0)" "$@"
     exit 0
 fi
+####################################################################################################
+# UPDATE FIRST IF REQUESTED
+####################################################################################################
+####################################################################################################
+#
+#
+#
+#
+#
+####################################################################################################
+####################################################################################################
+# FIND UTILITY SCRIPT FILE PATH IN ARGUMENTS
+####################################################################################################
+if [[ -z $VAR_UTILITY && -z $VAR_UTILITY_SCRIPT && -z $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
+    source "$GLOBAL_VAR_DIR_INSTALLATION/.mitchellvanbijleveld/Find/UtilityScriptFilePath.bash"
+fi
+#
+if [[ ! -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
+    exit 1
+fi
+####################################################################################################
+# FIND UTILITY SCRIPT FILE PATH IN ARGUMENTS
+####################################################################################################
+####################################################################################################
 #
 #
 #
@@ -242,7 +234,7 @@ export UTILITY_SCRIPT_VAR_DIR_TMP=$(mktemp -d "mitchellvanbijleveld-$(echo $VAR_
 ####################################################################################################
 # PRINT CONFIG 
 ####################################################################################################
-PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Printing configuration..."
+PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "PRint Configuration:"
 PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "GLOBAL_VAR_DIR_INSTALLATION  = $GLOBAL_VAR_DIR_INSTALLATION"
 PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "GLOBAL_VAR_DIR_ETC           = $GLOBAL_VAR_DIR_ETC"
 PrintMessage "CONFIG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "GLOBAL_VAR_DIR_TMP           = $GLOBAL_VAR_DIR_TMP"
@@ -271,7 +263,7 @@ fi
 # CHECK DEPENDENCIES
 ####################################################################################################
 if [[ $BIN_SKIP_DEPENDENCY_CHECK -eq 1 ]]; then
-    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Skipping dependency check..."
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Skipping Utility Script Dependency Check..."
 else
     PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Fetching dependencies from utility script..."
     eval_FromFile "VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" $VAR_UTILITY_SCRIPT_FILE_PATH
@@ -296,5 +288,9 @@ fi
 ####################################################################################################
 # START UTILITY SCRIPT
 ####################################################################################################
-PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Starting Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' with arguments: $(printf "'%s' " "${VAR_UTILITY_SCRIPT_ARGUMENTS[@]}")"
-$(which bash) $VAR_UTILITY_SCRIPT_FILE_PATH "${VAR_UTILITY_SCRIPT_ARGUMENTS[@]}"
+if [[ -z $@ ]]; then
+    PrintMessage "INFO" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Starting Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT'..."
+else
+    PrintMessage "INFO" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Starting Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' with Argument List: $(echo $(printf "'%s' " "$@"))..."
+fi
+$(which bash) $VAR_UTILITY_SCRIPT_FILE_PATH "$@"
