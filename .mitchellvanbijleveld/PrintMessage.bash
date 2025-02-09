@@ -203,3 +203,16 @@ export -f BIN_PrintMessage_Internal
 ####################################################################################################
 # START UTILITY SCRIPT
 ####################################################################################################
+if declare -F PrintMessage > /dev/null; then
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Function 'PrintMessage' is available!"
+else
+    PrintMessage "FATAL" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Function 'PrintMessage' is not available. Exiting..."
+    exit 1
+fi
+#
+if declare -F BIN_PrintMessage_Internal > /dev/null; then
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Function 'BIN_PrintMessage_Internal' is available!"
+else
+    PrintMessage "FATAL" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Function 'BIN_PrintMessage_Internal' is not available. Exiting..."
+    exit 1
+fi

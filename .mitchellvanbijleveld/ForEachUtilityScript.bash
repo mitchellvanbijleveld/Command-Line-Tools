@@ -111,3 +111,9 @@ export -f ForEachUtilityScript
 ####################################################################################################
 # START UTILITY SCRIPT
 ####################################################################################################
+if declare -F ForEachUtilityScript > /dev/null; then
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Function 'ForEachUtilityScript' is available!"
+else
+    PrintMessage "FATAL" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Function 'ForEachUtilityScript' is not available. Exiting..."
+    exit 1
+fi
