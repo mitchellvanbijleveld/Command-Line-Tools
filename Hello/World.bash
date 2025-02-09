@@ -92,8 +92,6 @@ done
 ####################################################################################################
 # START UTILITY SCRIPT
 ####################################################################################################
-PrintMessage
-#
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Hello, $VAR_FIRST_NAME! If you see this message, the Command Line Tools for Linux/macOS are working as expected!"
 #
 PrintMessage
