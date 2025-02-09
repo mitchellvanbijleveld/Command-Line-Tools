@@ -6,7 +6,7 @@
 ####################################################################################################
 BIN_HELPER_UTILITY=".Find"
 BIN_HELPER_UTILITY_SCRIPT="UtilityScriptFilePath"
-VAR_UTILITY_SCRIPT_VERSION="2025.02.09-0109"
+VAR_UTILITY_SCRIPT_VERSION="2025.02.09-1424"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename echo exit export find printf PrintMessage realpath sed shift"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
@@ -77,6 +77,10 @@ Die_UnknownCommand(){
 #
 FindUtilityFolder(){
     # $1 = Name Of Utility
+    if [[ -z $1 ]]; then
+        return 1
+    fi
+    #
     PrintMessage "DEBUG" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Find Utility Folder Path '$1' in '$VAR_UTILITY_FOLDER_PATH'..."
     #
     find_result=$(find -L $VAR_UTILITY_FOLDER_PATH -mindepth 1 -maxdepth 1 -iname $1 -type d)
@@ -95,6 +99,10 @@ FindUtilityFolder(){
 #
 FindUtilityScriptFilePath(){
     # $1 = Name Of Utility Script
+    if [[ -z $1 ]]; then
+        return 1
+    fi
+    #
     PrintMessage "DEBUG" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "Find Utility Script File Path '$1' in '$VAR_UTILITY_FOLDER_PATH'..."
     #
     find_result=$(find -L $VAR_UTILITY_FOLDER_PATH -mindepth 1 -maxdepth 1 -iname "$1.bash" -type f)
@@ -137,18 +145,16 @@ until [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]] || [[ $# -eq 0 ]]; do
     fi
     #
     if FindUtilityFolder $1; then
-        if [[ $# -gt 1 ]]; then
-            shift; continue
-        fi
+        shift
+    else
+        break
     fi
     #
     if FindUtilityScriptFilePath $1; then
-        shift; continue
+        shift
+    else
+        continue
     fi
-    #
-    FindUtilityScriptFilePath $(basename $VAR_UTILITY_FOLDER_PATH)
-    #
-    break
     #
 done
 #
