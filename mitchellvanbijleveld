@@ -293,4 +293,6 @@ if [[ -z $@ ]]; then
 else
     PrintMessage "INFO" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Starting Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' with Argument List: $(echo $(printf "'%s' " "$@"))..."
 fi
+PrintMessage "INFO" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "========================="
+PrintMessage
 $(which bash) $VAR_UTILITY_SCRIPT_FILE_PATH "$@"
