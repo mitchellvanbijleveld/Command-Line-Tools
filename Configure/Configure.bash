@@ -107,12 +107,18 @@ SetConfigurationParameter(){
 ####################################################################################################
 # START UTILITY SCRIPT
 ####################################################################################################
-source "$GLOBAL_VAR_DIR_INSTALLATION/.mitchellvanbijleveld/Find/UtilityScriptFilePath.bash"
-UTILITY_SCRIPT_VAR_DIR_ETC="$GLOBAL_VAR_DIR_ETC/$VAR_UTILITY/$VAR_UTILITY_SCRIPT"
-VAR_CONFIGURE_UTILITY=$VAR_UTILITY
-VAR_CONFIGURE_UTILITY_SCRIPT=$VAR_UTILITY_SCRIPT
-VAR_UTILITY="Configure"
-VAR_UTILITY_SCRIPT="Configure"
+if [[ $1 == "mitchellvanbijleveld" ]]; then
+    VAR_UTILITY_SCRIPT_FILE_PATH="$GLOBAL_VAR_DIR_INSTALLATION/mitchellvanbijleveld"
+    UTILITY_SCRIPT_VAR_DIR_ETC="$GLOBAL_VAR_DIR_ETC"
+    shift
+else
+    source "$GLOBAL_VAR_DIR_INSTALLATION/.mitchellvanbijleveld/Find/UtilityScriptFilePath.bash"
+    UTILITY_SCRIPT_VAR_DIR_ETC="$GLOBAL_VAR_DIR_ETC/$VAR_UTILITY/$VAR_UTILITY_SCRIPT"
+    VAR_CONFIGURE_UTILITY=$VAR_UTILITY
+    VAR_CONFIGURE_UTILITY_SCRIPT=$VAR_UTILITY_SCRIPT
+    VAR_UTILITY="Configure"
+    VAR_UTILITY_SCRIPT="Configure"
+fi
 #
 if [[ -z $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
     exit 1
@@ -150,10 +156,10 @@ until [[ $# -eq 0 ]]; do
             if [[ -z $2 ]]; then
                 PrintMessage "CONFIGURE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Skip Configure Parameter '$1' because no value was given..."
             else
-                SetConfigurationParameter "$var_configurable_setting" "$2"; CONFIGURED=1
+                SetConfigurationParameter "$var_configurable_setting" "$2"
             fi
             #
-            break
+            CONFIGURED=1; break
         fi
     done
     #
