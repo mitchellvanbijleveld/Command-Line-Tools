@@ -8,7 +8,7 @@ export BIN_UTILITY="mitchell"
 export BIN_UTILITY_SCRIPT="vanbijleveld"
 BIN_UTILITY_SCRIPT_VERSION="2025.02.09-2101"
 BIN_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash break date dirname echo eval exit export find grep mktemp printf PrintMessage realpath sed shasum shift source tee tr type which"
-BIN_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="LogLevel"
+VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="LogLevel UpdateFirst"
 BIN_PRODUCT_NAME="Mitchell van Bijleveld Command Line Tools"
 ####################################################################################################
 # BIN INFO - MITCHELL/VANBIJLEVELD
@@ -63,6 +63,40 @@ if [[ -z $GLOBAL_VAR_DIR_TMP ]]; then
     PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Export Global Variable 'GLOBAL_VAR_DIR_TMP' with value '$GLOBAL_VAR_DIR_TMP'."
 else
     PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Global Variable 'GLOBAL_VAR_DIR_TMP' is already exported."
+fi
+#
+#
+#
+if [[ -f "$GLOBAL_VAR_DIR_ETC/LogLevel" ]]; then
+    case $(cat "$GLOBAL_VAR_DIR_ETC/LogLevel" | tr '[:lower:]' '[:upper:]') in
+        'DEBUG')
+            if [[ -z $GLOBAL_VAR_DEBUG ]]; then
+                export GLOBAL_VAR_DEBUG=1
+                PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Restart $BIN_PRODUCT_NAME to enable debug logging..."
+                # shift;
+                $(which bash) $(realpath $0) "$@"; exit 0
+            else
+                PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Debug logging is already enabled..."
+            fi
+        ;;
+        'VERBOSE')
+            if [[ -z $GLOBAL_VAR_VERBOSE ]]; then
+                export GLOBAL_VAR_VERBOSE=1
+                PrintMessage "VERBOSE" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Restart $BIN_PRODUCT_NAME to enable verbose logging..."
+                # shift; 
+                $(which bash) $(realpath $0) "$@"; exit 0
+            else
+                PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Verbose logging is already enabled..."
+            fi
+        ;;
+        *)
+            PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "No valid default log level."
+        ;;
+    esac
+fi
+#
+if [[ -f "$GLOBAL_VAR_DIR_ETC/UpdateFirst" ]]; then
+    VAR_UPDATE_FIRST=$(cat "$GLOBAL_VAR_DIR_ETC/UpdateFirst")
 fi
 ####################################################################################################
 # DEFAULT VARIABLES
