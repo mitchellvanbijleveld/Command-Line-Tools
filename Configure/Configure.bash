@@ -6,7 +6,7 @@
 ####################################################################################################
 VAR_UTILITY="Configure"
 VAR_UTILITY_SCRIPT="Configure"
-VAR_UTILITY_SCRIPT_VERSION="2025.02.13-2108"
+VAR_UTILITY_SCRIPT_VERSION="2025.02.14-0049"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo eval_FromFile exit mkdir PrintMessage shift source tr unset"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
@@ -41,6 +41,9 @@ for var_argument in "$@"; do
     var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
     #
     case $var_argument_CAPS in
+        "--LIST-CONFIG" | "--PRINT-CONFIG" | "--SHOW-CONFIG")
+            PRINT_CONFIG=1
+        ;;
         "--"*)
             die_ProcessArguments_InvalidFlag $var_argument
         ;;
@@ -153,6 +156,26 @@ if [[ -z $@ ]]; then
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - $var_configurable_setting"
     done
     exit 1
+fi
+#
+if [[ $PRINT_CONFIG -eq 1 ]]; then
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Printing Configuration for $VAR_CONFIGURE_UTILITY/$VAR_CONFIGURE_UTILITY_SCRIPT:"
+    # Generate spaces, based on longest string.
+    for var_configurable_setting in $VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS; do
+        if [[ ${#var_configurable_setting} -gt $length ]]; then
+            length=${#var_configurable_setting}
+        fi
+    done
+    #
+    for var_configurable_setting in $VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS; do
+        if [[ -f "$UTILITY_SCRIPT_VAR_DIR_ETC/$var_configurable_setting" ]]; then
+            PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - $(printf "%-${length}s %s\n" $var_configurable_setting): $(cat "$UTILITY_SCRIPT_VAR_DIR_ETC/$var_configurable_setting")"
+        else
+            PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - $(printf "%-${length}s %s\n" $var_configurable_setting): N/A (No Configuration File)"
+        fi
+    done
+    #
+    exit 0
 fi
 #
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Start Configuring $VAR_CONFIGURE_UTILITY/$VAR_CONFIGURE_UTILITY_SCRIPT..."
