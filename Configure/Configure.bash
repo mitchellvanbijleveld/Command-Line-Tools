@@ -85,12 +85,12 @@ SetConfigurationParameter(){
         PrintMessage "CONFIGURE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Configure Parameter '$1' with value '$2' from current value '$(cat "$UTILITY_SCRIPT_VAR_DIR_ETC/$1")'..."                                           
     fi
     #
-    (echo "$2" > "$UTILITY_SCRIPT_VAR_DIR_ETC/$1") 2>/dev/null              
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which echo) "'$2' > '$UTILITY_SCRIPT_VAR_DIR_ETC/$1'"           
     #
     if [[ $2 == $(cat "$UTILITY_SCRIPT_VAR_DIR_ETC/$1") ]]; then
         return 0
     else
-        PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - There was a problem configuring '$1' with value '$2'..."   
+        PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "There was a problem configuring '$1' with value '$2'..."   
         return 1
     fi
 }
