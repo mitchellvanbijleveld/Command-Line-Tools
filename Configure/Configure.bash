@@ -67,7 +67,14 @@ done
 CreateConfigurationDirectory(){
     if [[ ! -d $UTILITY_SCRIPT_VAR_DIR_ETC ]]; then
         PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Creating configuration directory '$UTILITY_SCRIPT_VAR_DIR_ETC'..."
-        mkdir -p $UTILITY_SCRIPT_VAR_DIR_ETC
+        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which mkdir) -p $UTILITY_SCRIPT_VAR_DIR_ETC
+    fi
+    #
+    if [[ -d $UTILITY_SCRIPT_VAR_DIR_ETC ]]; then
+        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Configuration Directory '$UTILITY_SCRIPT_VAR_DIR_ETC' exists..."
+        return 0
+    else
+        return 1
     fi
 }
 #
@@ -80,14 +87,15 @@ SetConfigurationParameter(){
     if [[ ! -f "$UTILITY_SCRIPT_VAR_DIR_ETC/$1" ]]; then
         PrintMessage "CONFIGURE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Configure Parameter '$1' with value '$2'..."
     elif [[ $2 == $(cat "$UTILITY_SCRIPT_VAR_DIR_ETC/$1") ]]; then
-        PrintMessage "CONFIGURE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Skip Configure Parameter '$1' because value is already set to '$2'..."  
+        PrintMessage "CONFIGURE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Skip Configure Parameter '$1' because value is already set to '$2'..."
+        return 0
     else
         PrintMessage "CONFIGURE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Configure Parameter '$1' with value '$2' from current value '$(cat "$UTILITY_SCRIPT_VAR_DIR_ETC/$1")'..."                                           
     fi
     #
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which echo) "'$2' > '$UTILITY_SCRIPT_VAR_DIR_ETC/$1'"           
     #
-    if [[ $2 == $(cat "$UTILITY_SCRIPT_VAR_DIR_ETC/$1") ]]; then
+    if [[ -f "$UTILITY_SCRIPT_VAR_DIR_ETC/$1" && $2 == $(cat "$UTILITY_SCRIPT_VAR_DIR_ETC/$1") ]]; then
         return 0
     else
         PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "There was a problem configuring '$1' with value '$2'..."   
@@ -131,7 +139,10 @@ if [[ -z $VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "No parameters to configure for $VAR_CONFIGURE_UTILITY/$VAR_CONFIGURE_UTILITY_SCRIPT..."
     exit 0
 else
-    CreateConfigurationDirectory
+    if ! CreateConfigurationDirectory; then
+        PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Configuration Directory for $VAR_CONFIGURE_UTILITY/$VAR_CONFIGURE_UTILITY_SCRIPT could not be created..."
+        exit 1
+    fi
 fi
 #
 if [[ -z $@ ]]; then
