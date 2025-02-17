@@ -4,9 +4,9 @@
 ####################################################################################################
 # UTILITY SCRIPT INFO - Daemon/Daemon
 ####################################################################################################
-VAR_UTILITY="Daemon"
-VAR_UTILITY_SCRIPT="Daemon"
-VAR_UTILITY_SCRIPT_VERSION="2025.01.25-0059"
+DAEMON="Daemon"
+DAEMON_HELPER="Helper"
+VAR_UTILITY_SCRIPT_VERSION="2025.02.17-1717"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit mkdir PrintMessage shift tr"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
@@ -23,7 +23,7 @@ VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 # PROCESS ARGUMENTS
 ####################################################################################################
 for var_argument in "$@"; do
-    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Processing argument '$var_argument'..."
+    PrintMessage "DEBUG" "$DAEMON" "$DAEMON_HELPER" "Processing argument '$var_argument'..."
     var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
     #
     case $var_argument_CAPS in
@@ -33,10 +33,10 @@ for var_argument in "$@"; do
         ;;
         *)
             if [[ $VAR_DAEMON_NAME == "" ]] && [[ $var_argument_CAPS != "--"* ]]; then
-                PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Setting '$var_argument' as VAR_DAEMON_NAME..."
+                PrintMessage "DEBUG" "$DAEMON" "$DAEMON_HELPER" "Setting '$var_argument' as VAR_DAEMON_NAME..."
                 VAR_DAEMON_NAME=$var_argument
             else
-                PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Ignoring argument '$var_argument'..."
+                PrintMessage "DEBUG" "$DAEMON" "$DAEMON_HELPER" "Ignoring argument '$var_argument'..."
             fi
         ;;
     esac
@@ -56,9 +56,9 @@ done
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
-VAR_DAEMON_CONFIG_FILE="$GLOBAL_VAR_DIR_ETC/$VAR_UTILITY/$VAR_DAEMON_NAME"
-VAR_DAEMON_EXAMPLE_FILE="$GLOBAL_VAR_DIR_INSTALLATION/$VAR_UTILITY/Examples/$VAR_DAEMON_NAME"
-VAR_DAEMON_PID_FILE="$GLOBAL_VAR_DIR_TMP/$VAR_UTILITY/$VAR_DAEMON_NAME"
+VAR_DAEMON_CONFIG_FILE="$GLOBAL_VAR_DIR_ETC/$DAEMON/$VAR_DAEMON_NAME"
+VAR_DAEMON_EXAMPLE_FILE="$GLOBAL_VAR_DIR_INSTALLATION/$DAEMON/Examples/$VAR_DAEMON_NAME"
+VAR_DAEMON_PID_FILE="$GLOBAL_VAR_DIR_TMP/$DAEMON/$VAR_DAEMON_NAME"
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
@@ -72,15 +72,15 @@ VAR_DAEMON_PID_FILE="$GLOBAL_VAR_DIR_TMP/$VAR_UTILITY/$VAR_DAEMON_NAME"
 ####################################################################################################
 # FUNCTIONS
 ####################################################################################################
-PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which mkdir) -pv "$GLOBAL_VAR_DIR_ETC/$VAR_UTILITY"
-PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which mkdir) -pv "$GLOBAL_VAR_DIR_TMP/$VAR_UTILITY"
+PrintMessage "DEBUG" "$DAEMON" "$DAEMON_HELPER" $(which mkdir) -pv "$GLOBAL_VAR_DIR_ETC/$DAEMON"
+PrintMessage "DEBUG" "$DAEMON" "$DAEMON_HELPER" $(which mkdir) -pv "$GLOBAL_VAR_DIR_TMP/$DAEMON"
 #
 DaemonConfigFileExists(){
     if [[ -f $VAR_DAEMON_CONFIG_FILE ]]; then
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Config File for Daemon '$VAR_DAEMON_NAME' is installed in: '$VAR_DAEMON_CONFIG_FILE'"
+        PrintMessage "DEBUG" "$DAEMON" "$DAEMON_HELPER" "Config File for Daemon '$VAR_DAEMON_NAME' is installed in: '$VAR_DAEMON_CONFIG_FILE'"
         return 0
     else
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Config File for Daemon '$VAR_DAEMON_NAME' not installed."
+        PrintMessage "DEBUG" "$DAEMON" "$DAEMON_HELPER" "Config File for Daemon '$VAR_DAEMON_NAME' not installed."
         return 1
     fi
 }
@@ -88,10 +88,10 @@ export -f DaemonConfigFileExists
 #
 DaemonExampleFileExists(){
     if [[ -f $VAR_DAEMON_EXAMPLE_FILE ]]; then
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Example Deamon '$VAR_DAEMON_NAME' is available!"
+        PrintMessage "DEBUG" "$DAEMON" "$DAEMON_HELPER" "Example Deamon '$VAR_DAEMON_NAME' is available!"
         return 0
     else
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Example Deamon '$VAR_DAEMON_NAME' does not exist."
+        PrintMessage "DEBUG" "$DAEMON" "$DAEMON_HELPER" "Example Deamon '$VAR_DAEMON_NAME' does not exist."
         return 1
     fi
 }
@@ -99,10 +99,10 @@ export -f DaemonExampleFileExists
 #
 DaemonPidFileExists(){
     if [[ -f $VAR_DAEMON_PID_FILE ]]; then
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "PID File for Daemon '$VAR_DAEMON_NAME' is located in: '$VAR_DAEMON_PID_FILE'"
+        PrintMessage "DEBUG" "$DAEMON" "$DAEMON_HELPER" "PID File for Daemon '$VAR_DAEMON_NAME' is located in: '$VAR_DAEMON_PID_FILE'"
         return 0
     else
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "PID File for Daemon '$VAR_DAEMON_NAME' is absent."
+        PrintMessage "DEBUG" "$DAEMON" "$DAEMON_HELPER" "PID File for Daemon '$VAR_DAEMON_NAME' is absent."
         return 1
     fi
 }
@@ -110,10 +110,10 @@ export -f DaemonPidFileExists
 #
 DaemonHasSession(){
     if tmux has-session -t $VAR_DAEMON_NAME 2>/dev/null; then
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Active Session for Daemon '$VAR_DAEMON_NAME' is running!"
+        PrintMessage "DEBUG" "$DAEMON" "$DAEMON_HELPER" "Active Session for Daemon '$VAR_DAEMON_NAME' is running!"
         return 0
     else
-        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Active Session for Daemon '$VAR_DAEMON_NAME' does not exist."
+        PrintMessage "DEBUG" "$DAEMON" "$DAEMON_HELPER" "Active Session for Daemon '$VAR_DAEMON_NAME' does not exist."
         return 1
     fi
 }
@@ -132,6 +132,6 @@ export -f DaemonHasSession
 # START UTILITY SCRIPT
 ####################################################################################################
 if [[ $VAR_DAEMON_NAME == "" ]]; then
-    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "No Daemon specified. Exiting..."
+    PrintMessage "FATAL" "$DAEMON" "$DAEMON_HELPER" "No Daemon specified. Exiting..."
     exit 1
 fi
