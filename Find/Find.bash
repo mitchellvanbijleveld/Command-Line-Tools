@@ -6,7 +6,7 @@
 ####################################################################################################
 VAR_UTILITY="Find"
 VAR_UTILITY_SCRIPT="Find"
-VAR_UTILITY_SCRIPT_VERSION="2025.01.19-1853"
+VAR_UTILITY_SCRIPT_VERSION="2025.03.15-2025"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="clear echo find mktemp PrintMessage sed shift sudo tr wc which"
 ####################################################################################################
 # UTILITY SCRIPT INFO - Find/Find
@@ -23,7 +23,7 @@ VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="clear echo find mktemp PrintMess
 ####################################################################################################
 SUPPRESS_STRING="Invalid argument|No such file or directory|Not a directory|Operation not permitted|Permission denied"
 #
-VAR_SEARCH_DIR=$HOME
+VAR_SEARCH_DIR=$(pwd)
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
