@@ -6,7 +6,7 @@
 ####################################################################################################
 VAR_UTILITY="Find"
 VAR_UTILITY_SCRIPT="Find"
-VAR_UTILITY_SCRIPT_VERSION="2025.03.15-2025"
+VAR_UTILITY_SCRIPT_VERSION="2025.03.16-2132"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="clear echo find mktemp PrintMessage sed shift sudo tr wc which"
 ####################################################################################################
 # UTILITY SCRIPT INFO - Find/Find
@@ -76,11 +76,11 @@ for var_argument in "$@"; do
             fi
         ;;
         "--SORT" | "--SORT-OUTPUT")
-            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sorting output when done..."
+            PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Output Processing: Sorting output when done..."
             SORT_OUTPUT=1
         ;;
         "--SUPPRESS-ERRORS")
-            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Suppressing warnings and errors in output..."
+            PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Output Processing: Suppressing errors and warnings from output..."
             SUPPRESS_PERMISSION_DENIED=1
         ;;
         "--EXECUTE-COMMAND" | "--RUN-COMMAND")
