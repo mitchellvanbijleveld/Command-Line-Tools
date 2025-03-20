@@ -6,8 +6,8 @@
 ####################################################################################################
 #VAR_UTILITY=".mitchellvanbijleveld"
 #VAR_UTILITY_SCRIPT="PrintMessage"
-VAR_UTILITY_SCRIPT_VERSION="2025.02.06-1610"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="date echo eval printf shift"
+VAR_UTILITY_SCRIPT_VERSION="2025.03.21-0003"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="date echo eval mkdir printf shift touch"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - .mitchellvanbijleveld/PrintMessage
@@ -22,7 +22,17 @@ VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
+if [[ -z $PRINTMESSAGE_LOG_DIRECTORY ]]; then
+    PRINTMESSAGE_LOG_DIRECTORY="$(realpath ~)/.mitchellvanbijleveld/Command-Line-Tools/var/log"
+    echo $PRINTMESSAGE_LOG_DIRECTORY
+    mkdir -p $PRINTMESSAGE_LOG_DIRECTORY
+fi
 #
+if [[ -z $PRINTMESSAGE_LOG_FILE ]]; then
+    export PRINTMESSAGE_LOG_FILE="$PRINTMESSAGE_LOG_DIRECTORY/mitchellvanbijleveld.$(date +'%Y%m%d-%H%M%S').log"
+    echo $PRINTMESSAGE_LOG_FILE
+    touch $PRINTMESSAGE_LOG_FILE
+fi
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
@@ -59,9 +69,9 @@ BIN_PrintLogLine_UtilityAndUtilityScript(){
     # $1 = UTILITY | COMMAND
     # $2 = UTILITY SCRIPT | COMMAND
     if [[ $1 == "COMMAND" ]]; then
-        echo "$(printf '%-28s' $(echo "$1=$2"))"
+        echo "$(printf '%-34s' $(echo "$1=$2"))"
     else
-        echo "$(printf '%-28s' $(echo "$1/$2"))"
+        echo "$(printf '%-34s' $(echo "$1/$2"))"
     fi
 }
 export -f BIN_PrintLogLine_UtilityAndUtilityScript
@@ -149,6 +159,8 @@ PrintMessage() {
     fi
     #
     #
+    echo "$(BIN_PrintLogLine_TimeStamp)" "$(BIN_PrintLogLine_UtilityAndUtilityScript "$PrintMessage_Utility" "$PrintMessage_UtilityScript")" "$(BIN_PrintLogLine_LogLevel "$PrintMessage_LogLevel")" "$PrintMessage_Text" >> $PRINTMESSAGE_LOG_FILE
+    #
     #
     if [[ $GLOBAL_VAR_DEBUG ]]; then
         case $PrintMessage_LogLevel in
@@ -204,15 +216,15 @@ export -f BIN_PrintMessage_Internal
 # START UTILITY SCRIPT
 ####################################################################################################
 if declare -F PrintMessage > /dev/null; then
-    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Function 'PrintMessage' is available!"
+    PrintMessage "DEBUG" ".mitchellvanbijleveld" "PrintMessage" "Function 'PrintMessage' is available!"
 else
-    PrintMessage "FATAL" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Function 'PrintMessage' is not available. Exiting..."
+    PrintMessage "FATAL" ".mitchellvanbijleveld" "PrintMessage" "Function 'PrintMessage' is not available. Exiting..."
     exit 1
 fi
 #
 if declare -F BIN_PrintMessage_Internal > /dev/null; then
-    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Function 'BIN_PrintMessage_Internal' is available!"
+    PrintMessage "DEBUG" ".mitchellvanbijleveld" "PrintMessage" "Function 'BIN_PrintMessage_Internal' is available!"
 else
-    PrintMessage "FATAL" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Function 'BIN_PrintMessage_Internal' is not available. Exiting..."
+    PrintMessage "FATAL" ".mitchellvanbijleveld" "PrintMessage" "Function 'BIN_PrintMessage_Internal' is not available. Exiting..."
     exit 1
 fi
