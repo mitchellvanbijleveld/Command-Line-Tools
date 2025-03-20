@@ -126,5 +126,10 @@ done < <(find "$(pwd)" -type f -name '.DS_Store')
 #
 PrintMessage
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The script found $FOUND_FILES files. There were $DELETED_FILES files removed."
+#
+if [[ $DELETED_FILES -gt 0 ]]; then
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The list of removed files can be found here: $(pwd)/.REMOVED_FILES.txt"
+fi
+#
 PrintMessage
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Done!"
