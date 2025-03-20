@@ -137,8 +137,8 @@ while [[ $1 == "--"* ]]; do
             VAR_UTILITY_SCRIPT="Help"
         ;;
         "--INTERACTIVE" | "--INTERACTIVESHELL" | "--INTERACTIVE-SHELL" | "--IS")
-            VAR_UTILITY="InteractiveShell"
-            VAR_UTILITY_SCRIPT="InteractiveShell"
+            export VAR_UTILITY="InteractiveShell"
+            export VAR_UTILITY_SCRIPT="InteractiveShell"
         ;;
         "--SKIP-DEPENDENCY-CHECK")
             if [[ -z $BIN_SKIP_DEPENDENCY_CHECK ]]; then
@@ -231,6 +231,8 @@ fi
 ####################################################################################################
 if [[ -z $VAR_UTILITY && -z $VAR_UTILITY_SCRIPT && -z $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
     source "$GLOBAL_VAR_DIR_INSTALLATION/.mitchellvanbijleveld/Find/UtilityScriptFilePath.bash"
+elif [[ -n $VAR_UTILITY && -n $VAR_UTILITY_SCRIPT && -z $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
+    source "$GLOBAL_VAR_DIR_INSTALLATION/.mitchellvanbijleveld/Find/UtilityScriptFilePath.bash" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT"
 fi
 #
 if [[ ! -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
