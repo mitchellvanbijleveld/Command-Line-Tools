@@ -95,10 +95,13 @@ if [[ $REMOVE_FILES -eq 1 ]]; then
     PrintMessage
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "In order to continue, please type 'I understand.' below."
     read -p "Type your response: " MESSAGE
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "User's response is: '$MESSAGE'"
     #
     if [[ "$MESSAGE" != "I understand." ]]; then
         PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "You did not understand the warning message. Not removing any files."
         REMOVE_FILES=0
+    else
+        PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "OK, with great power... comes great responsibility. Good luck!"
     fi
     #
     PrintMessage
