@@ -6,8 +6,8 @@
 ####################################################################################################
 VAR_UTILITY="InteractiveShell"
 VAR_UTILITY_SCRIPT="InteractiveShell"
-VAR_UTILITY_SCRIPT_VERSION="2025.01.04-0313"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename clear echo exit printf PrintMessage shift tr"
+VAR_UTILITY_SCRIPT_VERSION="2025.03.20-2317"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename clear echo exit printf PrintMessage shift tr unset"
 ####################################################################################################
 # UTILITY SCRIPT INFO - InteractiveShell/InteractiveShell
 ####################################################################################################
@@ -141,19 +141,19 @@ PrintMenu_Footer(){
 #
 PrintMenu_InteractiveShell(){
     PrintMenu_Header
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
+    PrintMessage # "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Welcome to the Interactive Shell for Linux Command Line Tools!"
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
+    PrintMessage # "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "This menu helps you navigating through all available utilities. After"
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "selecting the Utility, you will be able to start a Utility Script."
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
+    PrintMessage # "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The following utilities are available:"
     PrintAvailableUtilities    
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
+    PrintMessage # "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Available Actions:"; ClearUserActions
     PrintUserAction "1-${#AvailableUtilities[@]}" "Utility from the list above"
     PrintUserAction "Q" "Quit Interactive Shell"
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
+    PrintMessage # "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
     AskForUserAction
     #
     if [[ $UserInput -ge 1 ]] && [[ $UserInput -le ${#AvailableUtilities[@]} ]]; then
@@ -172,17 +172,17 @@ PrintMenu_InteractiveShell(){
 PrintMenu_Utility(){
     # $1 = Utility
     PrintMenu_Header "Utility Menu"
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
+    PrintMessage # "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "This is the Utility menu for $1."
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
+    PrintMessage # "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The following Utility Scripts are available:"
     PrintAvailableUtilityScripts $1
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
+    PrintMessage # "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Available Actions:"; ClearUserActions
     PrintUserAction "1-${#AvailableUtilityScripts[@]}" "Utility Script from the list above"
     PrintUserAction "B" "Back"
     PrintUserAction "Q" "Quit Interactive Shell"
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
+    PrintMessage # "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
     AskForUserAction
     #
     if [[ $UserInput -ge 1 ]] && [[ $UserInput -le ${#AvailableUtilityScripts[@]} ]]; then
@@ -202,14 +202,15 @@ PrintMenu_Utility(){
 PrintMenu_UtilityScript(){
     # $1 = Utility
     # $2 = Utility Script
-
+    #
+    unset VAR_UTILITY_FOLDER_PATH
+    #
     PrintMenu_Header "Utility Script Menu"
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
+    PrintMessage # "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting Utility Script $1/$2..."
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "###########################################################################"
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which bash) "$GLOBAL_VAR_DIR_INSTALLATION/mitchellvanbijleveld '$1' '$2' '--START-FROM-INTERACTIVE-SHELL'"
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which bash) "$GLOBAL_VAR_DIR_INSTALLATION/mitchellvanbijleveld" "$1" "$2"
     exit 0
-
 }
 ##################################################
 # Print Menu
