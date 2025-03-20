@@ -203,13 +203,11 @@ PrintMenu_UtilityScript(){
     # $1 = Utility
     # $2 = Utility Script
     #
-    unset VAR_UTILITY_FOLDER_PATH
-    #
     PrintMenu_Header "Utility Script Menu"
     PrintMessage # "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "                                                                           "
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting Utility Script $1/$2..."
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "###########################################################################"
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which bash) "$GLOBAL_VAR_DIR_INSTALLATION/mitchellvanbijleveld" "$1" "$2"
+    unset VAR_UTILITY; unset VAR_UTILITY_SCRIPT; unset VAR_UTILITY_FOLDER_PATH; $(which bash) "$GLOBAL_VAR_DIR_INSTALLATION/mitchellvanbijleveld" "$1" "$2"
     exit 0
 }
 ##################################################
