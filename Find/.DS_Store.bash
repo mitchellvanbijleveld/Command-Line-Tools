@@ -115,7 +115,7 @@ while IFS= read -r DS_Store; do
     if [[ $REMOVE_FILES -eq 1 ]]; then
         #
         if [[ -f "$DS_Store" ]]; then
-            PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which rm) -v "\"$DS_Store\""
+            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which rm) -v "\"$DS_Store\""
         fi
         #
         if [[ ! -f "$DS_Store" ]]; then
