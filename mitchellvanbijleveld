@@ -6,7 +6,7 @@
 ####################################################################################################
 export BIN_UTILITY="mitchell"
 export BIN_UTILITY_SCRIPT="vanbijleveld"
-BIN_UTILITY_SCRIPT_VERSION="2025.02.09-2101"
+BIN_UTILITY_SCRIPT_VERSION="2025.03.24-0027"
 BIN_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash break date dirname echo eval exit export find grep mktemp printf PrintMessage realpath sed shasum shift source tee tr type which"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="LogLevel UpdateFirst"
 BIN_PRODUCT_NAME="Mitchell van Bijleveld Command Line Tools"
@@ -303,6 +303,12 @@ if [[ $BIN_SKIP_DEPENDENCY_CHECK -eq 1 ]]; then
 else
     PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Fetching dependencies from utility script..."
     eval_FromFile "VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" $VAR_UTILITY_SCRIPT_FILE_PATH
+    #
+    if [[ -z $VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS ]]; then
+        PrintMessage "FATAL" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Could not find required command line tools. Utility Script will not start to prevent failures."
+        exit 1        
+    fi
+    #
     PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Starting script to check dependencies..."
     $(which bash) "$GLOBAL_VAR_DIR_INSTALLATION/bin/CheckDependencies.bash" $VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS "--run-in-background"
     #
