@@ -6,7 +6,7 @@
 ####################################################################################################
 VAR_UTILITY="Server"
 VAR_UTILITY_SCRIPT="BackUp"
-VAR_UTILITY_SCRIPT_VERSION="2025.03.23-2311"
+VAR_UTILITY_SCRIPT_VERSION="2025.03.24-0025"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cat date diff echo exit find head mkdir mktemp PrintMessage rm sed shift sort tar tr which"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="Destination Directories MaximumBackUpFiles"
 ####################################################################################################
@@ -35,6 +35,9 @@ if [[ -f "$VAR_CONFIG_FILE_BACKUP_MAX_FILES" ]]; then
     VAR_BACKUP_MAXIMUM_FILES=$(cat $VAR_CONFIG_FILE_BACKUP_MAX_FILES)
 fi
 VAR_BACKUP_MAXIMUM_FILES=${VAR_BACKUP_MAXIMUM_FILES:-8}
+#
+succeeded_backups=0
+current_backup=0
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
@@ -200,23 +203,39 @@ RemoveEmptyDirectories(){
 if [[ ! -f "$VAR_CONFIG_FILE_BACKUP_DIRECTORIES" ]]; then
     PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The file with directories to backup does not exist. Exiting..."
     exit 1
+else
+    if [[ $(cat $VAR_CONFIG_FILE_BACKUP_DIRECTORIES | wc -l) -eq 1 ]]; then
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "There is $(echo $(cat $VAR_CONFIG_FILE_BACKUP_DIRECTORIES | wc -l)) backup to make."
+    else
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "There are $(echo $(cat $VAR_CONFIG_FILE_BACKUP_DIRECTORIES | wc -l)) backups to make."
+    fi
+    PrintMessage
 fi
 #
 CheckAndCreateDirectory "$VAR_BACKUP_DESTINATION_FOLDER"
 #
 while IFS= read -r DirectoryToBackUp; do
     #
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Start BackUp Process for Directory '$DirectoryToBackUp'..."
+    ((current_backup++))
+    #
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Start BackUp Process $current_backup/$(echo $(cat $VAR_CONFIG_FILE_BACKUP_DIRECTORIES | wc -l)): Directory '$DirectoryToBackUp'..."
     #
     BACKUP_TMP_FILE_BACKUP_FULLFILEPATH=$(mktemp)
     #
     if ! CreateBackUp "$DirectoryToBackUp" || ! VerifyBackUp "$DirectoryToBackUp" || ! RotateBackUp "$DirectoryToBackUp"; then
         PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Error during backup process for directory '$DirectoryToBackUp'. BackUp not completed."
+        PrintMessage
         continue
     fi
     #
     RemoveEmptyDirectories "$DirectoryToBackUp"
     #
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "BackUp Process for Directory '$DirectoryToBackUp' finished successfully!"
+    ((succeeded_backups++))
+    #
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "BackUp Process for Directory '$DirectoryToBackUp' completed successfully!"
+    #
+    PrintMessage
     #
 done < $VAR_CONFIG_FILE_BACKUP_DIRECTORIES
+#
+PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Done! Successfully backed up $succeeded_backups/$(echo $(cat $VAR_CONFIG_FILE_BACKUP_DIRECTORIES | wc -l)) directories."
