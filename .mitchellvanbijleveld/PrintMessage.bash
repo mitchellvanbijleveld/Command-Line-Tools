@@ -6,7 +6,7 @@
 ####################################################################################################
 #VAR_UTILITY=".mitchellvanbijleveld"
 #VAR_UTILITY_SCRIPT="PrintMessage"
-VAR_UTILITY_SCRIPT_VERSION="2025.03.21-0003"
+VAR_UTILITY_SCRIPT_VERSION="2025.03.23-2105"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="date echo eval mkdir printf shift touch"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
@@ -150,12 +150,19 @@ PrintMessage() {
         else
             BIN_PrintMessage_Internal "COMMAND" "$PrintMessage_Utility" "$PrintMessage_UtilityScript" "$PrintMessage_Command $PrintMessage_Text"
             #
-            eval $PrintMessage_Command $PrintMessage_Text 2>&1 | while IFS= read -r PrintMessage_Command_Result; do
+            PRINTMESSAGE_TMP_FILE_EXIT_CODE=$(mktemp)
+            #
+            {
+                eval $PrintMessage_Command $PrintMessage_Text 2>&1
+                echo $? > "$PRINTMESSAGE_TMP_FILE_EXIT_CODE"
+            } | while IFS= read -r PrintMessage_Command_Result; do
                 BIN_PrintMessage_Internal "$PrintMessage_LogLevel" "COMMAND" "$PrintMessage_Command" "$PrintMessage_Command_Result"
-            done       
+            done
+            #
         fi
         #
         BIN_PrintMessage_UnsetVariables; return 0
+        #
     fi
     #
     #
