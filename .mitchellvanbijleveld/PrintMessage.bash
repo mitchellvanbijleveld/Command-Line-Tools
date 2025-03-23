@@ -6,7 +6,7 @@
 ####################################################################################################
 #VAR_UTILITY=".mitchellvanbijleveld"
 #VAR_UTILITY_SCRIPT="PrintMessage"
-VAR_UTILITY_SCRIPT_VERSION="2025.03.23-2105"
+VAR_UTILITY_SCRIPT_VERSION="2025.03.24-0044"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="date echo eval mkdir printf shift touch"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
@@ -24,13 +24,13 @@ VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
 if [[ -z $PRINTMESSAGE_LOG_DIRECTORY ]]; then
     PRINTMESSAGE_LOG_DIRECTORY="$(realpath ~)/.mitchellvanbijleveld/Command-Line-Tools/var/log"
-    echo $PRINTMESSAGE_LOG_DIRECTORY
+    # echo $PRINTMESSAGE_LOG_DIRECTORY
     mkdir -p $PRINTMESSAGE_LOG_DIRECTORY
 fi
 #
 if [[ -z $PRINTMESSAGE_LOG_FILE ]]; then
     export PRINTMESSAGE_LOG_FILE="$PRINTMESSAGE_LOG_DIRECTORY/mitchellvanbijleveld.$(date +'%Y%m%d-%H%M%S').log"
-    echo $PRINTMESSAGE_LOG_FILE
+    echo "PrintMessage Log File: '$PRINTMESSAGE_LOG_FILE'..."
     touch $PRINTMESSAGE_LOG_FILE
 fi
 ####################################################################################################
@@ -151,6 +151,7 @@ PrintMessage() {
             BIN_PrintMessage_Internal "COMMAND" "$PrintMessage_Utility" "$PrintMessage_UtilityScript" "$PrintMessage_Command $PrintMessage_Text"
             #
             PRINTMESSAGE_TMP_FILE_EXIT_CODE=$(mktemp)
+            BIN_PrintMessage_Internal "DEBUG" ".mitchellvanbijleveld" "PrintMessage" "Command Exit Code File: '$PRINTMESSAGE_TMP_FILE_EXIT_CODE'..."
             #
             {
                 eval $PrintMessage_Command $PrintMessage_Text 2>&1
