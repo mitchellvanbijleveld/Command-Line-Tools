@@ -6,7 +6,7 @@
 ####################################################################################################
 VAR_UTILITY="Server"
 VAR_UTILITY_SCRIPT="BackUp"
-VAR_UTILITY_SCRIPT_VERSION="2025.03.23-2202"
+VAR_UTILITY_SCRIPT_VERSION="2025.03.23-2311"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cat date diff echo exit find head mkdir mktemp PrintMessage rm sed shift sort tar tr which"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="Destination Directories MaximumBackUpFiles"
 ####################################################################################################
@@ -169,6 +169,21 @@ RotateBackUp(){
     #
     PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "BackUp Rotation finished."
 }
+#
+#
+#
+RemoveEmptyDirectories(){
+    # $1 = Directory To BackUp
+    #
+    PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Removing Empty BackUp Directories for '$1'..."
+    #
+    find "$(echo "$VAR_BACKUP_DESTINATION_FOLDER/$1" | sed 's|//|/|g')" -type d -empty | sort -r | while IFS= read -r EmptyDirectory; do
+        PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Remove Empty Directory: $EmptyDirectory..."
+        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which rmdir) -v "\"$EmptyDirectory\""
+    done
+    #
+    PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Removing empty directories finished."
+}
 ####################################################################################################
 # FUNCTIONS
 ####################################################################################################
@@ -199,6 +214,8 @@ while IFS= read -r DirectoryToBackUp; do
         PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Error during backup process for directory '$DirectoryToBackUp'. BackUp not completed."
         continue
     fi
+    #
+    RemoveEmptyDirectories "$DirectoryToBackUp"
     #
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "BackUp Process for Directory '$DirectoryToBackUp' finished successfully!"
     #
