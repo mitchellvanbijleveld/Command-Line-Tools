@@ -6,7 +6,7 @@
 ####################################################################################################
 VAR_UTILITY="bin"
 VAR_UTILITY_SCRIPT="update"
-VAR_UTILITY_SCRIPT_VERSION="2024.12.22-2159"
+VAR_UTILITY_SCRIPT_VERSION="2025.03.24-0034"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk cat echo git mkdir PrintMessage shasum shift which"
 ####################################################################################################
 # UTILITY SCRIPT INFO - MITCHELLVANBIJLEVELD/UPDATE
@@ -165,6 +165,11 @@ PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Current shasum for bi
 #
 PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Pull git repository..."
 PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which git) -C $GLOBAL_VAR_DIR_INSTALLATION pull --rebase
+#
+if [[ $(cat $PRINTMESSAGE_TMP_FILE_EXIT_CODE) -ne 0 ]]; then
+    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Updating failed because $(which git) exited with non-zero exit code: $(cat $PRINTMESSAGE_TMP_FILE_EXIT_CODE)"
+    exit 1
+fi
 #
 PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Getting new version and shasum for bin..."
 VAR_NEW_VERSION=$(eval_FromFile "VAR_UTILITY_SCRIPT_VERSION" "$GLOBAL_VAR_DIR_INSTALLATION/mitchellvanbijleveld"; echo $VAR_UTILITY_SCRIPT_VERSION)
