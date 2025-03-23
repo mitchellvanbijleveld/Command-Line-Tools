@@ -150,19 +150,27 @@ PrintMessage() {
         else
             BIN_PrintMessage_Internal "COMMAND" "$PrintMessage_Utility" "$PrintMessage_UtilityScript" "$PrintMessage_Command $PrintMessage_Text"
             #
+            PRINTMESSAGE_TMP_FILE_COMMAND_OUTPUT=$(mktemp)
             PRINTMESSAGE_TMP_FILE_EXIT_CODE=$(mktemp)
-            BIN_PrintMessage_Internal "DEBUG" ".mitchellvanbijleveld" "PrintMessage" "Command Exit Code File: '$PRINTMESSAGE_TMP_FILE_EXIT_CODE'..."
+            BIN_PrintMessage_Internal "DEBUG" ".mitchellvanbijleveld" "PrintMessage" "Created Temporary File '$PRINTMESSAGE_TMP_FILE_COMMAND_OUTPUT' to save Command Output..."
+            BIN_PrintMessage_Internal "DEBUG" ".mitchellvanbijleveld" "PrintMessage" "Created Temporary File '$PRINTMESSAGE_TMP_FILE_EXIT_CODE' to save Command Exit Code..."
             #
             {
-                eval $PrintMessage_Command $PrintMessage_Text 2>&1
-                echo $? > "$PRINTMESSAGE_TMP_FILE_EXIT_CODE"
+                eval $PrintMessage_Command $PrintMessage_Text 2>&1 | tee $PRINTMESSAGE_TMP_FILE_COMMAND_OUTPUT;
+                echo ${PIPESTATUS[0]} > $PRINTMESSAGE_TMP_FILE_EXIT_CODE;
             } | while IFS= read -r PrintMessage_Command_Result; do
                 BIN_PrintMessage_Internal "$PrintMessage_LogLevel" "COMMAND" "$PrintMessage_Command" "$PrintMessage_Command_Result"
             done
             #
+            if [[ $(cat $PRINTMESSAGE_TMP_FILE_EXIT_CODE) -eq 0 ]]; then
+                BIN_PrintMessage_Internal "COMMAND" "$PrintMessage_Utility" "$PrintMessage_UtilityScript" "SUCCESS: $PrintMessage_Command exited with exit code zero: $(cat $PRINTMESSAGE_TMP_FILE_EXIT_CODE)"
+            else
+                BIN_PrintMessage_Internal "COMMAND" "$PrintMessage_Utility" "$PrintMessage_UtilityScript" "FAILURE: $PrintMessage_Command exited with non-zereo exit code: $(cat $PRINTMESSAGE_TMP_FILE_EXIT_CODE)"
+            fi
+            #
         fi
         #
-        BIN_PrintMessage_UnsetVariables; return 0
+        BIN_PrintMessage_UnsetVariables; return $(cat $PRINTMESSAGE_TMP_FILE_EXIT_CODE)
         #
     fi
     #

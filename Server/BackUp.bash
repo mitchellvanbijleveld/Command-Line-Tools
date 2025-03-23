@@ -115,9 +115,8 @@ CreateBackUp(){
     #
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which tar) --zstd -cvf "\"$BackUp_Destination_FilePath\"" "\"$1\""
     #
-    if [[ $(cat $PRINTMESSAGE_TMP_FILE_EXIT_CODE) -ne 0 ]]; then
-        PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "BackUp Process $(which tar) exited with non-zero exit code: $(cat $PRINTMESSAGE_TMP_FILE_EXIT_CODE)"
-        return 9
+    if [[ $? -ne 0 ]]; then
+        return 95
     fi
     #
     PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Backup file created successfully."
@@ -200,6 +199,11 @@ RemoveEmptyDirectories(){
 ####################################################################################################
 # START UTILITY SCRIPT
 ####################################################################################################
+if [[ $GLOBAL_VAR_DRY_RUN ]]; then
+    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Dry Run is not supported for $VAR_UTILITY/$VAR_UTILITY_SCRIPT. Exiting..."
+    exit 1
+fi
+#
 if [[ ! -f "$VAR_CONFIG_FILE_BACKUP_DIRECTORIES" ]]; then
     PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The file with directories to backup does not exist. Exiting..."
     exit 1

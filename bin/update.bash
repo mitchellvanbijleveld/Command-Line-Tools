@@ -166,8 +166,8 @@ PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Current shasum for bi
 PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Pull git repository..."
 PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which git) -C $GLOBAL_VAR_DIR_INSTALLATION pull --rebase
 #
-if [[ $(cat $PRINTMESSAGE_TMP_FILE_EXIT_CODE) -ne 0 ]]; then
-    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Updating failed because $(which git) exited with non-zero exit code: $(cat $PRINTMESSAGE_TMP_FILE_EXIT_CODE)"
+if [[ $? -ne 0 ]]; then
+    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Could not update the Git Repository. Exiting..."
     exit 1
 fi
 #
