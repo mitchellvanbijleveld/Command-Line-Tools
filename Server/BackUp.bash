@@ -26,12 +26,14 @@ VAR_CONFIG_FILE_BACKUP_DIRECTORIES="$UTILITY_SCRIPT_VAR_DIR_ETC/Directories"
 VAR_CONFIG_FILE_BACKUP_DESTINATION="$UTILITY_SCRIPT_VAR_DIR_ETC/Destination"
 VAR_CONFIG_FILE_BACKUP_MAX_FILES="$UTILITY_SCRIPT_VAR_DIR_ETC/MaximumBackUpFiles"
 #
-VAR_BACKUP_DESTINATION_FOLDER=$(cat $VAR_CONFIG_FILE_BACKUP_DESTINATION)
+if [[ -f "$VAR_CONFIG_FILE_BACKUP_DESTINATION" ]]; then
+    VAR_BACKUP_DESTINATION_FOLDER=$(cat $VAR_CONFIG_FILE_BACKUP_DESTINATION)
+fi
+VAR_BACKUP_DESTINATION_FOLDER="${VAR_BACKUP_DESTINATION_FOLDER:-/_BACKUP}"
 #
 if [[ -f "$VAR_CONFIG_FILE_BACKUP_MAX_FILES" ]]; then
     VAR_BACKUP_MAXIMUM_FILES=$(cat $VAR_CONFIG_FILE_BACKUP_MAX_FILES)
 fi
-#
 VAR_BACKUP_MAXIMUM_FILES=${VAR_BACKUP_MAXIMUM_FILES:-8}
 ####################################################################################################
 # DEFAULT VARIABLES
@@ -180,9 +182,12 @@ RotateBackUp(){
 ####################################################################################################
 # START UTILITY SCRIPT
 ####################################################################################################
+if [[ ! -f "$VAR_CONFIG_FILE_BACKUP_DIRECTORIES" ]]; then
+    PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The file with directories to backup does not exist. Exiting..."
+    exit 1
+fi
+#
 CheckAndCreateDirectory "$VAR_BACKUP_DESTINATION_FOLDER"
-#
-#
 #
 while IFS= read -r DirectoryToBackUp; do
     #
