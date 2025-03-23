@@ -140,7 +140,7 @@ VerifyBackUp(){
     #
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Verifying files in backup file '$latest_backup' with directory '$1'..."
     #
-    if ! diff <(find "$1" | sed 's|^/||' | sort) <(tar -tf "$latest_backup" | sed 's|/$||' | sort); then
+    if ! diff <(tar -tf "$latest_backup" | sed 's|/$||' | sort) <(find "$1" ! -type s | sed 's|^/||' | sort); then
         PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "BackUp Verification by comparing filenames did not pass : NOT OK"
         return 9
     fi
