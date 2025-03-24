@@ -6,8 +6,8 @@
 ####################################################################################################
 VAR_UTILITY="Server"
 VAR_UTILITY_SCRIPT="BackUp"
-VAR_UTILITY_SCRIPT_VERSION="2025.03.24-1220"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cat date diff echo exit find head mkdir mktemp PrintMessage rm sed shift sort tar tr which"
+VAR_UTILITY_SCRIPT_VERSION="2025.03.24-2259"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cat date diff echo exit find head mkdir mktemp PrintMessage rm rmdir sha256sum sed shift sort tar tr which"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="Destination Directories MaximumBackUpFiles"
 ####################################################################################################
 # UTILITY SCRIPT INFO - Server/BackUp
@@ -36,8 +36,9 @@ if [[ -f "$VAR_CONFIG_FILE_BACKUP_MAX_FILES" ]]; then
 fi
 VAR_BACKUP_MAXIMUM_FILES=${VAR_BACKUP_MAXIMUM_FILES:-8}
 #
-succeeded_backups=0
 current_backup=0
+skipped_backups=0
+succeeded_backups=0
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
@@ -56,6 +57,9 @@ for var_argument in "$@"; do
     var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
     #
     case $var_argument_CAPS in
+        "--ADVANCED-BACKUP-VERIFICATION")
+            ADVANCED_BACKUP_VERIFICATION=1
+        ;;
         "--"*)
             die_ProcessArguments_InvalidFlag $var_argument
         ;;
@@ -82,6 +86,11 @@ done
 PrintConfiguration(){
     PrintMessage "CONFIG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_DESTINATION_FOLDER : $VAR_BACKUP_DESTINATION_FOLDER"
     PrintMessage "CONFIG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_MAXIMUM_FILES      : $VAR_BACKUP_MAXIMUM_FILES"
+    if [[ $ADVANCED_BACKUP_VERIFICATION -eq 1 ]]; then
+        PrintMessage "CONFIG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "ADVANCED_BACKUP_VERIFICATION  : YES"
+    else
+            PrintMessage "CONFIG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "ADVANCED_BACKUP_VERIFICATION  : NO"
+    fi
 }
 #
 #
@@ -117,7 +126,7 @@ CreateBackUp(){
     #
     if [[ -f "$BackUp_Destination_FilePath" ]]; then
         PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Skip backup for '$1' on $BackUp_Date at $BackUp_Time because this backup already exists..."
-        return 9
+        return 95
     fi 
     #
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which tar) --zstd -cvf "\"$BackUp_Destination_FilePath\"" "\"$1\""
@@ -134,7 +143,11 @@ CreateBackUp(){
 VerifyBackUp(){
     # $1 = Directory To BackUp
     #
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Verifying backup for '$1'..."
+    if [[ $ADVANCED_BACKUP_VERIFICATION -eq 1 ]]; then
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Verifying backup for '$1' by comparing hashes (advanced backup verification)..."
+    else
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Verifying backup for '$1'..."
+    fi
     #
     latest_backup=$(find "$(echo "$VAR_BACKUP_DESTINATION_FOLDER/$1" | sed 's|//|/|g')" -type f -name '*.tar.zstd' | sort -r | head -n 1)
     expected_backup=$(cat "$BACKUP_TMP_FILE_BACKUP_FULLFILEPATH")
@@ -144,17 +157,37 @@ VerifyBackUp(){
     #
     if [[ "$latest_backup" != "$expected_backup" ]]; then
         PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Latest backup does not have the expected filename. Verification Failed."
-        return 9
+        return 95
     fi
     #
-    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Verifying files in backup file '$latest_backup' with directory '$1'..."
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Comparing files and folders in backup file '$latest_backup' with directory '$1'..."
     #
     if ! diff <(tar -tf "$latest_backup" | sed 's|/$||' | sort) <(find "$1" ! -type s | sed 's|^/||' | sort); then
-        PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "BackUp Verification by comparing filenames did not pass : NOT OK"
-        return 9
+        PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "BackUp Verification by comparing file and folders name did not pass : NOT OK"
+        return 95
+    else
+        PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Comparing BackUp Files & Folders: OK"
     fi
     #
-    PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "BackUp Verification by comparing filenames passed : OK"
+    if [[ $ADVANCED_BACKUP_VERIFICATION -eq 1 ]]; then
+        #
+        var_tmp_dir=$(mktemp -d)
+        #
+        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Extracting backup '$latest_backup' to temporary folder '$var_tmp_dir' and doing a hash comparison with files in directory '$1'..."
+        #
+        PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which tar) -xvf "\"$latest_backup\"" -C "\"$var_tmp_dir\""
+        #
+        if ! diff <(find "$(echo "$var_tmp_dir/$1" | sed 's|//|/|')" ! -type s -exec sha256sum {} + 2>/dev/null | sort | sed "s|$var_tmp_dir||") <(find "$1" ! -type s -exec sha256sum {} + 2>/dev/null | sort); then
+            PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Advanced BackUp Verification by comparing file hashes did not pass : NOT OK"
+            RemoveDirectory "$var_tmp_dir"; return 95
+        else
+            PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Comparing BackUp File Hashes: OK"
+            RemoveDirectory "$var_tmp_dir"
+        fi
+        #
+    fi
+    #
+    PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "BackUp verified successfully."
 }
 #
 #
@@ -176,7 +209,7 @@ RotateBackUp(){
         fi
     done
     #
-    PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "BackUp Rotation finished."
+    PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "BackUps rotated successfully."
 }
 #
 #
@@ -184,7 +217,7 @@ RotateBackUp(){
 RemoveEmptyDirectories(){
     # $1 = Directory To BackUp
     #
-    PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Removing Empty BackUp Directories for '$1'..."
+    PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Removing Empty BackUp Directories for '$1'..."
     #
     find "$(echo "$VAR_BACKUP_DESTINATION_FOLDER/$1" | sed 's|//|/|g')" -type d -empty | sort -r | while IFS= read -r EmptyDirectory; do
         PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Remove Empty Directory: $EmptyDirectory..."
@@ -192,6 +225,16 @@ RemoveEmptyDirectories(){
     done
     #
     PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Removing empty directories finished."
+}
+#
+#
+#
+RemoveDirectory(){
+    # $1 = Directory To Remove
+    #
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Removing Directory '$1'..."
+    #
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which rm) -r "\"$1\""
 }
 ####################################################################################################
 # FUNCTIONS
@@ -229,6 +272,12 @@ CheckAndCreateDirectory "$VAR_BACKUP_DESTINATION_FOLDER"
 #
 while IFS= read -r DirectoryToBackUp; do
     #
+    if [[ $DirectoryToBackUp =~ ^# ]]; then
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Ignoring Directory '$DirectoryToBackUp' because it's commented out..."
+        PrintMessage
+        ((skipped_backups++)); continue
+    fi
+    #
     ((current_backup++))
     #
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Start BackUp Process $current_backup/$(echo $(cat $VAR_CONFIG_FILE_BACKUP_DIRECTORIES | wc -l)): Directory '$DirectoryToBackUp'..."
@@ -251,4 +300,4 @@ while IFS= read -r DirectoryToBackUp; do
     #
 done < $VAR_CONFIG_FILE_BACKUP_DIRECTORIES
 #
-PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Done! Successfully backed up $succeeded_backups/$(echo $(cat $VAR_CONFIG_FILE_BACKUP_DIRECTORIES | wc -l)) directories."
+PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Done! Successfully backed up $succeeded_backups/$(echo $(cat $VAR_CONFIG_FILE_BACKUP_DIRECTORIES | wc -l)) directories. There are $skipped_backups backups skipped."
