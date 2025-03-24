@@ -6,7 +6,7 @@
 ####################################################################################################
 VAR_UTILITY="Server"
 VAR_UTILITY_SCRIPT="BackUp"
-VAR_UTILITY_SCRIPT_VERSION="2025.03.24-0025"
+VAR_UTILITY_SCRIPT_VERSION="2025.03.24-1220"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cat date diff echo exit find head mkdir mktemp PrintMessage rm sed shift sort tar tr which"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="Destination Directories MaximumBackUpFiles"
 ####################################################################################################
@@ -79,6 +79,13 @@ done
 ####################################################################################################
 # FUNCTIONS
 ####################################################################################################
+PrintConfiguration(){
+    PrintMessage "CONFIG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_DESTINATION_FOLDER : $VAR_BACKUP_DESTINATION_FOLDER"
+    PrintMessage "CONFIG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_MAXIMUM_FILES      : $VAR_BACKUP_MAXIMUM_FILES"
+}
+#
+#
+#
 CheckAndCreateDirectory(){
     # $1 = Directory To Check And/Or Create
     #
@@ -202,6 +209,8 @@ RemoveEmptyDirectories(){
 if [[ $GLOBAL_VAR_DRY_RUN ]]; then
     PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Dry Run is not supported for $VAR_UTILITY/$VAR_UTILITY_SCRIPT. Exiting..."
     exit 1
+else
+    PrintConfiguration
 fi
 #
 if [[ ! -f "$VAR_CONFIG_FILE_BACKUP_DIRECTORIES" ]]; then
