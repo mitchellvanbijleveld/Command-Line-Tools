@@ -177,7 +177,7 @@ VerifyBackUp(){
         #
         PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which tar) -xvf "\"$latest_backup\"" -C "\"$var_tmp_dir\""
         #
-        if ! diff <(find "$(echo "$var_tmp_dir/$1" | sed 's|//|/|')" ! -type s -exec sha256sum {} + 2>/dev/null | sort | sed "s|$var_tmp_dir||") <(find "$1" ! -type s -exec sha256sum {} + 2>/dev/null | sort); then
+        if ! diff <(find "$(echo "$var_tmp_dir/$1" | sed 's|//|/|g')" -type f -exec sha256sum {} + | sort | sed "s|$var_tmp_dir||") <(find "$1" -type f -exec sha256sum {} + | sort); then
             PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Advanced BackUp Verification by comparing file hashes did not pass : NOT OK"
             RemoveDirectory "$var_tmp_dir"; return 95
         else
