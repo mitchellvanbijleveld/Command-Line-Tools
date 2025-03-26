@@ -6,8 +6,8 @@
 ####################################################################################################
 #VAR_UTILITY=".mitchellvanbijleveld"
 #VAR_UTILITY_SCRIPT="PrintMessage"
-VAR_UTILITY_SCRIPT_VERSION="2025.03.24-0044"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="date echo eval mkdir printf shift touch"
+VAR_UTILITY_SCRIPT_VERSION="2025.03.26-2047"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cat date echo eval mkdir mktemp printf shift touch"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - .mitchellvanbijleveld/PrintMessage
@@ -147,6 +147,7 @@ PrintMessage() {
         #
         if [[ $GLOBAL_VAR_DRY_RUN ]]; then
             BIN_PrintMessage_Internal "DRY RUN" "$PrintMessage_Utility" "$PrintMessage_UtilityScript" "$PrintMessage_Command $PrintMessage_Text"
+            BIN_PrintMessage_UnsetVariables; return 0
         else
             BIN_PrintMessage_Internal "COMMAND" "$PrintMessage_Utility" "$PrintMessage_UtilityScript" "$PrintMessage_Command $PrintMessage_Text"
             #
@@ -168,9 +169,8 @@ PrintMessage() {
                 BIN_PrintMessage_Internal "COMMAND" "$PrintMessage_Utility" "$PrintMessage_UtilityScript" "FAILURE: $PrintMessage_Command exited with non-zereo exit code: $(cat $PRINTMESSAGE_TMP_FILE_EXIT_CODE)"
             fi
             #
+            BIN_PrintMessage_UnsetVariables; return $(cat $PRINTMESSAGE_TMP_FILE_EXIT_CODE)
         fi
-        #
-        BIN_PrintMessage_UnsetVariables; return $(cat $PRINTMESSAGE_TMP_FILE_EXIT_CODE)
         #
     fi
     #

@@ -129,7 +129,7 @@ CreateBackUp(){
         return 95
     fi 
     #
-    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which tar) --zstd -cvf "\"$BackUp_Destination_FilePath\"" "\"$1\""
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which tar) --zstdd -cvf "\"$BackUp_Destination_FilePath\"" "\"$1\""
     #
     if [[ $? -ne 0 ]]; then
         return 95
