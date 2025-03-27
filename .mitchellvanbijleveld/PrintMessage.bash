@@ -121,7 +121,7 @@ PrintMessage() {
             if [[ $PrintMessage_Utility == 'COMMAND' ]]; then
                 PrintMessage_Text="$@"
             else
-                if [[ $PrintMessage_Part == $(which $PrintMessage_Part) ]]; then
+                if [[ $PrintMessage_Part == $(which $PrintMessage_Part > /dev/null 2>&1) ]]; then
                     PrintMessage_Command=$PrintMessage_Part; shift
                 fi
                 #
