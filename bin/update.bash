@@ -40,6 +40,9 @@ for var_argument in "$@"; do
     var_argument_CAPS=$(echo $var_argument | tr '[:lower:]' '[:upper:]')
     #
     case $var_argument_CAPS in
+        "--FORCE")
+            FORCE_UPDATE=1
+        ;;
         "--"*)
             die_ProcessArguments_InvalidFlag $var_argument
         ;;
@@ -164,7 +167,15 @@ PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Current version for b
 PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Current shasum for bin is $VAR_OLD_SHASUM"
 #
 PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Pull git repository..."
-PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which git) -C $GLOBAL_VAR_DIR_INSTALLATION pull --rebase
+if [[ $FORCE_UPDATE -eq 1 ]]; then
+    echo; echo; echo
+    echo "!!!!! FORCING UPDATE !!!!!"
+    $(which git) -C $GLOBAL_VAR_DIR_INSTALLATION pull --rebase
+    echo "!!!!! FORCING UPDATE !!!!!"
+    echo; echo; echo
+else
+    PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which git) -C $GLOBAL_VAR_DIR_INSTALLATION pull --rebase
+fi
 #
 if [[ $? -ne 0 ]]; then
     PrintMessage "FATAL" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Could not update the Git Repository. Exiting..."
