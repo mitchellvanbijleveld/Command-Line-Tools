@@ -108,6 +108,9 @@ if [[ $InstalledDaemonVersion ]] && [[ $InstalledDaemonShasum ]]; then
     else
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Replacing Daemon '$VAR_DAEMON_NAME' version $InstalledDaemonVersion ($InstalledDaemonShasum) with version $ExampleDaemonVersion ($ExampleDaemonShasum)..."
     fi
+elif [[ $ExampleDaemonShasum == $InstalledDaemonShasum ]]; then
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Daemon '$VAR_DAEMON_NAME' is already up-to-date. Nothing to do!"
+    exit 0
 else
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Installing version $ExampleDaemonVersion ($ExampleDaemonShasum) of daemon '$VAR_DAEMON_NAME'..."
 fi
