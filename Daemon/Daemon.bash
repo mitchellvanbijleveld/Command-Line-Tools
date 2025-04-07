@@ -6,8 +6,8 @@
 ####################################################################################################
 DAEMON="Daemon"
 DAEMON_HELPER="Helper"
-VAR_UTILITY_SCRIPT_VERSION="2025.02.17-1717"
-VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit mkdir PrintMessage shift tr"
+VAR_UTILITY_SCRIPT_VERSION="2025.04.07-2343"
+VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename echo exit mkdir PrintMessage realpath shift tr"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - Daemon/Daemon
@@ -56,8 +56,17 @@ done
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
-VAR_DAEMON_CONFIG_FILE="$GLOBAL_VAR_DIR_ETC/$DAEMON/$VAR_DAEMON_NAME"
-VAR_DAEMON_EXAMPLE_FILE="$GLOBAL_VAR_DIR_INSTALLATION/$DAEMON/Examples/$VAR_DAEMON_NAME"
+if [[ -f $VAR_DAEMON_NAME ]]; then
+    PrintMessage "VERBOSE" "$DAEMON" "$DAEMON_HELPER" "Given Daemon '$VAR_DAEMON_NAME' is a file..."
+    PrintMessage "VERBOSE" "$DAEMON" "$DAEMON_HELPER" "Daemon File Path: '$(realpath $VAR_DAEMON_NAME)'..."
+    VAR_DAEMON_CONFIG_FILE="$GLOBAL_VAR_DIR_ETC/$DAEMON/$(basename $VAR_DAEMON_NAME)"
+    VAR_DAEMON_EXAMPLE_FILE="$(realpath $VAR_DAEMON_NAME)"
+    VAR_DAEMON_NAME="$(basename $VAR_DAEMON_NAME)" # In case daemon name is './daemon_name', strip relative path and set daemon name to 'daemon_name'
+else
+    VAR_DAEMON_CONFIG_FILE="$GLOBAL_VAR_DIR_ETC/$DAEMON/$VAR_DAEMON_NAME"
+    VAR_DAEMON_EXAMPLE_FILE="$GLOBAL_VAR_DIR_INSTALLATION/$DAEMON/Examples/$VAR_DAEMON_NAME"
+fi
+#
 VAR_DAEMON_PID_FILE="$GLOBAL_VAR_DIR_TMP/$DAEMON/$VAR_DAEMON_NAME"
 ####################################################################################################
 # DEFAULT VARIABLES
