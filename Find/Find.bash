@@ -62,7 +62,7 @@ for var_argument in "$@"; do
             fi
         ;;
         "--SEARCH-DIR" | "--SEARCH-DIRECTORY")
-            if [[ $VAR_SEARCH_DIR != $HOME ]]; then
+            if [[ $VAR_SEARCH_DIR != $(pwd) ]]; then
                 PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Argument '--SEARCH-DIR' should only be set once. Replacing existing value..,"
             fi
             VAR_SEARCH_DIR=$2           
