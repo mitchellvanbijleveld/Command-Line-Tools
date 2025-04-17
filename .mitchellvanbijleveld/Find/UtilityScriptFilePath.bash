@@ -6,7 +6,7 @@
 ####################################################################################################
 BIN_HELPER_UTILITY=".Find"
 BIN_HELPER_UTILITY_SCRIPT="UtilityScriptFilePath"
-VAR_UTILITY_SCRIPT_VERSION="2025.02.09-1424"
+VAR_UTILITY_SCRIPT_VERSION="2025.04.17-1432"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename echo exit export find printf PrintMessage realpath sed shift"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
 ####################################################################################################
@@ -67,12 +67,18 @@ Die_UnknownCommand(){
     #
     PrintMessage "INFO" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "The following commands are available for Utility '${VAR_UTILITY:-mitchellvanbijleveld}':"
     #
-    for var_utility_dir in "$VAR_UTILITY_FOLDER_PATH"/*; do
-        if [[ -d  $var_utility_dir ]] || [[ -f $var_utility_dir && $var_utility_dir == *".bash" ]]; then
-            var_utility=$(basename $var_utility_dir)
-            PrintMessage "INFO" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "  - ${var_utility%.bash}"
+    while IFS= read -r find_output_line; do
+        #
+        basename=$(basename $find_output_line)
+        #
+        if [[ -d $find_output_line ]]; then
+            PrintMessage "INFO" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "  - ${basename} (Utility Folder)"
+        elif [[ -f $find_output_line ]]; then
+            PrintMessage "INFO" "$BIN_HELPER_UTILITY" "$BIN_HELPER_UTILITY_SCRIPT" "  - ${basename%.bash}"
         fi
-    done
+        #
+    done < <(find $VAR_UTILITY_FOLDER_PATH -mindepth 1 -maxdepth 1 \( -type d -o -type f -name "*.bash" \) | sort)
+    #
 }
 #
 FindUtilityFolder(){
