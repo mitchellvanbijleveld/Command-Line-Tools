@@ -8,6 +8,7 @@ VAR_UTILITY="Find"
 VAR_UTILITY_SCRIPT="Find"
 VAR_UTILITY_SCRIPT_VERSION="2025.03.16-2132"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="clear echo find mktemp PrintMessage sed shift sudo tr wc which"
+VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="Sort SuppressErrors WildCard"
 ####################################################################################################
 # UTILITY SCRIPT INFO - Find/Find
 ####################################################################################################
@@ -24,6 +25,28 @@ VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="clear echo find mktemp PrintMess
 SUPPRESS_STRING="Invalid argument|No such file or directory|Not a directory|Operation not permitted|Permission denied"
 #
 VAR_SEARCH_DIR=$(pwd)
+#
+#
+#
+#
+#
+if [[ -f "$UTILITY_SCRIPT_VAR_DIR_ETC/Sort" ]]; then
+    case $(cat "$UTILITY_SCRIPT_VAR_DIR_ETC/Sort" | tr '[:lower:]' '[:upper:]') in
+        0|TRUE|YES) SORT_OUTPUT=1;;
+    esac
+fi
+#
+if [[ -f "$UTILITY_SCRIPT_VAR_DIR_ETC/SuppressErrors" ]]; then
+    case $(cat "$UTILITY_SCRIPT_VAR_DIR_ETC/SuppressErrors" | tr '[:lower:]' '[:upper:]') in
+        0|TRUE|YES) SUPPRESS_PERMISSION_DENIED=1;;
+    esac
+fi
+#
+if [[ -f "$UTILITY_SCRIPT_VAR_DIR_ETC/WildCard" ]]; then
+    case $(cat "$UTILITY_SCRIPT_VAR_DIR_ETC/WildCard" | tr '[:lower:]' '[:upper:]') in
+        0|TRUE|YES) SEARCH_WILDCARD=1;;
+    esac
+fi
 ####################################################################################################
 # DEFAULT VARIABLES
 ####################################################################################################
