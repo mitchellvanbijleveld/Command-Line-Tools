@@ -211,6 +211,14 @@ if [[ $SUPPRESS_PERMISSION_DENIED -eq 1 ]]; then
     VAR_FIND_COMMAND="$VAR_FIND_COMMAND | grep -Ev '$SUPPRESS_STRING'"
 fi
 #
+#
+#
+if [[ $(uname) =~ Darwin ]]; then
+    VAR_FIND_COMMAND="$VAR_FIND_COMMAND | grep -Ev '^/System/Volumes'"
+fi
+#
+#
+#
 VAR_TMP_FILE_COMMAND_OUTPUT=$(mktemp "mitchellvanbijleveld-$VAR_UTILITY-$VAR_UTILITY_SCRIPT.XXXXXXXX" --tmpdir)
 PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Saving find output to: $VAR_TMP_FILE_COMMAND_OUTPUT"
 #
