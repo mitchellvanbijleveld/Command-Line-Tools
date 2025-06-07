@@ -6,9 +6,9 @@
 ####################################################################################################
 VAR_UTILITY="Server"
 VAR_UTILITY_SCRIPT="BackUp"
-VAR_UTILITY_SCRIPT_VERSION="2025.03.24-2259"
+VAR_UTILITY_SCRIPT_VERSION="2025.06.08-0105"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cat date diff echo exit find head mkdir mktemp PrintMessage rm rmdir sha256sum sed shift sort tar tr which"
-UTILITY_SCRIPT_CONFIGURATION_VARS="Destination Directories MaximumBackUpFiles"
+UTILITY_SCRIPT_CONFIGURATION_VARS="AdvancedBackUpVerification Destination Directories MaximumBackUpFiles"
 ####################################################################################################
 # UTILITY SCRIPT INFO - Server/BackUp
 ####################################################################################################
@@ -23,18 +23,10 @@ UTILITY_SCRIPT_CONFIGURATION_VARS="Destination Directories MaximumBackUpFiles"
 # DEFAULT VARIABLES
 ####################################################################################################
 VAR_CONFIG_FILE_BACKUP_DIRECTORIES="$UTILITY_SCRIPT_VAR_DIR_ETC/Directories"
-VAR_CONFIG_FILE_BACKUP_DESTINATION="$UTILITY_SCRIPT_VAR_DIR_ETC/Destination"
-VAR_CONFIG_FILE_BACKUP_MAX_FILES="$UTILITY_SCRIPT_VAR_DIR_ETC/MaximumBackUpFiles"
 #
-if [[ -f "$VAR_CONFIG_FILE_BACKUP_DESTINATION" ]]; then
-    VAR_BACKUP_DESTINATION_FOLDER=$(cat $VAR_CONFIG_FILE_BACKUP_DESTINATION)
-fi
-VAR_BACKUP_DESTINATION_FOLDER="${VAR_BACKUP_DESTINATION_FOLDER:-/_BACKUP}"
+UTILITY_SCRIPT_VAR_Destination="${UTILITY_SCRIPT_VAR_Destination:-/_BACKUP}"
 #
-if [[ -f "$VAR_CONFIG_FILE_BACKUP_MAX_FILES" ]]; then
-    VAR_BACKUP_MAXIMUM_FILES=$(cat $VAR_CONFIG_FILE_BACKUP_MAX_FILES)
-fi
-VAR_BACKUP_MAXIMUM_FILES=${VAR_BACKUP_MAXIMUM_FILES:-8}
+UTILITY_SCRIPT_VAR_MaximumBackUpFiles=${UTILITY_SCRIPT_VAR_MaximumBackUpFiles:-8}
 #
 current_backup=0
 skipped_backups=0
@@ -58,7 +50,7 @@ for var_argument in "$@"; do
     #
     case $var_argument_CAPS in
         "--ADVANCED-BACKUP-VERIFICATION")
-            ADVANCED_BACKUP_VERIFICATION=1
+            UTILITY_SCRIPT_VAR_AdvancedBackUpVerification=1
         ;;
         "--"*)
             die_ProcessArguments_InvalidFlag $var_argument
@@ -84,12 +76,12 @@ done
 # FUNCTIONS
 ####################################################################################################
 PrintConfiguration(){
-    PrintMessage "CONFIG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_DESTINATION_FOLDER : $VAR_BACKUP_DESTINATION_FOLDER"
-    PrintMessage "CONFIG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_MAXIMUM_FILES      : $VAR_BACKUP_MAXIMUM_FILES"
-    if [[ $ADVANCED_BACKUP_VERIFICATION -eq 1 ]]; then
-        PrintMessage "CONFIG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "ADVANCED_BACKUP_VERIFICATION  : YES"
+    PrintMessage "CONFIG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "UTILITY_SCRIPT_VAR_Destination                : $UTILITY_SCRIPT_VAR_Destination"
+    PrintMessage "CONFIG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "UTILITY_SCRIPT_VAR_MaximumBackUpFiles         : $UTILITY_SCRIPT_VAR_MaximumBackUpFiles"
+    if [[ $UTILITY_SCRIPT_VAR_AdvancedBackUpVerification -eq 1 ]]; then
+        PrintMessage "CONFIG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "UTILITY_SCRIPT_VAR_AdvancedBackUpVerification : YES"
     else
-            PrintMessage "CONFIG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "ADVANCED_BACKUP_VERIFICATION  : NO"
+        PrintMessage "CONFIG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "UTILITY_SCRIPT_VAR_AdvancedBackUpVerification : NO"
     fi
 }
 #
@@ -118,7 +110,7 @@ CreateBackUp(){
     BackUp_Time=$(date +'%H%M')
     BackUp_FileType="tar.zstd"
     #
-    BackUp_Destination_FolderPath=$(echo "$VAR_BACKUP_DESTINATION_FOLDER/$1/$BackUp_Date" | sed 's|//|/|g')
+    BackUp_Destination_FolderPath=$(echo "$UTILITY_SCRIPT_VAR_Destination/$1/$BackUp_Date" | sed 's|//|/|g')
     BackUp_Destination_FilePath="$BackUp_Destination_FolderPath/$BackUp_Time.$BackUp_FileType"
     echo "$BackUp_Destination_FilePath" > "$BACKUP_TMP_FILE_BACKUP_FULLFILEPATH"
     #
@@ -129,7 +121,7 @@ CreateBackUp(){
         return 95
     fi 
     #
-    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which tar) --zstdd -cvf "\"$BackUp_Destination_FilePath\"" "\"$1\""
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which tar) --zstd -cvf "\"$BackUp_Destination_FilePath\"" "\"$1\""
     #
     if [[ $? -ne 0 ]]; then
         return 95
@@ -143,13 +135,13 @@ CreateBackUp(){
 VerifyBackUp(){
     # $1 = Directory To BackUp
     #
-    if [[ $ADVANCED_BACKUP_VERIFICATION -eq 1 ]]; then
+    if [[ $UTILITY_SCRIPT_VAR_AdvancedBackUpVerification -eq 1 ]]; then
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Verifying backup for '$1' by comparing hashes (advanced backup verification)..."
     else
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Verifying backup for '$1'..."
     fi
     #
-    latest_backup=$(find "$(echo "$VAR_BACKUP_DESTINATION_FOLDER/$1" | sed 's|//|/|g')" -type f -name '*.tar.zstd' | sort -r | head -n 1)
+    latest_backup=$(find "$(echo "$UTILITY_SCRIPT_VAR_Destination/$1" | sed 's|//|/|g')" -type f -name '*.tar.zstd' | sort -r | head -n 1)
     expected_backup=$(cat "$BACKUP_TMP_FILE_BACKUP_FULLFILEPATH")
     #
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "File Path of the latest found backup  : $latest_backup"
@@ -169,7 +161,7 @@ VerifyBackUp(){
         PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Comparing BackUp Files & Folders: OK"
     fi
     #
-    if [[ $ADVANCED_BACKUP_VERIFICATION -eq 1 ]]; then
+    if [[ $UTILITY_SCRIPT_VAR_AdvancedBackUpVerification -eq 1 ]]; then
         #
         var_tmp_dir=$(mktemp -d)
         #
@@ -197,15 +189,15 @@ RotateBackUp(){
     #
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Rotating backups for '$1'..."
     #
-    find "$(echo "$VAR_BACKUP_DESTINATION_FOLDER/$1" | sed 's|//|/|g')" -type f -name '*.tar.zstd' | sort -r | while IFS= read -r BackUpFile; do
+    find "$(echo "$UTILITY_SCRIPT_VAR_Destination/$1" | sed 's|//|/|g')" -type f -name '*.tar.zstd' | sort -r | while IFS= read -r BackUpFile; do
         #
         ((amount_of_backups++))
         #
-        if [[ $amount_of_backups -gt $VAR_BACKUP_MAXIMUM_FILES ]]; then
-            PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Remove BackUp File $amount_of_backups of $VAR_BACKUP_MAXIMUM_FILES: $BackUpFile"
+        if [[ $amount_of_backups -gt $UTILITY_SCRIPT_VAR_MaximumBackUpFiles ]]; then
+            PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Remove BackUp File $amount_of_backups of $UTILITY_SCRIPT_VAR_MaximumBackUpFiles: $BackUpFile"
             PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which rm) -v "\"$BackUpFile\""
         else
-            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Keep BackUp File $amount_of_backups of $VAR_BACKUP_MAXIMUM_FILES: $BackUpFile"
+            PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Keep BackUp File $amount_of_backups of $UTILITY_SCRIPT_VAR_MaximumBackUpFiles: $BackUpFile"
         fi
     done
     #
@@ -219,7 +211,7 @@ RemoveEmptyDirectories(){
     #
     PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Removing Empty BackUp Directories for '$1'..."
     #
-    find "$(echo "$VAR_BACKUP_DESTINATION_FOLDER/$1" | sed 's|//|/|g')" -type d -empty | sort -r | while IFS= read -r EmptyDirectory; do
+    find "$(echo "$UTILITY_SCRIPT_VAR_Destination/$1" | sed 's|//|/|g')" -type d -empty | sort -r | while IFS= read -r EmptyDirectory; do
         PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Remove Empty Directory: $EmptyDirectory..."
         PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which rmdir) -v "\"$EmptyDirectory\""
     done
@@ -268,7 +260,7 @@ else
     PrintMessage
 fi
 #
-CheckAndCreateDirectory "$VAR_BACKUP_DESTINATION_FOLDER"
+CheckAndCreateDirectory "$UTILITY_SCRIPT_VAR_Destination"
 #
 while IFS= read -r DirectoryToBackUp; do
     #
