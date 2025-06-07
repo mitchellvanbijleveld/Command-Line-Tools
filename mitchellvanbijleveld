@@ -6,7 +6,7 @@
 ####################################################################################################
 export BIN_UTILITY="mitchell"
 export BIN_UTILITY_SCRIPT="vanbijleveld"
-BIN_UTILITY_SCRIPT_VERSION="2025.03.24-0027"
+BIN_UTILITY_SCRIPT_VERSION="2025.06.07-2225"
 BIN_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk basename bash break date dirname echo eval exit export find grep mktemp printf PrintMessage realpath sed shasum shift source tee tr type which"
 VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="LogLevel UpdateFirst"
 BIN_PRODUCT_NAME="Mitchell van Bijleveld Command Line Tools"
@@ -320,6 +320,42 @@ fi
 ####################################################################################################
 # CHECK DEPENDENCIES
 ####################################################################################################
+####################################################################################################
+#
+#
+#
+#
+#
+####################################################################################################
+####################################################################################################
+# LOAD UTILITY SCRIPT CONFIGURATION
+####################################################################################################
+eval_FromFile "UTILITY_SCRIPT_CONFIGURATION_VARS" $VAR_UTILITY_SCRIPT_FILE_PATH
+#
+if [[ -z $UTILITY_SCRIPT_CONFIGURATION_VARS ]]; then
+
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "No Configuraion Variables for Utility Script $VAR_UTILITY/$VAR_UTILITY_SCRIPT..."
+
+else
+
+    PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Utility Script $VAR_UTILITY/$VAR_UTILITY_SCRIPT has specified configuration variables..."
+
+    for CONFIGURATION_VAR in $UTILITY_SCRIPT_CONFIGURATION_VARS; do
+
+        if [[ ! -f "$UTILITY_SCRIPT_VAR_DIR_ETC/$CONFIGURATION_VAR" ]]; then
+            PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Setting '$CONFIGURATION_VAR' will not be configured because there is not config file..."
+            continue
+        fi
+
+        PrintMessage "DEBUG" "$BIN_UTILITY" "$BIN_UTILITY_SCRIPT" "Process Configuration: Set 'UTILITY_SCRIPT_VAR_$CONFIGURATION_VAR' to '$(cat "$UTILITY_SCRIPT_VAR_DIR_ETC/$CONFIGURATION_VAR")'..."
+        eval "export UTILITY_SCRIPT_VAR_${CONFIGURATION_VAR}=\"$(cat "$UTILITY_SCRIPT_VAR_DIR_ETC/$CONFIGURATION_VAR")\""
+
+    done
+
+fi
+####################################################################################################
+####################################################################################################
+# LOAD UTILITY SCRIPT CONFIGURATION
 ####################################################################################################
 #
 #
