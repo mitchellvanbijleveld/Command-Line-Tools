@@ -8,7 +8,7 @@ DAEMON="Daemon"
 DAEMON_HELPER="Helper"
 VAR_UTILITY_SCRIPT_VERSION="2025.04.07-2343"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename echo exit mkdir PrintMessage realpath shift tr"
-VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
+UTILITY_SCRIPT_CONFIGURATION_VARS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - Daemon/Daemon
 ####################################################################################################

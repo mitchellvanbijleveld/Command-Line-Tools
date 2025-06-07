@@ -8,7 +8,7 @@
 #VAR_UTILITY_SCRIPT="PrintMessage"
 VAR_UTILITY_SCRIPT_VERSION="2025.03.26-2047"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cat date echo eval mkdir mktemp printf shift touch"
-VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
+UTILITY_SCRIPT_CONFIGURATION_VARS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - .mitchellvanbijleveld/PrintMessage
 ####################################################################################################

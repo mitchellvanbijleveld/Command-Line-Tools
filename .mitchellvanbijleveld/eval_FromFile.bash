@@ -8,7 +8,7 @@
 #VAR_UTILITY_SCRIPT="eval_FromFile"
 VAR_UTILITY_SCRIPT_VERSION="2025.02.09-2117"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="eval grep"
-VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
+UTILITY_SCRIPT_CONFIGURATION_VARS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - .mitchellvanbijleveld/eval_FromFile
 ####################################################################################################

@@ -8,7 +8,7 @@ VAR_UTILITY="Docker/Compose"
 VAR_UTILITY_SCRIPT="Pull"
 VAR_UTILITY_SCRIPT_VERSION="2025.03.16-0007"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cd docker echo exit PrintMessage pwd shift tr which"
-VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="Directories"
+UTILITY_SCRIPT_CONFIGURATION_VARS="Directories"
 ####################################################################################################
 # UTILITY SCRIPT INFO - Docker/Compose/Pull
 ####################################################################################################

@@ -8,7 +8,7 @@ VAR_UTILITY="Server"
 VAR_UTILITY_SCRIPT="BackUp"
 VAR_UTILITY_SCRIPT_VERSION="2025.03.24-2259"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cat date diff echo exit find head mkdir mktemp PrintMessage rm rmdir sha256sum sed shift sort tar tr which"
-VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS="Destination Directories MaximumBackUpFiles"
+UTILITY_SCRIPT_CONFIGURATION_VARS="Destination Directories MaximumBackUpFiles"
 ####################################################################################################
 # UTILITY SCRIPT INFO - Server/BackUp
 ####################################################################################################

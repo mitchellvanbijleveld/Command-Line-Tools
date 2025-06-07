@@ -8,7 +8,7 @@ VAR_UTILITY="Daemon"
 VAR_UTILITY_SCRIPT="UnInstall"
 VAR_UTILITY_SCRIPT_VERSION="2025.02.17-1733"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk cp echo eval_FromFile exit PrintMessage shasum shift source tr"
-VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
+UTILITY_SCRIPT_CONFIGURATION_VARS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - Daemon/Install
 ####################################################################################################

@@ -8,7 +8,7 @@
 #VAR_UTILITY_SCRIPT="ForEachUtilityScript"
 VAR_UTILITY_SCRIPT_VERSION="2025.02.03-1153"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit PrintMessage shift tr"
-VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
+UTILITY_SCRIPT_CONFIGURATION_VARS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - .mitchellvanbijleveld/ForEachUtilityScript
 ####################################################################################################

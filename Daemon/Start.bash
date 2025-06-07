@@ -8,7 +8,7 @@ VAR_UTILITY="Daemon"
 VAR_UTILITY_SCRIPT="Start"
 VAR_UTILITY_SCRIPT_VERSION="2025.01.25-0117"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo eval_FromFile exit PrintMessage shift source tmux tr"
-VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
+UTILITY_SCRIPT_CONFIGURATION_VARS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - Daemon/Start
 ####################################################################################################

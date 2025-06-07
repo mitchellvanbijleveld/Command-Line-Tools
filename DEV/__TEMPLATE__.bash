@@ -8,7 +8,7 @@ VAR_UTILITY="__TEMPLATE_VAR_UTILITY__"
 VAR_UTILITY_SCRIPT="__TEMPLATE_VAR_UTILITY_SCRIPT__"
 VAR_UTILITY_SCRIPT_VERSION="__TEMPLATE_YEAR__.__TEMPLATE_MONTH__.XX-XXXX"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit PrintMessage shift tr"
-VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
+UTILITY_SCRIPT_CONFIGURATION_VARS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - __TEMPLATE_VAR_UTILITY__/__TEMPLATE_VAR_UTILITY_SCRIPT__
 ####################################################################################################

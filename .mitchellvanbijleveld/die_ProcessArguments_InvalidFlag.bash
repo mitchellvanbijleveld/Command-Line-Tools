@@ -8,7 +8,7 @@
 #VAR_UTILITY_SCRIPT="die_ProcessArguments_InvalidFlag"
 VAR_UTILITY_SCRIPT_VERSION="2025.02.09-2120"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="exit PrintMessage"
-VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
+UTILITY_SCRIPT_CONFIGURATION_VARS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - .mitchellvanbijleveld/die_ProcessArguments_InvalidFlag
 ####################################################################################################

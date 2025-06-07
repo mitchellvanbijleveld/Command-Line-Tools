@@ -8,7 +8,7 @@ BIN_HELPER_UTILITY=".Find"
 BIN_HELPER_UTILITY_SCRIPT="UtilityScriptFilePath"
 VAR_UTILITY_SCRIPT_VERSION="2025.04.17-1432"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename echo exit export find printf PrintMessage realpath sed shift"
-VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
+UTILITY_SCRIPT_CONFIGURATION_VARS=""
 ####################################################################################################
 # BIN HELPER UTILITY SCRIPT INFO - .Find/UtilityScriptFilePath
 ####################################################################################################

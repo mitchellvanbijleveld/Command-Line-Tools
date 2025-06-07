@@ -8,7 +8,7 @@ VAR_UTILITY="Server"
 VAR_UTILITY_SCRIPT="SecurePermissions"
 VAR_UTILITY_SCRIPT_VERSION="2025.01.11-0101"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="chmod echo eval exit find printf PrintMessage shift tr which"
-VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
+UTILITY_SCRIPT_CONFIGURATION_VARS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - Server/SecurePermissions
 ####################################################################################################

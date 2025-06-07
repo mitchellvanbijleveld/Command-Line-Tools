@@ -8,7 +8,7 @@ VAR_UTILITY="Daemon"
 VAR_UTILITY_SCRIPT="Stop"
 VAR_UTILITY_SCRIPT_VERSION="2025.01.25-0146"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit PrintMessage shift source tmux tr"
-VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
+UTILITY_SCRIPT_CONFIGURATION_VARS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - Daemon/Stop
 ####################################################################################################
