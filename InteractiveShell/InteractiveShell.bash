@@ -8,6 +8,7 @@ VAR_UTILITY="InteractiveShell"
 VAR_UTILITY_SCRIPT="InteractiveShell"
 VAR_UTILITY_SCRIPT_VERSION="2025.03.20-2317"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename clear echo exit printf PrintMessage shift tr unset"
+UTILITY_SCRIPT_CONFIGURATION_VARS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - InteractiveShell/InteractiveShell
 ####################################################################################################

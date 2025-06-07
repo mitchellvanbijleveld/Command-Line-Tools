@@ -8,6 +8,7 @@ VAR_UTILITY="bin"
 VAR_UTILITY_SCRIPT="update"
 VAR_UTILITY_SCRIPT_VERSION="2025.03.24-0034"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="awk cat echo git mkdir PrintMessage shasum shift which"
+UTILITY_SCRIPT_CONFIGURATION_VARS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - MITCHELLVANBIJLEVELD/UPDATE
 ####################################################################################################

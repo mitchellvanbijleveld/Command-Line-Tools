@@ -8,6 +8,7 @@ VAR_UTILITY="bin"
 VAR_UTILITY_SCRIPT="InstallAutoCompletion"
 VAR_UTILITY_SCRIPT_VERSION="2024.12.19-1805"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit PrintMessage sed shasum shift tr"
+UTILITY_SCRIPT_CONFIGURATION_VARS=""
 ####################################################################################################
 # UTILITY SCRIPT INFO - bin/InstallAutoCompletion
 ####################################################################################################
