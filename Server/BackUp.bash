@@ -173,7 +173,7 @@ VerifyBackUp(){
             PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Advanced BackUp Verification by comparing file hashes did not pass : NOT OK"
             RemoveDirectory "$var_tmp_dir"; return 95
         else
-            PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Comparing BackUp File Hashes: OK"
+            PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Advanced BackUp Verification by comparing file hashes: OK"
             RemoveDirectory "$var_tmp_dir"
         fi
         #
@@ -201,7 +201,7 @@ RotateBackUp(){
         fi
     done
     #
-    PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "BackUps rotated successfully."
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "BackUps rotated successfully."
 }
 #
 #
@@ -216,7 +216,7 @@ RemoveEmptyDirectories(){
         PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which rmdir) -v "\"$EmptyDirectory\""
     done
     #
-    PrintMessage "VERBOSE" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Removing empty directories finished."
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Removing empty directories finished."
 }
 #
 #
