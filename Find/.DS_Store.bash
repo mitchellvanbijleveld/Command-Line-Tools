@@ -8,7 +8,7 @@ VAR_UTILITY="Find"
 VAR_UTILITY_SCRIPT=".DS_Store"
 VAR_UTILITY_SCRIPT_VERSION="2025.03.20-1929"
 VAR_UTILITY_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo exit find PrintMessage pwd rm shift tr"
-VAR_UTILITY_SCRIPT_CONFIGURABLE_SETTINGS=""
+UTILITY_SCRIPT_CONFIGURATION_VARS="RemoveFoundFiles"
 ####################################################################################################
 # UTILITY SCRIPT INFO - Find/.DS_Store
 ####################################################################################################
@@ -43,7 +43,7 @@ for var_argument in "$@"; do
     #
     case $var_argument_CAPS in
         "--DELETE" | "--REMOVE")
-            REMOVE_FILES=1
+            UTILITY_SCRIPT_VAR_RemoveFoundFiles=1
         ;;
         "--"*)
             die_ProcessArguments_InvalidFlag $var_argument
@@ -86,7 +86,7 @@ PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "This script will find 
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The search directory is set to '$(pwd)'..."
 PrintMessage
 #
-if [[ $REMOVE_FILES -eq 1 ]]; then
+if [[ $UTILITY_SCRIPT_VAR_RemoveFoundFiles -eq 1 ]]; then
     #
     PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The '--delete' or '--remove' flag is passed."
     PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "This means every file found, will be removed without confirmation."
@@ -99,7 +99,7 @@ if [[ $REMOVE_FILES -eq 1 ]]; then
     #
     if [[ "$MESSAGE" != "I understand." ]]; then
         PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "You did not understand the warning message. Not removing any files."
-        REMOVE_FILES=0
+        UTILITY_SCRIPT_VAR_RemoveFoundFiles=0
     else
         PrintMessage "WARNING" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "OK, with great power... comes great responsibility. Good luck!"
     fi
@@ -112,7 +112,7 @@ while IFS= read -r DS_Store; do
     #
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Found '.DS_Store'...: $DS_Store"; ((FOUND_FILES++))
     #
-    if [[ $REMOVE_FILES -eq 1 ]]; then
+    if [[ $UTILITY_SCRIPT_VAR_RemoveFoundFiles -eq 1 ]]; then
         #
         if [[ -f "$DS_Store" ]]; then
             PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $(which rm) -v "\"$DS_Store\""
